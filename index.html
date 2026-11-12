@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#3F5A9E">
-<link rel="icon" href="logo.png">
-<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sol-EMP">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="App Contaduría de Sol-EMP Soluciones Empresariales: IVA, ISR, facturas y declaración anual.">
-<title>App Contaduría</title>
+<title>Sol-EMP · App Contaduría</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
@@ -1162,6 +1167,7 @@ document.getElementById("spSw").src=LG_SW;document.getElementById("spDk").src=LG
 {const sh=document.getElementById("spSh");sh.style.webkitMaskImage=sh.style.maskImage="url("+LOGO+")";}
 render();
 initStore();
+if(STANDALONE&&"serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 setTimeout(()=>{const sp=document.getElementById("splash");if(sp)sp.remove()},3500);
 setTimeout(()=>$("#app").classList.remove("intro"),4300);
 </script>
