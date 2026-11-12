@@ -168,6 +168,67 @@ dl.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;overflow-wr
 #toast.on{opacity:1}
 .foot{font-size:.8rem;color:var(--muted);text-align:center;line-height:1.6}
 @media (max-width:420px){.big{font-size:2rem}.split{gap:8px}.split div{padding:10px}.split b{font-size:.88rem}.three{grid-template-columns:1fr 1fr}.tabs button{font-size:.82rem}}
+
+/* ===== Apartados: navegación inferior, inicio, servicios, contacto ===== */
+.wrap{padding-bottom:140px}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:15;background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
+.nav .in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.72rem;font-weight:600;color:var(--muted);padding:7px 0 6px;border-radius:14px;cursor:pointer}
+.nav button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.top-mini{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top-mini .logo{width:104px}
+.hero-sol{position:relative;overflow:hidden;border-radius:24px;padding:30px 24px 28px;color:#fff;background:linear-gradient(155deg,#4C68B0 0%,#2D4079 100%);display:flex;flex-direction:column;gap:20px}
+.hero-sol::before{content:"";position:absolute;right:-90px;top:-70px;width:280px;height:280px;border-radius:50%;border:38px solid rgba(255,255,255,.07)}
+.hero-sol::after{content:"";position:absolute;left:-60px;bottom:-120px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.05)}
+.hero-sol>*{position:relative}
+.hero-sol .eyebrow{font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;opacity:.8}
+.hero-sol h1{font-size:2rem;line-height:1.12;font-weight:800;color:#fff}
+.hero-sol p{margin:0;opacity:.88;max-width:40ch}
+.hero-sol .areas{display:flex;flex-wrap:wrap;gap:8px}
+.hero-sol .areas span{font-size:.78rem;font-weight:500;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18)}
+.hero-sol .cta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero-sol .cta .btn{white-space:nowrap;padding:10px 12px}
+.btn.on-blue{background:#fff;color:#2D4079;border-color:#fff}
+.btn.on-blue-o{background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.sec-t{display:flex;flex-direction:column;gap:4px}
+.sec-t .eyebrow{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.sec-t h2{font-size:1.35rem}
+.sec-t p{margin:0;color:var(--muted)}
+.svc-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:560px){.svc-grid{grid-template-columns:1fr 1fr}}
+.svc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;text-align:left;cursor:pointer;width:100%}
+.svc:hover{border-color:var(--accent)}
+.svc .ib{width:44px;height:44px;border-radius:13px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.svc h3{font-size:1.02rem;margin:0}
+.svc p{margin:0;color:var(--muted);font-size:.92rem}
+.svc .more{display:flex;align-items:center;gap:6px;color:var(--accent);font-weight:600;font-size:.88rem;margin-top:auto}
+.svc .more .ic{width:16px;height:16px}
+.mvv{display:grid;gap:14px}
+.mvv .card{display:flex;flex-direction:column;gap:8px}
+.mvv .card h3{display:flex;align-items:center;gap:10px;margin:0}
+.mvv .card p{margin:0;color:var(--muted)}
+.dates{display:flex;flex-direction:column;gap:2px}
+.date-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.date-row:last-child{border-bottom:0}
+.dbadge{width:54px;flex:none;border-radius:14px;background:var(--accent-soft);color:var(--accent);text-align:center;padding:8px 0;display:flex;flex-direction:column;line-height:1.1}
+.dbadge b{font-family:var(--font-d);font-size:1.3rem}
+.dbadge span{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em}
+.date-row .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ct-list{display:flex;flex-direction:column}
+.ct{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);color:inherit;text-decoration:none}
+.ct:last-child{border-bottom:0}
+.ct .ib{width:44px;height:44px;border-radius:13px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.ct .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ct .info b{font-weight:600;overflow-wrap:anywhere}
+.ct .go{color:var(--muted)}
+.social{display:flex;gap:10px;flex-wrap:wrap}
+.social a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;font-weight:500;font-size:.9rem}
+.social a:hover{border-color:var(--accent)}
+.social .dot{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:.7rem;font-weight:800;font-family:var(--font-d)}
+.sig{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;padding-top:6px}
+.sig .logo{width:120px}
+.sig small{color:var(--muted);font-size:.8rem;line-height:1.6}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 /* Entrada: el logo se arma por partes (trazos, texto, EMP), brillo, y la cortina sube */
 #splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;
@@ -204,6 +265,7 @@ dl.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;overflow-wr
   <div class="lg"><img class="sw" id="spSw" alt=""><img class="dk" id="spDk" alt=""><img class="em" id="spEm" alt=""><div class="shine" id="spSh"></div></div>
   <div class="tag">Contaduría · Impuestos</div></div></div>
 <div class="wrap intro" id="app"></div>
+<nav class="nav" id="nav" aria-label="Apartados"><div class="in"></div></nav>
 <div class="overlay" id="sheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
     <div class="sheet-h"><h2 id="sheetTitle"></h2><button class="btn ghost" data-act="close" aria-label="Cerrar">Cerrar</button></div>
@@ -706,6 +768,135 @@ function verDoc(id){
       <button class="btn danger" data-act="borrarDoc" data-id="${esc(id)}">${S.confirm===id?"Toca otra vez para borrar":"Borrar"}</button></div>`);
 }
 
+
+/* ================= Sol-Emp: datos de la firma ================= */
+const FIRMA={nombre:"Sol-Emp Integradora de Servicios S.C.",lema:"Honestidad y Profesionalismo",
+  tel:"2288136386",telTxt:"(228) 813 6386",correo:"contacto@solemp.com.mx",
+  dir:"Helsinki #2, esq. Ciudad del Vaticano, Fracc. Monte Magno, C.P. 91193, Xalapa, Veracruz",
+  fb:"https://www.facebook.com/integradorasolemp",tw:"https://twitter.com/Solemp_SC",li:"https://www.linkedin.com/in/sol-emp-integradora-de-servicios-s-c-599046bb/"};
+const ICON={
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h1M12 12h1M16 12h0M8 16h1M12 16h1M16 16h0"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  pin:'<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+  shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  scale:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7M8 11h7"/>',
+  board:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 12l3-3 2 2 4-4"/>',
+  clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+  cap:'<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  heart:'<path d="M12 20s-8-4.8-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6.2-8 11-8 11z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const ic=(n,cls)=>`<svg class="ic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+const SERVICIOS=[
+  {i:"scale",t:"Consultoría fiscal",d:"Te orientamos para tomar decisiones con el menor costo fiscal posible y siempre dentro de la ley."},
+  {i:"shield",t:"Defensa fiscal",d:"Te acompañamos ante requerimientos, revisiones y créditos fiscales, desde la respuesta hasta la resolución."},
+  {i:"eye",t:"Vigilancia fiscal",d:"Revisamos tu buzón tributario, tu opinión de cumplimiento y tus obligaciones para que no haya sorpresas."},
+  {i:"users",t:"Nóminas y seguridad social",d:"Cálculo y timbrado de nómina, altas, bajas y modificaciones ante el IMSS y el Infonavit."},
+  {i:"book",t:"Contabilidad",d:"Registros, conciliaciones y estados financieros al día, con tus declaraciones mensuales y anual en tiempo."},
+  {i:"board",t:"Capacitación al personal",d:"Cursos prácticos para que tu equipo administrativo trabaje con orden y cumpla a tiempo."},
+  {i:"clip",t:"Trámites",d:"RFC, e.firma, avisos ante el SAT, registros ante el IMSS y gestiones con dependencias locales."},
+  {i:"cap",t:"Capacitación profesional",d:"Formación práctica para contadores, estudiantes y recién egresados que quieren crecer en la profesión."}];
+const SECS=[["inicio","Inicio","home"],["servicios","Servicios","brief"],["trabajo","Área de trabajo","calc"],["contacto","Contacto","phone"]];
+S.sec=(SECS.find(x=>x[0]===location.hash.slice(1))||SECS[0])[0];
+function irA(sec,extra){S.sec=sec;if(extra)Object.assign(S,extra);try{if(location.hash.slice(1)!==sec)history.replaceState(null,"","#"+sec)}catch(e){}render();scrollTo(0,0)}
+window.addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(SECS.some(x=>x[0]===h)&&h!==S.sec){S.sec=h;render();scrollTo(0,0)}});
+function renderNav(){
+  $("#nav .in").innerHTML=SECS.map(([k,l,i])=>`<button data-act="ir" data-s="${k}"${S.sec===k?' aria-current="page"':""}>${ic(i)}<span>${l}</span></button>`).join("");
+}
+const topMini=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales"><span class="chip">${esc(FIRMA.lema)}</span></div>`;
+const firma=()=>`<div class="sig"><img class="logo" src="${LOGO}" alt=""><small>${esc(FIRMA.nombre)}<br>${esc(FIRMA.lema)}</small></div>`;
+function proximasFechas(){
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const out=[];
+  let y=hoy.getFullYear(),m=hoy.getMonth();
+  let d=new Date(y,m,17);if(d<hoy)d=new Date(y,m+1,17);
+  const pm=new Date(d.getFullYear(),d.getMonth()-1,1);
+  out.push({d,t:"Declaración mensual de "+MESES[pm.getMonth()].toLowerCase(),s:"IVA, ISR y retenciones"});
+  const d2=new Date(d.getFullYear(),d.getMonth()+1,17),pm2=new Date(d2.getFullYear(),d2.getMonth()-1,1);
+  out.push({d:d2,t:"Declaración mensual de "+MESES[pm2.getMonth()].toLowerCase(),s:"IVA, ISR y retenciones"});
+  let a=new Date(y,2,31);if(a<hoy)a=new Date(y+1,2,31);out.push({d:a,t:"Anual de personas morales",s:"Ejercicio "+(a.getFullYear()-1)});
+  let b=new Date(y,3,30);if(b<hoy)b=new Date(y+1,3,30);out.push({d:b,t:"Anual de personas físicas",s:"Ejercicio "+(b.getFullYear()-1)});
+  return out.sort((p,q)=>p.d-q.d).map(x=>({...x,dias:Math.round((x.d-hoy)/864e5)}));
+}
+function viewInicio(){
+  const fs=proximasFechas();
+  return`${topMini()}
+  <section class="hero-sol">
+    <span class="eyebrow">Soluciones empresariales · Xalapa</span>
+    <h1>Tu contabilidad e impuestos, en orden y a tiempo.</h1>
+    <p>Asesoría y capacitación para que tu negocio cumpla con el SAT sin preocupaciones y crezca con bases firmes.</p>
+    <div class="areas"><span>Administración</span><span>Contabilidad</span><span>Impuestos</span><span>Seguridad social</span></div>
+    <div class="cta"><button class="btn on-blue" data-act="ir" data-s="contacto">Pedir asesoría</button><button class="btn on-blue-o" data-act="ir" data-s="servicios">Ver servicios</button></div>
+  </section>
+  <section class="card stack">
+    <div class="sec-t"><span class="eyebrow">Agenda fiscal</span><h2>Próximas fechas</h2></div>
+    <div class="dates">${fs.map(x=>`<div class="date-row"><div class="dbadge"><b>${x.d.getDate()}</b><span>${MESES[x.d.getMonth()].slice(0,3)}</span></div>
+      <div class="info"><strong>${esc(x.t)}</strong><span class="small muted">${esc(x.s)}</span></div>
+      <span class="chip ${x.dias<=5?"pay":x.dias<=15?"warn":"mute"}">${x.dias===0?"Hoy":x.dias===1?"Mañana":"En "+x.dias+" días"}</span></div>`).join("")}</div>
+    <p class="small muted" style="margin:0">Si la fecha cae en día inhábil, se recorre al siguiente día hábil.</p>
+  </section>
+  <section class="stack">
+    <div class="sec-t"><span class="eyebrow">Nosotros</span><h2>Trabajamos para superar tus expectativas</h2>
+      <p>Nuestra cultura gira en torno a la satisfacción de cada cliente. Capacitamos a nuestro equipo de forma continua para darte un servicio de calidad, íntegro y eficiente.</p></div>
+    <div class="mvv">
+      <div class="card"><h3>${ic("target")} Misión</h3><p>Ser para las empresas una herramienta eficaz y confiable de asesoría y capacitación que impulse su crecimiento económico.</p></div>
+      <div class="card"><h3>${ic("eye")} Visión</h3><p>Ser el apoyo fundamental de los negocios en contabilidad, administración e impuestos, para que cumplan sus obligaciones fiscales correctamente y a tiempo.</p></div>
+      <div class="card"><h3>${ic("heart")} Valores</h3><p>Honestidad y profesionalismo, servicio de alta calidad, atención cercana al cliente y trabajo en equipo.</p></div>
+    </div>
+  </section>
+  <section class="stack">
+    <div class="sec-h"><div class="sec-t"><span class="eyebrow">Servicios</span><h2>Lo que hacemos por ti</h2></div></div>
+    <div class="svc-grid">${SERVICIOS.slice(0,4).map(svcCard).join("")}</div>
+    <button class="btn full" data-act="ir" data-s="servicios">Ver los ${SERVICIOS.length} servicios</button>
+  </section>
+  ${firma()}`;
+}
+const svcCard=x=>`<button class="svc" data-act="pedir" data-t="${esc(x.t)}"><span class="ib">${ic(x.i)}</span><h3>${esc(x.t)}</h3><p>${esc(x.d)}</p><span class="more">Pedir información ${ic("arrow")}</span></button>`;
+function viewServicios(){
+  return`${topMini()}
+  <div class="sec-t"><span class="eyebrow">Servicios</span><h2 style="font-size:1.6rem">Administración, contabilidad e impuestos</h2>
+    <p>Elige un servicio para pedir información; te contestamos a la brevedad.</p></div>
+  <div class="svc-grid">${SERVICIOS.map(svcCard).join("")}</div>
+  <section class="hero-sol" style="gap:14px">
+    <h2 style="color:#fff;font-size:1.3rem">¿No sabes qué servicio necesitas?</h2>
+    <p>Cuéntanos tu situación y te decimos cómo podemos ayudarte.</p>
+    <button class="btn on-blue" data-act="ir" data-s="contacto">Solicitar asesoría</button>
+  </section>
+  ${firma()}`;
+}
+function viewContacto(){
+  const maps="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(FIRMA.dir);
+  return`${topMini()}
+  <div class="sec-t"><span class="eyebrow">Contacto</span><h2 style="font-size:1.6rem">Estamos para ayudarte</h2><p>Llámanos, escríbenos o visítanos en Xalapa.</p></div>
+  <section class="card ct-list">
+    <a class="ct" href="tel:+52${FIRMA.tel}"><span class="ib">${ic("phone")}</span><span class="info"><span class="small muted">Teléfono</span><b>${FIRMA.telTxt}</b></span><span class="go">${ic("arrow")}</span></a>
+    <a class="ct" href="mailto:${FIRMA.correo}"><span class="ib">${ic("mail")}</span><span class="info"><span class="small muted">Correo</span><b>${FIRMA.correo}</b></span><span class="go">${ic("arrow")}</span></a>
+    <a class="ct" href="${maps}" target="_blank" rel="noopener"><span class="ib">${ic("pin")}</span><span class="info"><span class="small muted">Oficina · abrir en mapas</span><b>${esc(FIRMA.dir)}</b></span><span class="go">${ic("arrow")}</span></a>
+  </section>
+  <section class="card stack">
+    <div class="sec-t"><h2 style="font-size:1.15rem">Solicita una asesoría</h2><p class="small">Llena tus datos y se arma el mensaje listo para enviar.</p></div>
+    <form id="fContacto">
+      <div class="field"><label for="ctNom">Nombre</label><input id="ctNom" name="nombre" required autocomplete="name"></div>
+      <div class="two"><div class="field"><label for="ctTel">Teléfono</label><input id="ctTel" name="tel" inputmode="tel" autocomplete="tel"></div>
+        <div class="field"><label for="ctSvc">Servicio</label><select id="ctSvc" name="servicio">${SERVICIOS.map(x=>`<option${x.t===S.svcPedido?" selected":""}>${esc(x.t)}</option>`).join("")}<option${!S.svcPedido?" selected":""}>Otro</option></select></div></div>
+      <div class="field"><label for="ctMsg">¿En qué te ayudamos?</label><textarea id="ctMsg" name="mensaje" rows="4"></textarea></div>
+      <button class="btn primary full" type="submit">Preparar mensaje</button>
+    </form>
+  </section>
+  <section class="stack">
+    <div class="sec-t"><h2 style="font-size:1.1rem">Síguenos</h2></div>
+    <div class="social"><a href="${FIRMA.fb}" target="_blank" rel="noopener"><span class="dot">f</span>Facebook</a><a href="${FIRMA.tw}" target="_blank" rel="noopener"><span class="dot">X</span>X (Twitter)</a><a href="${FIRMA.li}" target="_blank" rel="noopener"><span class="dot">in</span>LinkedIn</a></div>
+  </section>
+  ${firma()}`;
+}
+
 /* ================= Vistas ================= */
 function periodBar(){
   return`<div class="period"><label for="mes">Periodo</label>
@@ -717,7 +908,7 @@ function storeChip(){
   if(S.mode==="nube")return S.slow?`<span class="chip warn">Sin conexión</span>`:`<span class="chip">Guardado en tu cuenta</span>`;
   return`<span class="chip">Guardado en este dispositivo</span>`;
 }
-const header=()=>`<header class="top"><div class="brand"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales">${storeChip()}</div><h1 class="ttl">App Contaduría<small>Impuestos, facturas y declaración anual · ${YEAR}</small></h1>${periodBar()}</header>`;
+const header=()=>`<header class="top"><div class="brand"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales">${storeChip()}</div><h1 class="ttl">Área de trabajo<small>Impuestos, facturas y declaración anual · ${YEAR}</small></h1>${periodBar()}</header>`;
 const foot=()=>`<p class="foot">Tarifas ${YEAR} del Anexo 8 de la RMF, tasas RESICO del art. 113-E LISR y UMA ${YEAR}.<br>Es una hoja de trabajo: revisa siempre contra la declaración en el portal del SAT.</p>`;
 function viewHome(){
   const cs=clientesOrden();
@@ -849,7 +1040,10 @@ function invItem(f){
       ${tags.length?`<span class="tags">${tags.join("")}</span>`:""}</span>
     <span class="amt"><b>${money((f.tipo==="E"?-1:1)*f.total)}</b><span class="small muted">${f.dir==="nomina"?"ISR "+money(f.isrRet):"IVA "+money(f.iva)}</span></span></button>`;
 }
-function render(){$("#app").innerHTML=S.view==="cliente"?viewCliente():viewHome()}
+function render(){
+  const v=S.sec==="inicio"?viewInicio():S.sec==="servicios"?viewServicios():S.sec==="contacto"?viewContacto():(S.view==="cliente"?viewCliente():viewHome());
+  $("#app").innerHTML=v;renderNav();
+}
 
 /* ================= Hojas (formularios) ================= */
 function openSheet(title,html){$("#sheetTitle").textContent=title;$("#sheetBody").innerHTML=html;$("#sheet").hidden=false}
@@ -1016,6 +1210,9 @@ const act={
     const id=S.cid;$("#sheet").hidden=true;S.confirm=null;S.view="home";render();
     try{await delCliente(id);toast("Cliente borrado")}catch(e){toast(dbErr(e),5000)}render();
   },
+  ir(d){irA(d.s)},
+  copiarContacto(){copiarTxt(S.msgContacto||"","Mensaje copiado")},
+  pedir(d){irA("contacto",{svcPedido:d.t});setTimeout(()=>{const n=$("#ctNom");if(n)n.focus()},60)},
   ejemplo:crearEjemplo,
   respaldo(){const h=new Date();descargar("respaldo-contaduria-"+h.getFullYear()+"-"+pad(h.getMonth()+1)+"-"+pad(h.getDate())+".json",JSON.stringify({app:"app-contaduria",v:1,clientes:S.clientes,facturas:S.facturas,docs:S.docs}))},
   copiarRespaldo(){copiarTxt(JSON.stringify({app:"app-contaduria",v:1,clientes:S.clientes,facturas:S.facturas,docs:S.docs}),"Respaldo copiado: pégalo en una nota o mándatelo por WhatsApp")},
@@ -1112,6 +1309,16 @@ document.addEventListener("change",async e=>{
 });
 document.addEventListener("submit",async e=>{
   e.preventDefault();const fm=e.target,d=Object.fromEntries(new FormData(fm));
+  if(fm.id==="fContacto"){
+    const txt="Hola, Sol-Emp. Soy "+d.nombre.trim()+(d.tel?" ("+d.tel.trim()+")":"")+".\nMe interesa: "+d.servicio+"."+(d.mensaje.trim()?"\n\n"+d.mensaje.trim():"");
+    const href="mailto:"+FIRMA.correo+"?subject="+encodeURIComponent("Solicitud de asesoría: "+d.servicio)+"&body="+encodeURIComponent(txt);
+    S.msgContacto=txt;
+    openSheet("Tu mensaje está listo",`<pre class="report">${esc(txt)}</pre>
+      <a class="btn primary full" href="${esc(href)}">Enviar por correo</a>
+      <button class="btn full" data-act="copiarContacto">Copiar mensaje</button>
+      <p class="small muted" style="margin:0">También puedes llamar al ${FIRMA.telTxt} o escribir a ${FIRMA.correo}.</p>`);
+    return;
+  }
   if(fm.id==="fCliente"){
     const rfc=d.rfc.trim().toUpperCase().replace(/\s/g,"");
     if(!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfc)){toast("Revisa el RFC: 12 o 13 caracteres, como ABC010101AB1");return}
