@@ -449,28 +449,45 @@ const Local={
     if(!m.id)m.id=uid("m");d.movs[m.id]=m;this.save_();return m},
   async deleteMov(m,auth){const d=this.load_();this._check(d.movs[m.id]||m,auth);delete d.movs[m.id];this.save_()}
 };
-let sb=null;
+let sb=null,sbCargando=null;
+// Carga la librería de Supabase (con un segundo servidor de respaldo) y crea la conexión una sola vez.
+function cargarScript(src){return new Promise((ok,no)=>{const t=document.createElement("script");t.src=src;t.onload=ok;t.onerror=no;document.head.appendChild(t)})}
+async function getSb(){
+  if(sb)return sb;
+  if(!sbCargando)sbCargando=(async()=>{
+    if(!window.supabase){
+      for(const u of["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.1/dist/umd/supabase.js","https://unpkg.com/@supabase/supabase-js@2.100.1/dist/umd/supabase.js"]){
+        try{await cargarScript(u);if(window.supabase)break}catch(e){}
+      }
+    }
+    if(!window.supabase||!window.supabase.createClient)throw new Error("No se pudo cargar la conexión. Revisa tu internet y vuelve a abrir la app.");
+    sb=window.supabase.createClient(SB_URL,SB_KEY);
+    sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){S.sec="trabajo";render();openSheet("Nueva contraseña",`<form id="fNuevaPw"><div class="field"><label for="npw">Escribe tu nueva contraseña</label><input id="npw" name="pw" type="password" minlength="6" required autocomplete="new-password"></div><button class="btn primary full" type="submit">Guardar</button></form>`)}});
+    return sb;
+  })().catch(e=>{sbCargando=null;throw e});
+  return sbCargando;
+}
 const Remote={
   async session(){
-    const{data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return null;
-    const r=await sb.from("admins").select("email").limit(1);
+    const{data}=await (await getSb()).auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return null;
+    const r=await (await getSb()).from("admins").select("email").limit(1);
     return{email:(u.email||"").toLowerCase(),admin:!r.error&&!!(r.data&&r.data.length)};
   },
-  async signIn(email,pw){const{error}=await sb.auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
-  async signUp(email,pw){const{error}=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error},
-  async reset(email){const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.href.split("#")[0]});if(error)throw error},
-  async signOut(){await sb.auth.signOut()},
+  async signIn(email,pw){const{error}=await (await getSb()).auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
+  async signUp(email,pw){const{error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error},
+  async reset(email){const{error}=await (await getSb()).auth.resetPasswordForEmail(email,{redirectTo:location.href.split("#")[0]});if(error)throw error},
+  async signOut(){await (await getSb()).auth.signOut()},
   async load(){
-    const[c,p,m]=await Promise.all([sb.from("clientes").select("*"),sb.from("periodos").select("*").eq("anio",YEAR),sb.from("movimientos").select("*").eq("anio",YEAR)]);
+    const[c,p,m]=await Promise.all([(await getSb()).from("clientes").select("*"),(await getSb()).from("periodos").select("*").eq("anio",YEAR),(await getSb()).from("movimientos").select("*").eq("anio",YEAR)]);
     for(const r of[c,p,m])if(r.error)throw r.error;
     return{clientes:c.data,periodos:p.data,movs:m.data};
   },
-  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;const{data,error}=await sb.from("clientes").upsert(row).select().single();if(error)throw error;return data},
-  async deleteCliente(id){const{error}=await sb.from("clientes").delete().eq("id",id);if(error)throw error},
-  async setPeriodo(p){const{data,error}=await sb.from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
+  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;const{data,error}=await (await getSb()).from("clientes").upsert(row).select().single();if(error)throw error;return data},
+  async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
+  async setPeriodo(p){const{data,error}=await (await getSb()).from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
   async saveMov(m,auth){const row=clone(m);if(!auth.admin)row.capturado_por="cliente";if(!row.id)delete row.id;
-    const{data,error}=await sb.from("movimientos").upsert(row).select().single();if(error)throw error;return data},
-  async deleteMov(m){const{error}=await sb.from("movimientos").delete().eq("id",m.id);if(error)throw error}
+    const{data,error}=await (await getSb()).from("movimientos").upsert(row).select().single();if(error)throw error;return data},
+  async deleteMov(m){const{error}=await (await getSb()).from("movimientos").delete().eq("id",m.id);if(error)throw error}
 };
 const API=MODO_DEMO?Local:Remote;
 function errTxt(e){
@@ -481,7 +498,8 @@ function errTxt(e){
   if(/already registered/i.test(m))return"Ese correo ya tiene cuenta. Entra con tu contraseña.";
   if(/Password should be/i.test(m))return"La contraseña debe tener al menos 6 caracteres.";
   if(/duplicate key/i.test(m))return"Ese comprobante ya estaba registrado.";
-  if(/fetch|network/i.test(m))return"Sin conexión. Revisa tu internet e inténtalo de nuevo.";
+  if(/No se pudo cargar/.test(m))return m;
+  if(/fetch|network|Load failed/i.test(m))return"Sin conexión. Revisa tu internet e inténtalo de nuevo.";
   return"No se pudo completar: "+m;
 }
 async function recargar(){
@@ -1371,7 +1389,7 @@ document.addEventListener("submit",async e=>{
     return;
   }
   if(fid==="fNuevaPw"){
-    try{const{error}=await sb.auth.updateUser({password:d.pw});if(error)throw error;$("#sheet").hidden=true;toast("Contraseña actualizada");await entrar(await Remote.session())}catch(er){toast(errTxt(er),5000)}
+    try{const{error}=await (await getSb()).auth.updateUser({password:d.pw});if(error)throw error;$("#sheet").hidden=true;toast("Contraseña actualizada");await entrar(await Remote.session())}catch(er){toast(errTxt(er),5000)}
     return;
   }
   if(fid==="fCliente"){
@@ -1405,12 +1423,7 @@ document.addEventListener("submit",async e=>{
 /* ================= Arranque ================= */
 async function iniciar(){
   try{if(window.claude&&typeof window.claude.use==="function")DL=await window.claude.use("downloads")}catch(e){}
-  if(!MODO_DEMO){
-    try{
-      sb=window.supabase.createClient(SB_URL,SB_KEY);
-      sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){S.sec="trabajo";render();openSheet("Nueva contraseña",`<form id="fNuevaPw"><div class="field"><label for="npw">Escribe tu nueva contraseña</label><input id="npw" name="pw" type="password" minlength="6" required autocomplete="new-password"></div><button class="btn primary full" type="submit">Guardar</button></form>`)}});
-    }catch(e){toast("No se pudo conectar con la base de datos",5000)}
-  }
+  if(!MODO_DEMO){try{await getSb()}catch(e){toast(e.message,6000)}}
   try{const s=await API.session();if(s){S.auth=s;await recargar()}}catch(e){}
   S.listo=true;render();
 }
