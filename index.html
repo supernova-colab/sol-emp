@@ -933,8 +933,8 @@ function listaCliente(c,m){
   const sec=(t,sub,a,vacio)=>`<section class="stack"><div class="sec-t"><h2 style="font-size:1.1rem">${t}</h2><p class="small">${sub}</p></div>
     ${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<div class="card empty" style="padding:22px"><p class="muted">${vacio}</p></div>`}</section>`;
   const tot=a=>a.reduce((t,x)=>t+(+x.subtotal||0),0);
-  return`${edit?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="nuevoMov" data-t="ingreso">+ Agregar un ingreso (lo que facturaste)</button>
-      <button class="btn primary full" data-act="nuevoMov" data-t="gasto">+ Agregar un gasto (lo que pagaste)</button>
+  return`${edit?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="nuevoMov" data-t="ingreso">+ Agregar un ingreso</button>
+      <button class="btn primary full" data-act="nuevoMov" data-t="gasto">+ Agregar un gasto</button>
       <button class="btn full" data-act="subir">Subir mis facturas (XML o ZIP del SAT)</button></div>`:""}
     ${sec("Tus ingresos","Total sin IVA: "+money(tot(I)),I,edit?"Aún no agregas ingresos este mes.":"No hay ingresos en este mes.")}
     ${sec("Tus gastos","Total sin IVA: "+money(tot(G)),G,edit?"Aún no agregas gastos este mes.":"No hay gastos en este mes.")}
@@ -961,15 +961,15 @@ function hoja(c,m){
       <td>${x.deducible===false?'<span class="chip pay">No</span>':'<span class="chip favor">Sí</span>'}</td>${who(x)}</tr>`}).join("");
   const vacio=(cols,t)=>`<tr><td class="rn">1</td><td colspan="${cols}" class="muted" style="white-space:normal;padding:20px 12px">${t}</td></tr>`;
   const ci=varios?11:10,cg=varios?8:7;
-  return`${edit?`<div class="actions"><button class="btn primary" data-act="nuevoMov" data-t="ingreso">+ Factura de ingreso</button><button class="btn primary" data-act="nuevoMov" data-t="gasto">+ Gasto</button><button class="btn" data-act="subir">Subir XML de este mes</button><button class="btn" data-act="xlsCliente">Excel</button>${esAdmin()?`<button class="btn full2" data-act="subirAnio">Subir el año completo (ZIP del SAT)</button>`:""}</div>`
+  return`${edit?`<div class="actions"><button class="btn primary" data-act="nuevoMov" data-t="ingreso">+ Ingreso</button><button class="btn primary" data-act="nuevoMov" data-t="gasto">+ Gasto</button><button class="btn" data-act="subir">Subir XML de este mes</button><button class="btn" data-act="xlsCliente">Excel</button>${esAdmin()?`<button class="btn full2" data-act="subirAnio">Subir el año completo (ZIP del SAT)</button>`:""}</div>`
       :`<div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="xlsCliente">Descargar en Excel</button></div>`}
     <div class="sec-h"><h3 style="margin:0">Ingresos</h3><span class="small muted">C contado · I no pagado · MA cobro de meses anteriores</span></div>
     <div class="grid-wrap"><table class="xl"><thead>
-      <tr><th class="rn" rowspan="2">#</th><th rowspan="2">Concepto</th><th rowspan="2">Est.</th><th rowspan="2">Ret</th>${varios?'<th rowspan="2">Régimen</th>':""}<th class="n grp" colspan="2">Facturas elaboradas</th><th class="n grp" colspan="4">Facturas cobradas</th><th rowspan="2">Capturó</th></tr>
+      <tr><th class="rn" rowspan="2">#</th><th rowspan="2">Concepto</th><th rowspan="2">Est.</th><th rowspan="2">Ret</th>${varios?'<th rowspan="2">Régimen</th>':""}<th class="n grp" colspan="2">Elaborado</th><th class="n grp" colspan="4">Cobrado</th><th rowspan="2">Capturó</th></tr>
       <tr><th class="n">Importe</th><th class="n">IVA</th><th class="n">Importe</th><th class="n">IVA</th><th class="n">Ret. IVA</th><th class="n">Ret. ISR</th></tr></thead>
-      <tbody>${filasI||vacio(ci,"Sin facturas de ingreso en "+MESES[m-1].toLowerCase()+".")}
+      <tbody>${filasI||vacio(ci,"Sin ingresos en "+MESES[m-1].toLowerCase()+".")}
       ${I.length?`<tr class="trt"><td class="rn"></td><td colspan="${varios?4:3}">Totales</td><td class="n">${money(eI)}</td><td class="n">${money(eV)}</td><td class="n">${money(cI)}</td><td class="n">${money(cV)}</td><td class="n">${money(rV)}</td><td class="n">${money(rI)}</td><td></td></tr>`:""}</tbody></table></div>
-    <div class="sec-h"><h3 style="margin:0">Gastos pagados facturados</h3></div>
+    <div class="sec-h"><h3 style="margin:0">Gastos</h3></div>
     <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th>Concepto</th>${varios?"<th>Régimen</th>":""}<th class="n">Importe</th><th class="n">IVA</th><th class="n">Ret. ISR</th><th class="n">Ret. IVA</th><th>Deducible</th><th>Capturó</th></tr></thead>
       <tbody>${filasG||vacio(cg,"Sin gastos en "+MESES[m-1].toLowerCase()+".")}
       ${G.length?`<tr class="trt"><td class="rn"></td><td colspan="${varios?2:1}">Totales</td><td class="n">${money(gI)}</td><td class="n">${money(gV)}</td><td class="n">${money(gRi)}</td><td class="n">${money(gRv)}</td><td></td><td></td></tr>`:""}</tbody></table></div>
@@ -1098,11 +1098,11 @@ function formMov(x){
   openSheet(x.id?(edit?"Editar":"Detalle"):(ing?"Agregar un ingreso":"Agregar un gasto"),`<form id="fMov">
     <input type="hidden" name="id" value="${esc(x.id||"")}"><input type="hidden" name="tipo" id="mvTipo" value="${x.tipo}">
     <div class="seg" role="group" aria-label="Tipo"><button type="button" data-act="mvTipo" data-t="ingreso" aria-pressed="${ing}"${dis}>Ingreso</button><button type="button" data-act="mvTipo" data-t="gasto" aria-pressed="${!ing}"${dis}>Gasto</button></div>
-    <div class="field" id="wEst"${ing?"":" hidden"}><label>¿Ya te pagaron esta factura?</label>
-      <div class="opts" role="group" aria-label="Estatus">${[["C","Sí, ya me pagaron","C · De contado"],["I","Todavía no me pagan","I · No pagado"],["MA","Me pagaron una factura de otro mes","MA · Cobro de meses anteriores"]].map(([k,l,s2])=>`<button type="button" class="opt" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}><b>${l}</b><span>${s2}</span></button>`).join("")}</div>
+    <div class="field" id="wEst"${ing?"":" hidden"}><label>¿Ya te pagaron?</label>
+      <div class="opts" role="group" aria-label="Estatus">${[["C","Sí, ya me pagaron","C · De contado"],["I","Todavía no me pagan","I · No pagado"],["MA","Me pagaron algo de otro mes","MA · Cobro de meses anteriores"]].map(([k,l,s2])=>`<button type="button" class="opt" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}><b>${l}</b><span>${s2}</span></button>`).join("")}</div>
       <input type="hidden" name="estatus" id="mvEst" value="${est(x)}"></div>
     <div class="field" id="wRet"${ing?"":" hidden"}><label>¿Te retuvieron impuestos? (RET)</label>
-      <span class="small muted">Pasa cuando le facturas a una empresa: te paga un poco menos y ella entera ese impuesto.</span>
+      <span class="small muted">Pasa cuando le cobras a una empresa: te paga un poco menos y ella entera ese impuesto.</span>
       <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!retOn}"${dis}>No</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${retOn}"${dis}>Sí</button></div>
       <span class="small muted" id="hRetT"></span></div>
     <div class="field"><label for="mvCon">¿Qué fue? (concepto)</label><input id="mvCon" name="concepto" value="${esc(x.concepto)}" required autocomplete="off"${dis}></div>
