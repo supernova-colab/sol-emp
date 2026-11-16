@@ -1502,7 +1502,8 @@ render();
 iniciar();
 setTimeout(()=>{const sp=document.getElementById("splash");if(sp)sp.remove()},3500);
 setTimeout(()=>$("#app").classList.remove("intro"),4300);
-if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")r.update()})}).catch(()=>{});
+  let recargado=false;const habia=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(habia&&!recargado){recargado=true;location.reload()}})}
 </script>
 </body>
 </html>
