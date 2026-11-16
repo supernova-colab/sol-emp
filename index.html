@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#3F5A9E">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -48,6 +48,10 @@
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
 h1,h2,h3{font-family:var(--font-d);margin:0;text-wrap:balance;letter-spacing:-.01em}
 button,input,select,textarea{font:inherit;color:inherit}
+html{touch-action:manipulation}
+input,select,textarea{font-size:16px!important} /* evita el zoom automático del iPhone al tocar un campo */
+.narrow{width:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
+.mid{width:100%;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:26px}
 .num,td.v,.big{font-variant-numeric:tabular-nums}
 .wrap{max-width:680px;margin:0 auto;padding:22px 18px 96px;display:flex;flex-direction:column;gap:26px}
 .top{display:flex;flex-direction:column;gap:16px}
@@ -356,6 +360,12 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 @keyframes upIn{from{opacity:0;transform:translateY(22px)}}
 @media (prefers-reduced-motion:reduce){#splash{display:none}#app.intro>*{animation:none}}
 
+@media (min-width:900px){
+  .wrap{max-width:1000px;padding-left:28px;padding-right:28px}
+  .pc-box{display:grid!important;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .pc-box .pc-head{grid-column:1 / -1}
+  .nav .in{max-width:520px}
+}
 </style>
 </head>
 <body>
@@ -799,7 +809,7 @@ function viewServicios(){
 }
 function viewContacto(){
   const maps="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(FIRMA.dir);
-  return`${topMini()}
+  return`<div class="mid">${topMini()}
   <div class="sec-t"><span class="eyebrow">Contacto</span><h2 style="font-size:1.6rem">Estamos para ayudarte</h2><p>Llámanos, escríbenos o visítanos en Xalapa.</p></div>
   <section class="card ct-list">
     <a class="ct" href="tel:+52${FIRMA.tel}"><span class="ib">${ic("phone")}</span><span class="info"><span class="small muted">Teléfono</span><b>${FIRMA.telTxt}</b></span><span class="go">${ic("arrow")}</span></a>
@@ -822,7 +832,7 @@ function viewContacto(){
     <div class="sec-t"><h2 style="font-size:1.1rem">Síguenos</h2></div>
     <div class="social"><a href="${FIRMA.fb}" target="_blank" rel="noopener"><span class="dot">f</span>Facebook</a><a href="${FIRMA.tw}" target="_blank" rel="noopener"><span class="dot">X</span>X (Twitter)</a><a href="${FIRMA.li}" target="_blank" rel="noopener"><span class="dot">in</span>LinkedIn</a></div>
   </section>
-  ${firma()}`;
+  ${firma()}</div>`;
 }
 
 
@@ -879,16 +889,16 @@ const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:-12px"><span class="chip">${esAdmin()?"Administrador":"Cliente"}</span>${MODO_DEMO?`<span class="chip warn">Modo demostración</span>`:""}<span class="small muted" style="overflow-wrap:anywhere">${esc(S.auth.email)}</span></div>`;
 const estadoChip=e=>`<span class="chip ${ESTADOS[e].k}">${ESTADOS[e].l}</span>`;
 function viewLogin(){
-  if(MODO_DEMO)return`${topMini()}
+  if(MODO_DEMO)return`<div class="narrow">${topMini()}
     <div class="sec-t"><span class="eyebrow">Área de trabajo</span><h2 style="font-size:1.6rem">Entra a tu panel</h2>
       <p>El despacho calcula y autoriza; cada cliente solo ve y captura lo suyo.</p></div>
     <section class="card stack">
       <p class="note">Modo demostración: los datos se guardan en este dispositivo. Al conectar la base de datos se activan las cuentas con correo y contraseña.</p>
       <button class="btn primary full" data-act="demoAdmin">Entrar como administrador</button>
       <button class="btn full" data-act="demoCliente">Entrar como cliente de ejemplo</button>
-    </section>${firma()}`;
+    </section>${firma()}</div>`;
   const reg=S.login==="registro",rec=S.login==="recuperar";
-  return`<div class="sec-t" style="padding-top:12px"><span class="eyebrow">Bienvenido</span><h2 style="font-size:1.6rem">${reg?"Crea tu cuenta":rec?"Recupera tu contraseña":"Inicia sesión"}</h2>
+  return`<div class="narrow"><div class="sec-t" style="padding-top:12px"><span class="eyebrow">Bienvenido</span><h2 style="font-size:1.6rem">${reg?"Crea tu cuenta":rec?"Recupera tu contraseña":"Inicia sesión"}</h2>
       <p>${reg?"Usa el mismo correo que le diste al despacho.":rec?"Te enviaremos un enlace a tu correo.":"Entra con tu correo y contraseña."}</p></div>
     <section class="card"><form id="fLogin">
       <div class="field"><label for="lgMail">Correo</label><input id="lgMail" name="email" type="email" autocomplete="email" required></div>
@@ -898,7 +908,7 @@ function viewLogin(){
     <div class="stack" style="gap:6px;align-items:center">
       ${S.login!=="entrar"?`<button class="btn ghost" data-act="lgModo" data-m="entrar">Ya tengo cuenta</button>`:`<button class="btn ghost" data-act="lgModo" data-m="registro">Crear mi cuenta</button><button class="btn ghost" data-act="lgModo" data-m="recuperar">Olvidé mi contraseña</button>`}
     </div>
-    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png" alt="" width="150"><span class="mono-t">¿Necesitas ayuda? <b>Tócame</b></span></button>`;
+    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png" alt="" width="150"><span class="mono-t">¿Necesitas ayuda? <b>Tócame</b></span></button></div>`;
 }
 function viewTablero(){
   const cs=clientesOrden(),pm=cs.filter(c=>c.tipo==="PM"),pf=cs.filter(c=>c.tipo==="PF");
@@ -1503,6 +1513,7 @@ render();
 iniciar();
 setTimeout(()=>{const sp=document.getElementById("splash");if(sp)sp.remove()},3500);
 setTimeout(()=>$("#app").classList.remove("intro"),4300);
+document.addEventListener("gesturestart",e=>e.preventDefault());
 if(!window.claude&&"serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>{r.update();document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")r.update()})}).catch(()=>{});
   let recargado=false;const habia=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(habia&&!recargado){recargado=true;location.reload()}})}
 </script>
