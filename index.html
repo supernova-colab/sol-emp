@@ -325,7 +325,7 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 #splash .em{opacity:0;transform:translateX(26px);animation:spSlide .7s cubic-bezier(.2,.8,.2,1) 1.15s forwards}
 #splash .shine{background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%) no-repeat;background-size:250% 100%;background-position:130% 0;
   -webkit-mask-size:100% 100%;mask-size:100% 100%;animation:spShine .9s ease-in-out 1.7s forwards}
-#splash .tag{font-family:var(--font-b);font-size:.78rem;letter-spacing:.32em;text-transform:uppercase;color:#5B6378;opacity:0;animation:spTag .7s ease 1.55s forwards}
+#splash .tag{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-family:var(--font-b);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:#5B6378;opacity:0;animation:spTag .7s ease 1.55s forwards}
 @keyframes spWipe{to{-webkit-mask-position:0 0;mask-position:0 0}}
 @keyframes spRise{to{opacity:1;transform:none;filter:blur(0)}}
 @keyframes spSlide{to{opacity:1;transform:none}}
@@ -344,7 +344,7 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 <body>
 <div id="splash" aria-hidden="true"><div class="sp">
   <div class="lg"><img class="sw" id="spSw" alt=""><img class="dk" id="spDk" alt=""><img class="em" id="spEm" alt=""><div class="shine" id="spSh"></div></div>
-  <div class="tag">Contaduría · Impuestos</div></div></div>
+  <div class="tag"><span>Contabilidad · Auditoría</span><span>Administración · Impuestos</span></div></div></div>
 <div class="wrap intro" id="app"></div>
 <nav class="nav" id="nav" aria-label="Apartados"><div class="in"></div></nav>
 <div class="overlay" id="sheet" hidden>
