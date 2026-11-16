@@ -242,6 +242,7 @@ table.act td.na{background:repeating-linear-gradient(135deg,var(--line) 0 6px,tr
 table.act .emp{position:sticky;left:0;background:var(--surface);min-width:150px;white-space:normal;z-index:1;border-right:1px solid var(--line)}
 table.act th.emp{background:var(--bg)}
 #mesesPF{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;min-height:44px}
+.actions .full2{grid-column:1 / -1}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;cursor:pointer}
 .opt b{font-weight:600}.opt span{font-size:.78rem;color:var(--muted)}
@@ -941,7 +942,7 @@ function hoja(c,m){
       <td>${x.deducible===false?'<span class="chip pay">No</span>':'<span class="chip favor">Sí</span>'}</td>${who(x)}</tr>`}).join("");
   const vacio=(cols,t)=>`<tr><td class="rn">1</td><td colspan="${cols}" class="muted" style="white-space:normal;padding:20px 12px">${t}</td></tr>`;
   const ci=varios?11:10,cg=varios?8:7;
-  return`${edit?`<div class="actions"><button class="btn primary" data-act="nuevoMov" data-t="ingreso">+ Factura de ingreso</button><button class="btn primary" data-act="nuevoMov" data-t="gasto">+ Gasto</button><button class="btn" data-act="subir">Subir XML o ZIP</button><button class="btn" data-act="xlsCliente">Excel</button></div>`
+  return`${edit?`<div class="actions"><button class="btn primary" data-act="nuevoMov" data-t="ingreso">+ Factura de ingreso</button><button class="btn primary" data-act="nuevoMov" data-t="gasto">+ Gasto</button><button class="btn" data-act="subir">Subir XML de este mes</button><button class="btn" data-act="xlsCliente">Excel</button>${esAdmin()?`<button class="btn full2" data-act="subirAnio">Subir el año completo (ZIP del SAT)</button>`:""}</div>`
       :`<div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="xlsCliente">Descargar en Excel</button></div>`}
     <div class="sec-h"><h3 style="margin:0">Ingresos</h3><span class="small muted">C contado · I no pagado · MA cobro de meses anteriores</span></div>
     <div class="grid-wrap"><table class="xl"><thead>
@@ -1158,34 +1159,45 @@ function xlsTablero(){
 /* ================= XML del SAT ================= */
 async function importar(files){
   const c=S.clientes[S.cid];if(!c)return;
-  if(!puedeCapturar(c.id,S.m)){toast("La captura de este mes está cerrada.");return}
+  const anio=!!S.importAnio&&esAdmin();S.importAnio=false;
+  if(!anio&&!puedeCapturar(c.id,S.m)){toast("La captura de este mes está cerrada.");return}
   toast("Leyendo archivos…",60000);
   const raw=await leerArchivos(files),docs=[];let mal=0;
   for(const r of raw){if(r.err){mal++;continue}try{docs.push(parseCFDI(r.text))}catch(e){mal++}}
+  docs.sort((x,y)=>x.fecha.localeCompare(y.fecha));
   const rfc=c.rfc.toUpperCase(),ya=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.uuid_cfdi).map(x=>x.uuid_cfdi));
-  const R={ok:0,rep:0,otroMes:0,ajeno:0,otros:0,mal};
+  const R={ok:0,rep:0,otroMes:0,otroAnio:0,cerrado:0,ajeno:0,otros:0,mal},porMes={};
   try{
     for(const d of docs){
       if(d.tipo!=="I"&&d.tipo!=="E"){R.otros++;continue}
       const tipo=d.emRfc===rfc?"ingreso":d.reRfc===rfc?"gasto":null;
       if(!tipo){R.ajeno++;continue}
-      if(+d.fecha.slice(5,7)!==S.m||+d.fecha.slice(0,4)!==YEAR){R.otroMes++;continue}
+      const mes=+d.fecha.slice(5,7);
+      if(+d.fecha.slice(0,4)!==YEAR){R.otroAnio++;continue}
+      if(!anio&&mes!==S.m){R.otroMes++;continue}
+      if(!puedeCapturar(c.id,mes)){R.cerrado++;continue}
       if(d.uuid&&ya.has(d.uuid)){R.rep++;continue}
       const sg=d.tipo==="E"?-1:1;
-      const m={cliente_id:c.id,anio:YEAR,mes:S.m,fecha:d.fecha,tipo,estatus:tipo==="ingreso"?(d.metodo==="PPD"?"I":"C"):null,regimen:(c.regimenes||[])[0],concepto:(d.tipo==="E"?"Nota de crédito · ":"")+(tipo==="ingreso"?d.reNom:d.emNom)+(d.folio?" · "+d.folio:""),
+      const m={cliente_id:c.id,anio:YEAR,mes,fecha:d.fecha,tipo,estatus:tipo==="ingreso"?(d.metodo==="PPD"?"I":"C"):null,regimen:(c.regimenes||[])[0],concepto:(d.tipo==="E"?"Nota de crédito · ":"")+(tipo==="ingreso"?d.reNom:d.emNom)+(d.folio?" · "+d.folio:""),
         rfc:tipo==="ingreso"?d.reRfc:d.emRfc,subtotal:sg*(d.subtotal-d.descuento),iva:sg*d.iva,iva_ret:sg*d.ivaRet,isr_ret:sg*d.isrRet,deducible:true,uuid_cfdi:d.uuid||null,capturado_por:esAdmin()?"admin":"cliente"};
-      const saved=await API.saveMov(m,S.auth);saved.subtotal=+saved.subtotal;saved.iva=+saved.iva;saved.iva_ret=+saved.iva_ret;saved.isr_ret=+saved.isr_ret;
-      S.movs[saved.id]=saved;if(d.uuid)ya.add(d.uuid);R.ok++;
+      const saved=await API.saveMov(m,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>saved[k]=+saved[k]);
+      S.movs[saved.id]=saved;if(d.uuid)ya.add(d.uuid);R.ok++;porMes[mes]=(porMes[mes]||0)+1;
       if(R.ok%5===0)toast("Guardando "+R.ok+"…",60000);
     }
   }catch(e){toast(errTxt(e),5000)}
   $("#toast").classList.remove("on");render();
-  const li=[["Agregados a "+MESES[S.m-1].toLowerCase(),R.ok]];
-  if(R.rep)li.push(["Ya estaban registrados",R.rep]);if(R.otroMes)li.push(["Son de otro mes (no se agregaron)",R.otroMes]);
+  const meses=Object.keys(porMes).map(Number).sort((x,y)=>x-y);
+  const li=[[anio?"Facturas agregadas":"Agregadas a "+MESES[S.m-1].toLowerCase(),R.ok]];
+  if(R.rep)li.push(["Ya estaban registradas",R.rep]);if(R.otroMes)li.push(["Son de otro mes (usa “Subir el año completo”)",R.otroMes]);
+  if(R.otroAnio)li.push(["Son de otro año",R.otroAnio]);if(R.cerrado)li.push(["Su mes ya está declarado (no se tocaron)",R.cerrado]);
   if(R.ajeno)li.push(["No son de este RFC",R.ajeno]);if(R.otros)li.push(["Pagos, nómina u otros (no se usan)",R.otros]);if(R.mal)li.push(["Archivos no válidos",R.mal]);
-  openSheet("Carga terminada",`<dl class="kv">${li.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl><button class="btn primary full" data-act="close">Ver la hoja</button>`);
+  const pend=anio?MESES.map((n,i)=>i+1).filter(m=>m<S.m&&periodo(c.id,m).estado!=="declarado"&&movsDe(c.id,m).length):[];
+  openSheet("Carga terminada",`<dl class="kv">${li.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${meses.length>1||anio?`<div class="stack" style="gap:6px"><b>Facturas por mes</b><div class="tags">${meses.map(m=>`<span class="chip">${MESES[m-1].slice(0,3)} · ${porMes[m]}</span>`).join("")||'<span class="small muted">Ninguna nueva</span>'}</div></div>`:""}
+    ${pend.length?`<div class="card stack" style="padding:16px;gap:8px"><b>¿Esos meses ya los declaraste?</b><span class="small muted">Si ya presentaste ${pend.length===1?"ese mes":"esos meses"} en el SAT (${pend.map(m=>MESES[m-1].slice(0,3)).join(", ")}), márcalos como declarados: sus pagos se restan solos en los meses siguientes y quedan cerrados.</span>
+      <button class="btn primary full" data-act="declararAnteriores">Marcar ${pend.length===1?"ese mes":"esos "+pend.length+" meses"} como declarados</button></div>`:""}
+    <button class="btn ${pend.length?"":"primary "}full" data-act="close">Ver la hoja</button>`);
 }
-
 /* ================= Ejemplo ================= */
 async function crearEjemplo(){
   const m=S.m,p=m>1?m-1:m,a=S.auth;
@@ -1287,7 +1299,20 @@ const act={
     const x=S.movs[d.id];$("#sheet").hidden=true;S.confirm=null;
     try{await API.deleteMov(x,S.auth);delete S.movs[d.id];toast("Movimiento borrado")}catch(e){toast(errTxt(e),5000)}render();
   },
-  subir(){const i=$("#fileIn");i.value="";i.click()},
+  subir(){S.importAnio=false;const i=$("#fileIn");i.value="";i.click()},
+  subirAnio(){S.importAnio=true;const i=$("#fileIn");i.value="";i.click()},
+  async declararAnteriores(){
+    const c=S.clientes[S.cid];$("#sheet").hidden=true;toast("Guardando…",20000);
+    try{
+      for(let m=1;m<S.m;m++){
+        const p=clone(periodo(c.id,m));if(p.estado==="declarado"||!movsDe(c.id,m).length)continue;
+        MEMO={};p.estado="declarado";p.resumen=resumenDe(c,m);p.resumen.fecha="Cargado desde XML";
+        const s2=await API.setPeriodo(p);S.periodos[pkey(c.id,m)]=s2||p;
+      }
+      toast("Meses anteriores marcados como declarados");
+    }catch(e){toast(errTxt(e),5000)}
+    S.tabC="historial";render();
+  },
   xlsCliente,xlsTablero,
   ejemplo:crearEjemplo
 };
