@@ -234,6 +234,23 @@ dl.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;overflow-wr
 .sig small{color:var(--muted);font-size:.8rem;line-height:1.6}
 
 /* ===== Sistema de despacho ===== */
+table.act{min-width:1180px}
+table.act td{padding:8px 8px}
+table.act .ycell{width:108px}
+table.act .ycell.coef{width:86px}
+table.act td.na{background:repeating-linear-gradient(135deg,var(--line) 0 6px,transparent 6px 12px);background-color:var(--bg)}
+table.act .emp{position:sticky;left:0;background:var(--surface);min-width:150px;white-space:normal;z-index:1;border-right:1px solid var(--line)}
+table.act th.emp{background:var(--bg)}
+#mesesPF{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;min-height:44px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;cursor:pointer}
+.opt b{font-weight:600}.opt span{font-size:.78rem;color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt[aria-pressed="true"] b{color:var(--accent)}
+ol.howto{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:p}
+ol.howto li{counter-increment:p;display:grid;grid-template-columns:34px 1fr;gap:2px 12px}
+ol.howto li::before{content:counter(p);grid-row:span 2;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--font-d);font-weight:800}
+ol.howto span{font-size:.9rem;color:var(--muted)}
 .tiles{grid-template-columns:1fr 1fr}
 .top-mini{flex-wrap:wrap}
 html,body{overflow-x:hidden}
@@ -514,7 +531,7 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
   let prevAuto=0;for(let k=1;k<mes;k++)prevAuto+=pagoISR(c,reg,k);
   const A=k=>aj(c.id,mes,reg,k),Y="aj";
   const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=prevAuto+A("pagos_ant");
-  const ret=suma(c.id,reg,1,mes,"cobr").isrRet;
+  const ret=suma(c.id,reg,1,mes,"cobr").isrRet+A("isr_ret_ant");
   let rows=[],isr=0;
   if(reg==="601"||reg==="624"){
     const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=suma(c.id,reg,1,mes-1,"elab").base+A("ing_ant");
@@ -524,18 +541,19 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
       ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util],["Menos: PTU acumulada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else if(reg==="626"){
-    const ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-ptu-perd);
+    const dep=A("depreciacion"),ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-dep-ptu-perd);
     isr=base*0.30;
-    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: gastos pagados acumulados",-gas,"","gas_ant"],["Menos: PTU pagada",-ptu,"","ptu"],
+    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: gastos pagados acumulados",-gas,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else{
-    const ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-perd),t=tarifa(base,mes);
+    const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes)),dep=A("depreciacion");
+    const ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-dep-ptu-perd),t=tarifa(base,k);
     isr=t.isr;
-    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: gastos pagados acumulados",-gas,"","gas_ant"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
-      ["Igual: base gravable",base],...tarifaRows(t,mes),["ISR causado acumulado",t.isr]];
+    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: deducciones acumuladas",-gas,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
+      ["Igual: base gravable",base],...tarifaRows(t,k),["ISR causado acumulado",t.isr]];
   }
   const pago=Math.max(0,isr-pagosAnt-comp-ret);
-  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido acumulado",-ret],["ISR neto a pagar",pago,"total"]);
+  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido acumulado",-ret,"",reg==="612"?"isr_ret_ant":undefined],["ISR neto a pagar",pago,"total"]);
   return{reg,pago,isr,rows};
 })}
 function ivaFavorAnt(c,mes){ // saldo a favor que viene de meses anteriores
@@ -751,6 +769,46 @@ function viewContacto(){
 
 
 
+/* ================= Actualización de precierres ================= */
+const COLS_ACT=[
+  ["ing_ant","Ing. meses ant.",r=>true],
+  ["gas_ant","Ded. meses ant.",r=>r==="612"||r==="626"],
+  ["depreciacion","Depreciación",r=>r==="612"||r==="626"],
+  ["coef","Coef. ut.",r=>r==="601"||r==="624"],
+  ["ptu","PTU",r=>true],
+  ["perdidas","Pérdidas fisc.",r=>true],
+  ["pagos_ant","PP ant. ISR",r=>true],
+  ["isr_ret_ant","ISR ret. mes ant.",r=>r==="612"],
+  ["comp","Comp. ISR",r=>true],
+  ["iva_favor_ant","Sdo. a f. IVA",r=>true]];
+function viewActualizar(){
+  const filas=[];
+  for(const c of clientesOrden())(c.regimenes||[]).forEach((r,i)=>filas.push({c,r,primero:i===0}));
+  const hayPF=filas.some(f=>f.r==="612");
+  const mesesPF=(()=>{const f=filas.find(f=>f.r==="612");return f?(aj(f.c.id,S.m,"612","meses")||S.m):S.m})();
+  const celda=(f,k,aplica)=>{
+    if(!aplica)return`<td class="na" aria-label="No aplica"></td>`;
+    const decl=periodo(f.c.id,S.m).estado==="declarado";
+    let v;
+    if(k==="coef")v=num(f.r==="624"&&f.c.coef_aut?f.c.coef_aut:f.c.coef);
+    else if(k==="iva_favor_ant")v=num(ajustes(f.c.id,S.m).iva_favor_ant);
+    else v=aj(f.c.id,S.m,f.r,k);
+    if(k==="iva_favor_ant"&&!f.primero)return`<td class="na" aria-label="Se captura en la primera fila de la empresa"></td>`;
+    if(decl)return`<td class="n">${k==="coef"?v.toFixed(4):v?money(v):"—"}</td>`;
+    return`<td><input class="ycell${k==="coef"?" coef":""}" type="number" step="${k==="coef"?"0.0001":"0.01"}" min="0" inputmode="decimal" value="${v||""}" placeholder="${k==="coef"?"0.0000":"0.00"}" data-act2="${esc(f.c.id)}|${f.r}|${k}" aria-label="${esc(f.c.nombre)} ${k}"></td>`;
+  };
+  return`${quien()}
+  <div class="row between"><button class="btn ghost" data-act="tablero">← Clientes</button></div>
+  <div class="sec-t"><span class="eyebrow">Actualización de precierres</span><h2 style="font-size:1.5rem">Datos de arranque del mes</h2>
+    <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen.</p></div>
+  ${barraMes()}
+  ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa del ISR (normalmente el mismo mes).</span></div>
+    <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
+  ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp">Empresa</th>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
+    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${f.c.tipo} · ${REGS[f.r].c}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap(f.r))).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Los meses ya declarados no se pueden modificar.</p>`
+    :`<div class="card empty"><p class="muted">Primero agrega clientes.</p></div>`}`;
+}
 /* ================= Vistas del Área de trabajo ================= */
 function barraMes(){
   const d=diasPara(S.m);
@@ -760,7 +818,7 @@ function barraMes(){
     <button class="btn ghost sm" data-act="mesNext" aria-label="Mes siguiente"${S.m>=12?" disabled":""}>›</button>
     <div class="due">Se declara a más tardar el <b>${venceTxt(S.m)}</b>${d>=0?` · <span class="chip ${d<=3?"pay":d<=10?"warn":"mute"}">${d===0?"hoy":d===1?"mañana":"faltan "+d+" días"}</span>`:` · <span class="chip mute">ya venció</span>`}</div></div>`;
 }
-const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales"><button class="btn sm" data-act="salir">Salir</button></div>
+const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales"><div class="row" style="gap:8px"><button class="btn sm" data-act="ayuda">? Ayuda</button><button class="btn sm" data-act="salir">Salir</button></div></div>
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:-12px"><span class="chip">${esAdmin()?"Administrador":"Cliente"}</span>${MODO_DEMO?`<span class="chip warn">Modo demostración</span>`:""}<span class="small muted" style="overflow-wrap:anywhere">${esc(S.auth.email)}</span></div>`;
 const estadoChip=e=>`<span class="chip ${ESTADOS[e].k}">${ESTADOS[e].l}</span>`;
 function viewLogin(){
@@ -812,22 +870,25 @@ function viewTablero(){
         <span class="info"><strong>${esc(c.nombre)}</strong><span class="small muted">${esc(c.rfc)}</span>
           <span class="tags">${(c.regimenes||[]).map(r=>`<span class="chip mute">${REGS[r].c}</span>`).join("")}</span></span>
         <span class="amt"><b>${money(totalMes(c,S.m))}</b>${estadoChip(p.estado)}</span></button>`}).join("")}</div>`
-    :`<div class="card empty"><p class="muted">Todavía no hay ${S.apartado==="PM"?"personas morales":"personas físicas"}${S.filtroReg!=="todos"&&S.apartado==="PM"?" en este régimen":""}.</p>
+    :`<div class="card empty"><p class="muted">Todavía no hay ${S.apartado==="PM"?"personas morales":"personas físicas"}${S.filtroReg!=="todos"&&S.apartado==="PM"?" en este régimen":""}.${!cs.length?" Empieza agregando a tu primer cliente; si tienes dudas, toca “? Ayuda” arriba.":""}</p>
       <button class="btn primary" data-act="nuevoCliente">Agregar cliente</button>${!cs.length?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
-  ${cs.length?`<button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button>`:""}`;
+  ${cs.length?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="actualizar">Actualizar precierres (ingresos y pagos anteriores, PTU, pérdidas…)</button><button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button></div>`:""}`;
 }
 function pasos(e){
   const n=ESTADOS[e].paso;
   return`<div class="steps">${["Captura cerrada","Captura abierta","Precierre","Declarado"].map((l,i)=>`<div class="step${i<n?" done":""}${i===n?" cur":""}"><i></i><span>${l}</span></div>`).join("")}</div>`;
 }
 function accionesAdmin(c,p){
-  const b=(a,l,k)=>`<button class="btn ${k||""}" data-act="estado" data-e="${a}">${l}</button>`;
-  const e=p.estado;
-  if(e==="bloqueado")return`<div class="two">${b("abierto","Autorizar captura","primary")}${b("precierre","Hacer precierre")}</div><p class="small muted" style="margin:0">El cliente no puede capturar hasta que autorices.</p>`;
-  if(e==="abierto")return`<div class="two">${b("precierre","Hacer precierre","primary")}${b("bloqueado","Cerrar captura")}</div><p class="small muted" style="margin:0">El cliente puede capturar ingresos y gastos de ${MESES[p.mes-1].toLowerCase()}. Al hacer el precierre ya no podrá meter nada.</p>`;
-  if(e==="precierre")return`<div class="two">${b("declarado","Marcar como declarado","primary")}${b("abierto","Reabrir captura")}</div><p class="small muted" style="margin:0">El cliente ya no puede capturar. Revisa, ajusta y declara antes del ${venceTxt(p.mes)}.</p>`;
-  return`<div class="two">${b("precierre","Regresar a precierre")}<span></span></div><p class="small muted" style="margin:0">Declarado${p.resumen&&p.resumen.fecha?" el "+esc(p.resumen.fecha):""}. Los montos quedan guardados tal como se declararon.</p>`;
+  const e=p.estado,mes=MESES[p.mes-1].toLowerCase();
+  const go=(a,l)=>`<button class="btn primary full" data-act="estado" data-e="${a}">${l}</button>`;
+  const alt=(a,l)=>`<button class="btn ghost full" data-act="estado" data-e="${a}">${l}</button>`;
+  const P={
+    bloqueado:["Siguiente paso: deja que el cliente capture","Al abrir la captura, el cliente podrá agregar sus ingresos y gastos de "+mes+". Si tú capturas todo, puedes saltar directo al precierre.",go("abierto","Abrir captura para el cliente")+alt("precierre","Saltar y hacer el precierre yo")],
+    abierto:["El cliente está capturando","Cuando tenga todo, haz el precierre: el cliente ya no podrá agregar ni cambiar nada y tú revisas el cálculo.",go("precierre","Cerrar captura y hacer precierre")+alt("bloqueado","Pausar la captura")],
+    precierre:["Revisa y declara antes del "+venceTxt(p.mes),"Revisa la hoja y el cálculo. Cuando presentes la declaración en el SAT, márcalo aquí y los montos quedan guardados.",go("declarado","Ya lo declaré")+alt("abierto","Dejar que el cliente capture otra vez")],
+    declarado:["Mes terminado","Declarado"+(p.resumen&&p.resumen.fecha?" el "+esc(p.resumen.fecha):"")+". Los montos quedan guardados tal como se declararon y nadie puede cambiar la hoja.",alt("precierre","Necesito corregir algo")]}[e];
+  return`<div class="stack" style="gap:6px"><strong>${P[0]}</strong><span class="small muted">${P[1]}</span></div><div class="stack" style="gap:6px">${P[2]}</div>`;
 }
 function resumenHero(c,r,p){
   const v=vals(c,S.m);
@@ -841,6 +902,24 @@ function resumenHero(c,r,p){
       </div>
       ${v.ivaFavor>0.5?`<div class="pc-favor">IVA a favor: <b>${money(v.ivaFavor)}</b> · pasa al mes siguiente</div>`:""}
     </div>`;
+}
+function listaCliente(c,m){
+  const ms=movsDe(c.id,m),edit=puedeCapturar(c.id,m),I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
+  const lbl={C:["favor","Ya pagada"],I:["pay","Pendiente de pago"],MA:["","Pago de otro mes"]};
+  const item=x=>{const[,mo,d]=x.fecha.split("-"),e=est(x);return`<button class="inv" data-act="mov" data-id="${esc(x.id)}">
+    <span class="info"><strong>${esc(x.concepto||"Sin concepto")}</strong><span class="small muted">${d}/${mo}${x.rfc?" · "+esc(x.rfc):""}</span>
+      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${lbl[e][0]}">${lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}</span></span>
+    <span class="amt"><b>${money(x.subtotal)}</b><span class="small muted">+ IVA ${money(x.iva)}</span></span></button>`};
+  const sec=(t,sub,a,vacio)=>`<section class="stack"><div class="sec-t"><h2 style="font-size:1.1rem">${t}</h2><p class="small">${sub}</p></div>
+    ${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<div class="card empty" style="padding:22px"><p class="muted">${vacio}</p></div>`}</section>`;
+  const tot=a=>a.reduce((t,x)=>t+(+x.subtotal||0),0);
+  return`${edit?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="nuevoMov" data-t="ingreso">+ Agregar un ingreso (lo que facturaste)</button>
+      <button class="btn primary full" data-act="nuevoMov" data-t="gasto">+ Agregar un gasto (lo que pagaste)</button>
+      <button class="btn full" data-act="subir">Subir mis facturas (XML o ZIP del SAT)</button></div>`:""}
+    ${sec("Tus ingresos","Total sin IVA: "+money(tot(I)),I,edit?"Aún no agregas ingresos este mes.":"No hay ingresos en este mes.")}
+    ${sec("Tus gastos","Total sin IVA: "+money(tot(G)),G,edit?"Aún no agregas gastos este mes.":"No hay gastos en este mes.")}
+    <p class="note info">Tip: mete tus gastos con factura y con IVA; así baja el IVA que pagas.</p>
+    <button class="btn full" data-act="xlsCliente">Descargar en Excel</button>`;
 }
 function hoja(c,m){
   const ms=movsDe(c.id,m),varios=(c.regimenes||[]).length>1,edit=puedeCapturar(c.id,m);
@@ -883,7 +962,7 @@ function rowsTable(rows,ctx){ // ctx: {c,m,reg} vuelve editables las celdas amar
     const val=typeof v==="number"?sm(v):esc(v);
     let extra="";
     if(key){const cur=ctx?(ctx.reg?aj(ctx.c.id,ctx.m,ctx.reg,key):num(ajustes(ctx.c.id,ctx.m)[key])):0;
-      extra=editable?`<label class="ycap">${["ing_ant","gas_ant","pagos_ant"].includes(key)?"Captura adicional":"Captura"} <input class="ycell" type="number" step="0.01" min="0" inputmode="decimal" value="${cur||""}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
+      extra=editable?`<label class="ycap">${["ing_ant","gas_ant","pagos_ant","isr_ret_ant"].includes(key)?"Captura adicional":"Captura"} <input class="ycell" type="number" step="0.01" min="0" inputmode="decimal" value="${cur||""}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
         :(cur?`<span class="ycap"><span class="ytag">Capturado ${money(cur)}</span></span>`:"");}
     return`<tr class="${k||""}"><td>${esc(l)}${extra}</td><td class="v">${val}</td></tr>`}).join("")}</tbody></table>`;
 }
@@ -934,10 +1013,10 @@ function viewPanelCliente(){
     <button class="btn" data-act="recargar">Ya me avisaron, actualizar</button></section>${firma()}`;
   const c=S.clientes[S.cid]||cs[0],p=periodo(c.id,S.m),r=calc(c,S.m);
   const msg={bloqueado:["lock","Captura cerrada","Tu contador todavía no abre la captura de "+MESES[S.m-1].toLowerCase()+". Cuando la autorice podrás agregar tus ingresos y gastos."],
-    abierto:["warn","Captura abierta","Agrega tus ingresos y gastos de "+MESES[S.m-1].toLowerCase()+". Al hacer el precierre ya no podrás meter más información."],
+    abierto:["warn","Ya puedes capturar","Agrega aquí abajo tus ingresos y gastos de "+MESES[S.m-1].toLowerCase()+". Cuando tu contador haga el precierre ya no podrás agregar ni cambiar nada."],
     precierre:["lock","Mes en precierre","Tu contador está revisando y preparando la declaración. Ya no se puede agregar información."],
     declarado:["ok","Mes declarado","Tu declaración de "+MESES[S.m-1].toLowerCase()+" ya se presentó."]}[p.estado];
-  const tabs=[["hoja","Mis movimientos"],["historial","Mis meses"]];
+  const tabs=[["hoja","Este mes"],["historial","Todos mis meses"]];
   if(S.tabC==="calculo")S.tabC="hoja";
   return`${quien()}
   <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.4rem">${esc(c.nombre)}</h2><p class="small">${esc(c.rfc)} · ${(c.regimenes||[]).map(x=>REGS[x].c).join(", ")}</p></div>
@@ -946,12 +1025,12 @@ function viewPanelCliente(){
   <div class="banner ${msg[0]}"><div class="stack" style="gap:2px"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span></div></div>
   <section class="card hero">${resumenHero(c,r,p)}${p.estado!=="declarado"?`<p class="small muted" style="margin:0">Cálculo estimado; el monto final lo confirma tu contador.</p>`:""}</section>
   <div class="tabs" role="tablist" style="grid-template-columns:1fr 1fr">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>
-  <section class="stack">${S.tabC==="historial"?tabHistorial(c):hoja(c,S.m)}</section>`;
+  <section class="stack">${S.tabC==="historial"?tabHistorial(c):listaCliente(c,S.m)}</section>`;
 }
 function viewTrabajo(){
   if(!S.listo)return`${topMini()}<div class="card empty"><p class="muted">Cargando…</p></div>`;
   if(!S.auth)return viewLogin();
-  if(esAdmin())return S.vista==="cliente"?viewClienteAdmin():viewTablero();
+  if(esAdmin())return S.vista==="cliente"?viewClienteAdmin():S.vista==="actualizar"?viewActualizar():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
 function render(){
@@ -996,26 +1075,27 @@ function formMov(x){
   const last=new Date(YEAR,m,0).getDate(),dis=edit?"":" disabled",ing=x.tipo==="ingreso";
   const sug="";
   const retOn=x.id?tieneRet(x):(x.tipo==="ingreso"&&x.regimen==="624");S.retOn=retOn;
-  openSheet(x.id?(edit?"Editar movimiento":"Detalle del movimiento"):(ing?"Nueva factura de ingreso":"Nuevo gasto"),`<form id="fMov">
+  openSheet(x.id?(edit?"Editar":"Detalle"):(ing?"Agregar un ingreso":"Agregar un gasto"),`<form id="fMov">
     <input type="hidden" name="id" value="${esc(x.id||"")}"><input type="hidden" name="tipo" id="mvTipo" value="${x.tipo}">
     <div class="seg" role="group" aria-label="Tipo"><button type="button" data-act="mvTipo" data-t="ingreso" aria-pressed="${ing}"${dis}>Ingreso</button><button type="button" data-act="mvTipo" data-t="gasto" aria-pressed="${!ing}"${dis}>Gasto</button></div>
-    <div class="field" id="wEst"${ing?"":" hidden"}><label>Estatus de la factura</label>
-      <div class="seg" role="group" aria-label="Estatus">${[["C","C · De contado"],["I","I · No pagado"],["MA","MA · Cobro de meses anteriores"]].map(([k,l])=>`<button type="button" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}>${l}</button>`).join("")}</div>
+    <div class="field" id="wEst"${ing?"":" hidden"}><label>¿Ya te pagaron esta factura?</label>
+      <div class="opts" role="group" aria-label="Estatus">${[["C","Sí, ya me pagaron","C · De contado"],["I","Todavía no me pagan","I · No pagado"],["MA","Me pagaron una factura de otro mes","MA · Cobro de meses anteriores"]].map(([k,l,s2])=>`<button type="button" class="opt" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}><b>${l}</b><span>${s2}</span></button>`).join("")}</div>
       <input type="hidden" name="estatus" id="mvEst" value="${est(x)}"></div>
-    <div class="field" id="wRet"${ing?"":" hidden"}><label>Retención (RET)</label>
-      <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!retOn}"${dis}>NO</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${retOn}"${dis}>SÍ</button></div>
+    <div class="field" id="wRet"${ing?"":" hidden"}><label>¿Te retuvieron impuestos? (RET)</label>
+      <span class="small muted">Pasa cuando le facturas a una empresa: te paga un poco menos y ella entera ese impuesto.</span>
+      <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!retOn}"${dis}>No</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${retOn}"${dis}>Sí</button></div>
       <span class="small muted" id="hRetT"></span></div>
-    <div class="field"><label for="mvCon">Concepto</label><input id="mvCon" name="concepto" value="${esc(x.concepto)}" required autocomplete="off"${dis}></div>
+    <div class="field"><label for="mvCon">¿Qué fue? (concepto)</label><input id="mvCon" name="concepto" value="${esc(x.concepto)}" required autocomplete="off"${dis}></div>
     <div class="two"><div class="field"><label for="mvFec">Fecha</label><input id="mvFec" name="fecha" type="date" min="${YEAR}-${pad(m)}-01" max="${YEAR}-${pad(m)}-${pad(last)}" value="${esc(x.fecha)}" required${dis}></div>
       ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvReg">Régimen</label><select id="mvReg" name="regimen"${dis}>${c.regimenes.map(r=>`<option value="${r}"${r===x.regimen?" selected":""}>${REGS[r].c}</option>`).join("")}</select></div>`
         :`<div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div><input type="hidden" name="regimen" value="${(c.regimenes||[])[0]||""}">`}</div>
     ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div>`:""}
-    <div class="two"><div class="field"><label for="mvSub">Importe sin IVA</label><input id="mvSub" name="subtotal" type="number" step="0.01" inputmode="decimal" value="${esc(x.subtotal)}" required${dis}></div>
-      <div class="field"><label for="mvIva">IVA</label><input id="mvIva" name="iva" type="number" step="0.01" inputmode="decimal" value="${esc(x.iva)}" placeholder="Vacío = 16 %"${dis}></div></div>
+    <div class="two"><div class="field"><label for="mvSub">Importe sin IVA ($)</label><input id="mvSub" name="subtotal" type="number" step="0.01" inputmode="decimal" value="${esc(x.subtotal)}" required${dis}></div>
+      <div class="field"><label for="mvIva">IVA</label><input id="mvIva" name="iva" type="number" step="0.01" inputmode="decimal" value="${esc(x.iva)}" placeholder="Se calcula solo (16 %)"${dis}></div></div>
     <div class="two"><div class="field"><label for="mvIvr" id="lIvr">${ing?"IVA que te retuvieron":"IVA que retuviste"}</label><input id="mvIvr" name="iva_ret" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(x.iva_ret||"")}" placeholder="0"${dis}></div>
       <div class="field"><label for="mvIsr" id="lIsr">${ing?"ISR que te retuvieron":"ISR que retuviste"}</label><input id="mvIsr" name="isr_ret" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(x.isr_ret||"")}" placeholder="0"${dis}></div></div>
     <p class="small muted" style="margin:0" id="hRet">${ing?"":"Las retenciones que hiciste a proveedores se suman al total a pagar."}</p>
-    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Es gasto deducible con factura</label>
+    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo factura de este gasto (es deducible)</label>
     ${x.id?`<p class="small muted" style="margin:0">Capturó: ${x.capturado_por==="cliente"?"el cliente":"el despacho"}${x.uuid_cfdi?" · CFDI "+esc(x.uuid_cfdi):""}</p>`:""}
     ${edit?`<button class="btn primary full" type="submit">${x.id?"Guardar cambios":"Agregar a la hoja"}</button>`:`<p class="note">${esAdmin()?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
     ${x.id&&edit?`<button class="btn danger full" type="button" data-act="borrarMov" data-id="${esc(x.id)}">${S.confirm===x.id?"Toca otra vez para borrar":"Borrar movimiento"}</button>`:""}
@@ -1181,7 +1261,25 @@ const act={
     const ing=d.t==="ingreso";$("#wEst").hidden=!ing;$("#wRet").hidden=!ing;$("#wDed").hidden=ing;
     $("#lIvr").textContent=ing?"IVA que te retuvieron":"IVA que retuviste";$("#lIsr").textContent=ing?"ISR que te retuvieron":"ISR que retuviste";
     $("#hRet").textContent=ing?"":"Las retenciones que hiciste a proveedores se suman al total a pagar.";
-    if($("#sheetTitle").textContent.startsWith("Nuev"))$("#sheetTitle").textContent=ing?"Nueva factura de ingreso":"Nuevo gasto"},
+    if($("#sheetTitle").textContent.startsWith("Agregar"))$("#sheetTitle").textContent=ing?"Agregar un ingreso":"Agregar un gasto"},
+  actualizar(){S.vista="actualizar";render();scrollTo(0,0)},
+  ayuda(){
+    const pasosA=[["Agrega a tus clientes","En Persona moral o Persona física toca “+ Agregar”. Marca sus regímenes y, si quieres que él capture, escribe su correo."],
+      ["Elige el mes","Arriba cambias de mes con las flechas. Cada mes se guarda solo y el ISR se va sumando."],
+      ["Abre la captura","Dentro del cliente toca “Abrir captura para el cliente”. Antes de eso el cliente no puede meter nada."],
+      ["Captura o revisa","En “Hoja” agregas ingresos y gastos, o subes los XML del SAT. En “Cálculo” ves el ISR y el IVA paso por paso; las celdas amarillas son para datos a mano."],
+      ["Haz el precierre","Toca “Cerrar captura y hacer precierre”: el cliente ya no puede cambiar nada."],
+      ["Declara","Cuando la presentes en el SAT, toca “Ya lo declaré”. Los montos quedan guardados."]];
+    const pasosC=[["Revisa que la captura esté abierta","Si dice “Ya puedes capturar”, adelante. Si no, espera a que tu contador la abra."],
+      ["Agrega tus ingresos","Toca “+ Agregar un ingreso”, escribe qué fue y el importe sin IVA. Indica si ya te pagaron."],
+      ["Agrega tus gastos","Toca “+ Agregar un gasto”. Los gastos con factura e IVA hacen que pagues menos IVA."],
+      ["O sube tus facturas","Si tienes los XML del SAT, súbelos y se agregan solos."],
+      ["Listo","Tu contador revisa y hace el precierre antes del día 17. En “Todos mis meses” ves tu historial."]];
+    const P=esAdmin()?pasosA:pasosC;
+    openSheet("Cómo se usa",`<ol class="howto">${P.map(([t,d])=>`<li><b>${t}</b><span>${d}</span></li>`).join("")}</ol>
+      ${esAdmin()?`<div class="card stack" style="padding:16px;gap:8px"><b>Significado de las letras</b><span class="small"><b>C</b> ya me pagaron · <b>I</b> todavía no me pagan · <b>MA</b> me pagaron una factura de otro mes · <b>RET</b> me retuvieron impuestos</span></div>`:""}
+      <button class="btn primary full" data-act="close">Entendido</button>`);
+  },
   mvRet(d){S.retOn=d.v==="si";document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===d.v));syncRet(true)},
   mvEst(d){$("#mvEst").value=d.e;document.querySelectorAll('[data-act="mvEst"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===d.e))},
   async borrarMov(d){
@@ -1205,6 +1303,21 @@ document.addEventListener("change",async e=>{
   if(t.dataset.change==="mes"){S.m=+t.value;render();return}
   if(t.name==="reg")syncClienteForm();
   if(t.id==="mvReg"){syncRet(S.retOn);return}
+  if(t.dataset.act2||t.dataset.change==="mesesPF"){
+    const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),num(t.value)]];
+    try{
+      for(const [cid,reg,key,val] of lista){
+        const c=S.clientes[cid];
+        if(key==="coef"){const nc=clone(c);if(reg==="624")nc.coef_aut=val;else nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=s2||nc;continue}
+        const p=clone(periodo(cid,S.m));p.ajustes=p.ajustes||{};
+        if(key==="iva_favor_ant")p.ajustes.iva_favor_ant=val;else{p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=val}
+        const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;
+      }
+      toast("Guardado");
+    }catch(er){toast(errTxt(er),5000)}
+    if(t.dataset.change==="mesesPF"){const y=scrollY;render();scrollTo(0,y)}
+    return;
+  }
   if(t.dataset.aj){
     const c=S.clientes[S.cid],[reg,key]=t.dataset.aj.split("|"),p=clone(periodo(c.id,S.m));p.ajustes=p.ajustes||{};
     if(reg){p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=num(t.value)}else p.ajustes[key]=num(t.value);
