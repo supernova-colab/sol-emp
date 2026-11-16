@@ -474,7 +474,8 @@ const Remote={
     return{email:(u.email||"").toLowerCase(),admin:!r.error&&!!(r.data&&r.data.length)};
   },
   async signIn(email,pw){const{error}=await (await getSb()).auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
-  async signUp(email,pw){const{error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error},
+  async signUp(email,pw){const{data,error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error;
+    if(data&&data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length)throw new Error("already registered")},
   async reset(email){const{error}=await (await getSb()).auth.resetPasswordForEmail(email,{redirectTo:location.href.split("#")[0]});if(error)throw error},
   async signOut(){await (await getSb()).auth.signOut()},
   async load(){
@@ -890,7 +891,7 @@ function viewTablero(){
           <span class="tags">${(c.regimenes||[]).map(r=>`<span class="chip mute">${REGS[r].c}</span>`).join("")}</span></span>
         <span class="amt"><b>${money(totalMes(c,S.m))}</b>${estadoChip(p.estado)}</span></button>`}).join("")}</div>`
     :`<div class="card empty"><p class="muted">Todavía no hay ${S.apartado==="PM"?"personas morales":"personas físicas"}${S.filtroReg!=="todos"&&S.apartado==="PM"?" en este régimen":""}.${!cs.length?" Empieza agregando a tu primer cliente; si tienes dudas, toca “? Ayuda” arriba.":""}</p>
-      <button class="btn primary" data-act="nuevoCliente">Agregar cliente</button>${!cs.length?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
+      <button class="btn primary" data-act="nuevoCliente">Agregar cliente</button>${!cs.length&&MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
   ${cs.length?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="actualizar">Actualizar precierres (ingresos y pagos anteriores, PTU, pérdidas…)</button><button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button></div>`:""}`;
 }
@@ -1119,6 +1120,7 @@ function formMov(x){
     ${edit?`<button class="btn primary full" type="submit">${x.id?"Guardar cambios":"Agregar a la hoja"}</button>`:`<p class="note">${esAdmin()?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
     ${x.id&&edit?`<button class="btn danger full" type="button" data-act="borrarMov" data-id="${esc(x.id)}">${S.confirm===x.id?"Toca otra vez para borrar":"Borrar movimiento"}</button>`:""}
   </form>`);
+  S.ivaAuto=x.iva===""||x.iva==null||Math.abs(num(x.iva)-num(x.subtotal)*0.16)<0.02;
   syncRet(!x.id&&retOn);
 }
 // Con RET = SÍ calcula las retenciones a partir del importe; con NO las deja en cero.
@@ -1340,12 +1342,24 @@ document.addEventListener("click",e=>{
   if(e.target.id==="sheet")closeSheet();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden)closeSheet()});
-document.addEventListener("input",e=>{if(e.target.id==="mvSub"&&S.retOn)syncRet(true)});
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="mvIva")S.ivaAuto=t.value==="";
+  if(t.id==="mvSub"){
+    if(S.ivaAuto&&$("#mvIva")&&$("#mvIva").value!=="")$("#mvIva").value=(Math.round(num(t.value)*16)/100).toFixed(2);
+    if(S.retOn)syncRet(true);
+  }
+});
 document.addEventListener("change",async e=>{
   const t=e.target;
   if(t.dataset.change==="mes"){S.m=+t.value;render();return}
   if(t.name==="reg")syncClienteForm();
-  if(t.id==="mvReg"){syncRet(S.retOn);return}
+  if(t.id==="mvReg"){
+    if(!$("#fMov [name=id]").value&&$("#mvTipo").value==="ingreso"){
+      S.retOn=t.value==="624";document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="si")===S.retOn));
+    }
+    syncRet(true);return;
+  }
   if(t.dataset.act2||t.dataset.change==="mesesPF"){
     const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),num(t.value)]];
     try{
@@ -1424,7 +1438,12 @@ document.addEventListener("submit",async e=>{
 async function iniciar(){
   try{if(window.claude&&typeof window.claude.use==="function")DL=await window.claude.use("downloads")}catch(e){}
   if(!MODO_DEMO){try{await getSb()}catch(e){toast(e.message,6000)}}
-  try{const s=await API.session();if(s){S.auth=s;await recargar()}}catch(e){}
+  const h=location.hash||"";
+  if(/access_token|type=signup|type=recovery|type=magiclink/.test(h))S.sec="trabajo";
+  if(/error_code=otp_expired|error=access_denied/.test(h)){S.sec="trabajo";setTimeout(()=>toast("Ese enlace ya expiró o ya se usó. Si ya confirmaste tu correo, entra con tu contraseña.",7000),3600)}
+  try{const s=await API.session();if(s){S.auth=s;await recargar();if(/access_token|type=signup/.test(h))setTimeout(()=>toast("Correo confirmado. ¡Bienvenido!",4000),3600)}}
+  catch(e){if(S.auth)toast(errTxt(e),6000)}
+  if(S.sec==="trabajo"&&!/^#trabajo$/.test(location.hash)){try{history.replaceState(null,"",location.pathname+"#trabajo")}catch(e){}}
   S.listo=true;render();
 }
 let DL=null;
