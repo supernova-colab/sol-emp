@@ -570,13 +570,13 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
   }else if(reg==="626"){
     const dep=A("depreciacion"),iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd);
     isr=base*0.30;
-    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Gastos pagados del mes",-gM],["Más: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
+    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Menos: gastos pagados del mes",-gM],["Menos: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else{
     const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes)),dep=A("depreciacion");
     const iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd),t=tarifa(base,k);
     isr=t.isr;
-    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Deducciones del mes",-gM],["Más: deducciones de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
+    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Menos: deducciones del mes",-gM],["Menos: deducciones de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
       ["Igual: base gravable",base],...tarifaRows(t,k),["ISR causado acumulado",t.isr]];
   }
   const pago=Math.max(0,isr-pagosAnt-comp-ret);
