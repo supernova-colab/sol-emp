@@ -555,32 +555,32 @@ function pagoISR(c,reg,m){ // lo que se pagó (o se pagaría) de ISR en el mes m
   return calcISR(c,reg,m).pago;
 }
 function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
-  let prevAuto=0;for(let k=1;k<mes;k++)prevAuto+=pagoISR(c,reg,k);
-  const A=k=>aj(c.id,mes,reg,k),Y="aj";
-  const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=prevAuto+A("pagos_ant");
-  const ret=suma(c.id,reg,1,mes,"cobr").isrRet+A("isr_ret_ant");
+  // Nada se arrastra en automático de meses anteriores: el contador lo captura en las celdas amarillas
+  const A=k=>aj(c.id,mes,reg,k);
+  const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=A("pagos_ant");
+  const retMes=suma(c.id,reg,mes,mes,"cobr").isrRet,retAnt=A("isr_ret_ant"),ret=retMes+retAnt;
   let rows=[],isr=0;
   if(reg==="601"||reg==="624"){
-    const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=suma(c.id,reg,1,mes-1,"elab").base+A("ing_ant");
+    const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=A("ing_ant");
     const total=ingMes+ingAnt,coef=num(reg==="624"&&c.coef_aut?c.coef_aut:c.coef),util=Math.max(0,total)*coef,base=Math.max(0,util-ptu-perd);
     isr=base*0.30;
     rows=[["Ingresos acumulables del mes",ingMes],["Más: ingresos de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos",total],
       ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util],["Menos: PTU acumulada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else if(reg==="626"){
-    const dep=A("depreciacion"),ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-dep-ptu-perd);
+    const dep=A("depreciacion"),iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd);
     isr=base*0.30;
-    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: gastos pagados acumulados",-gas,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
+    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Gastos pagados del mes",-gM],["Más: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else{
     const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes)),dep=A("depreciacion");
-    const ing=suma(c.id,reg,1,mes,"cobr").base+A("ing_ant"),gas=suma(c.id,reg,1,mes,"gded").base+A("gas_ant"),base=Math.max(0,ing-gas-dep-ptu-perd),t=tarifa(base,k);
+    const iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd),t=tarifa(base,k);
     isr=t.isr;
-    rows=[["Ingresos cobrados acumulados",ing,"","ing_ant"],["Menos: deducciones acumuladas",-gas,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
+    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Deducciones del mes",-gM],["Más: deducciones de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
       ["Igual: base gravable",base],...tarifaRows(t,k),["ISR causado acumulado",t.isr]];
   }
   const pago=Math.max(0,isr-pagosAnt-comp-ret);
-  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido acumulado",-ret,"",reg==="612"?"isr_ret_ant":undefined],["ISR neto a pagar",pago,"total"]);
+  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido del mes",-retMes],["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"],["ISR neto a pagar",pago,"total"]);
   return{reg,pago,isr,rows};
 })}
 function ivaFavorAnt(c,mes){ // saldo a favor que viene de meses anteriores
@@ -591,7 +591,7 @@ function ivaFavorAnt(c,mes){ // saldo a favor que viene de meses anteriores
 }
 function calcIVA(c,mes){return memo("iva|"+c.id+"|"+mes,()=>{
   const C=suma(c.id,null,mes,mes,"cobr"),G=suma(c.id,null,mes,mes,"gded");
-  const ant=ivaFavorAnt(c,mes)+num(ajustes(c.id,mes).iva_favor_ant);
+  const ant=num(ajustes(c.id,mes).iva_favor_ant); // solo lo que captura el contador
   const o={tras:C.iva,ret:C.ivaRet,acred:G.iva,ant};o.neto=o.tras-o.ret-o.acred-o.ant;
   o.cargo=Math.max(0,o.neto);o.favor=Math.max(0,-o.neto);return o;
 })}
@@ -806,7 +806,7 @@ const COLS_ACT=[
   ["ptu","PTU",r=>true],
   ["perdidas","Pérdidas fisc.",r=>true],
   ["pagos_ant","PP ant. ISR",r=>true],
-  ["isr_ret_ant","ISR ret. mes ant.",r=>r==="612"],
+  ["isr_ret_ant","ISR ret. meses ant.",r=>true],
   ["comp","Comp. ISR",r=>true],
   ["iva_favor_ant","Sdo. a f. IVA",r=>true]];
 function viewActualizar(){
@@ -993,14 +993,14 @@ function rowsTable(rows,ctx){ // ctx: {c,m,reg} vuelve editables las celdas amar
     const val=typeof v==="number"?sm(v):esc(v);
     let extra="";
     if(key){const cur=ctx?(ctx.reg?aj(ctx.c.id,ctx.m,ctx.reg,key):num(ajustes(ctx.c.id,ctx.m)[key])):0;
-      extra=editable?`<label class="ycap">${["ing_ant","gas_ant","pagos_ant","isr_ret_ant"].includes(key)?"Captura adicional":"Captura"} <input class="ycell" type="number" step="0.01" min="0" inputmode="decimal" value="${cur||""}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
+      extra=editable?`<label class="ycap">${"Captura"} <input class="ycell" type="number" step="0.01" min="0" inputmode="decimal" value="${cur||""}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
         :(cur?`<span class="ycap"><span class="ytag">Capturado ${money(cur)}</span></span>`:"");}
     return`<tr class="${k||""}"><td>${esc(l)}${extra}</td><td class="v">${val}</td></tr>`}).join("")}</tbody></table>`;
 }
 function tabCalculo(c,r){
   const ctxI={c,m:S.m,reg:""};
   return`<div class="card"><h3>IVA</h3>${rowsTable([["Trasladado (IVA de facturas cobradas)",r.iva.tras],["Menos: IVA retenido",-r.iva.ret],["Menos: acreditable (gastos con IVA)",-r.iva.acred],
-      ["Menos: saldo a favor de periodos anteriores",-(r.iva.ant-num(ajustes(c.id,S.m).iva_favor_ant))],["Menos: saldo a favor capturado",-num(ajustes(c.id,S.m).iva_favor_ant),"","iva_favor_ant"],
+      ["Menos: saldo a favor de meses anteriores",-num(ajustes(c.id,S.m).iva_favor_ant),"","iva_favor_ant"],
       [r.iva.neto>=0?"IVA a pagar":"IVA a favor",Math.abs(r.iva.neto),"total"]],ctxI)}</div>
     ${r.regs.map(x=>`<div class="card"><h3>Cálculo de ISR · ${esc(REGS[x.reg].n)}</h3>${rowsTable(x.rows,{c,m:S.m,reg:x.reg})}</div>`).join("")}
     ${r.ret>0.5?`<div class="card"><h3>Retenciones a enterar</h3>${rowsTable([["ISR retenido a proveedores",Math.max(0,r.G.isrRet)],["IVA retenido a proveedores",Math.max(0,r.G.ivaRet)],["Total",r.ret,"total"]])}</div>`:""}
