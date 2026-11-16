@@ -294,14 +294,21 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 .ycell{width:120px;text-align:right;border:1px solid #E6C64C;background:#FFF6CC;color:#4A3B00;border-radius:8px;padding:6px 8px;font-variant-numeric:tabular-nums}
 .ytag{background:#FFF6CC;color:#4A3B00;border-radius:6px;padding:2px 6px}
 .pc-box{background:#14182A;color:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
-.pc-head{display:flex;justify-content:space-between;gap:10px;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:#AEB7D6;flex-wrap:wrap}
-.pc-rows{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pc-rows div{background:rgba(255,255,255,.06);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.pc-rows span{font-size:.74rem;color:#C9D0E8}
-.pc-rows b{font-family:var(--font-d);font-size:1.12rem;color:#FF8A80;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.pc-rows .pc-tot{grid-column:1 / -1;background:rgba(255,138,128,.12);flex-direction:row;justify-content:space-between;align-items:center}
-.pc-rows .pc-tot span{font-size:.9rem;color:#fff;font-weight:600}
-.pc-rows .pc-tot b{font-size:1.6rem}
+.pc-head{display:flex;flex-direction:column;gap:4px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.12)}
+.pc-head .pc-emp{font-family:var(--font-d);font-size:1.15rem;color:#fff;overflow-wrap:anywhere}
+.pc-head span{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:#AEB7D6}
+.pc-io{display:flex;flex-direction:column;gap:8px}
+.pc-io div{background:rgba(255,255,255,.06);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0}
+.pc-io span{font-size:.88rem;color:#C9D0E8}
+.pc-io b{font-family:var(--font-d);font-size:1.05rem;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pc-imp{display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.04);border-radius:12px;padding:12px 14px}
+.pc-lbl{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:#AEB7D6;padding-bottom:6px}
+.pc-l{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.pc-l span{font-size:.92rem;color:#E4E8F5}
+.pc-l b{font-family:var(--font-d);font-size:1.02rem;color:#FF8A80;font-variant-numeric:tabular-nums}
+.pc-l.pc-tot{border-bottom:0;padding-top:12px}
+.pc-l.pc-tot span{font-weight:700;color:#fff}
+.pc-l.pc-tot b{font-size:1.5rem}
 .pc-favor{font-size:.85rem;color:#9FE3B8}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 /* Entrada: el logo se arma por partes (trazos, texto, EMP), brillo, y la cortina sube */
@@ -401,7 +408,7 @@ function tarifa(base,k){
 
 /* ================= Estado ================= */
 const now=new Date();
-let defM=now.getMonth();if(defM===0)defM=12; // mes que se declara (el anterior)
+let defM=now.getMonth()+1; // mes actual
 if(now.getFullYear()>YEAR)defM=12;if(now.getFullYear()<YEAR)defM=1;
 const S={sec:"inicio",auth:null,listo:false,clientes:{},periodos:{},movs:{},m:defM,apartado:"PM",filtroReg:"todos",
   vista:"tablero",cid:null,tabC:"hoja",confirm:null,mov:null,login:"entrar"};
@@ -887,7 +894,7 @@ function viewTablero(){
     ${lista.length?`<div class="list">${lista.map(c=>{const p=periodo(c.id,S.m);return`
       <button class="client" data-act="abrir" data-id="${esc(c.id)}">
         <span class="avatar" aria-hidden="true">${esc((c.nombre.trim()[0]||"?").toUpperCase())}</span>
-        <span class="info"><strong>${esc(c.nombre)}</strong><span class="small muted">${esc(c.rfc)}</span>
+        <span class="info"><strong>${esc(c.nombre)}</strong><span class="small muted">${c.rfc?esc(c.rfc):"Sin RFC"}</span>
           <span class="tags">${(c.regimenes||[]).map(r=>`<span class="chip mute">${REGS[r].c}</span>`).join("")}</span></span>
         <span class="amt"><b>${money(totalMes(c,S.m))}</b>${estadoChip(p.estado)}</span></button>`}).join("")}</div>`
     :`<div class="card empty"><p class="muted">Todavía no hay ${S.apartado==="PM"?"personas morales":"personas físicas"}${S.filtroReg!=="todos"&&S.apartado==="PM"?" en este régimen":""}.${!cs.length?" Empieza agregando a tu primer cliente; si tienes dudas, toca “? Ayuda” arriba.":""}</p>
@@ -911,16 +918,20 @@ function accionesAdmin(c,p){
   return`<div class="stack" style="gap:6px"><strong>${P[0]}</strong><span class="small muted">${P[1]}</span></div><div class="stack" style="gap:6px">${P[2]}</div>`;
 }
 function resumenHero(c,r,p){
-  const v=vals(c,S.m);
+  const v=vals(c,S.m),k=calc(c,S.m);
   return`<div class="pc-box">
-      <div class="pc-head"><span>${v.decl?"Declarado":"Precierre"} · ${MESES[S.m-1]} ${YEAR}</span><span>Reporte: ${new Date().toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"})}</span></div>
-      <div class="pc-rows">
-        <div><span>ISR probable</span><b>${money(v.isr)}</b></div>
-        <div><span>IVA probable</span><b>${money(Math.max(0,v.iva))}</b></div>
-        <div><span>Retenciones</span><b>${money(v.ret)}</b></div>
-        <div class="pc-tot"><span>Total</span><b>${money(v.total)}</b></div>
+      <div class="pc-head"><b class="pc-emp">${esc(c.nombre)}</b><span>Periodo: ${MESES[S.m-1]} ${YEAR}</span></div>
+      <div class="pc-io">
+        <div><span>Total de ingresos</span><b>${money(k.E.base)}</b></div>
+        <div><span>Total de gastos</span><b>${money(k.G.base)}</b></div>
       </div>
-      ${v.ivaFavor>0.5?`<div class="pc-favor">IVA a favor: <b>${money(v.ivaFavor)}</b> · pasa al mes siguiente</div>`:""}
+      <div class="pc-imp">
+        <span class="pc-lbl">Impuestos</span>
+        <div class="pc-l"><span>ISR</span><b>${money(v.isr)}</b></div>
+        <div class="pc-l"><span>IVA</span><b>${money(Math.max(0,v.iva))}</b></div>
+        <div class="pc-l"><span>Retenciones</span><b>${money(v.ret)}</b></div>
+        <div class="pc-l pc-tot"><span>Total</span><b>${money(v.total)}</b></div>
+      </div>
     </div>`;
 }
 function listaCliente(c,m){
@@ -999,7 +1010,7 @@ function tabHistorial(c){
   let ti=0,tg=0,tv=0,tr=0,tt=0;
   const rows=MESES.map((n,i)=>{const m=i+1,p=periodo(c.id,m),r=calc(c,m),v=vals(c,m);
     ti+=r.E.base;tg+=r.G.base;tv+=Math.max(0,v.iva);tr+=v.isr;tt+=v.total;
-    const cuando=m<defM?"Anterior":m===defM?"Por declarar":m===defM+1?"En curso":"";
+    const cuando=m<defM?"Anterior":m===defM?"Este mes":"";
     return`<tr class="xr${m===S.m?" sel":""}" data-act="irMes" data-m="${m}"><td>${n.slice(0,3)}${cuando?`<br><span class="small muted">${cuando}</span>`:""}</td><td>${estadoChip(p.estado)}</td>
       <td class="n">${money(r.E.base)}</td><td class="n">${money(r.G.base)}</td><td class="n">${v.iva<0?'<span class="small muted">a favor</span> '+money(-v.iva):money(v.iva)}</td><td class="n">${money(v.isr)}</td><td class="n"><b>${money(v.total)}</b></td></tr>`}).join("");
   return`<div class="grid-wrap"><table class="xl"><thead><tr><th>Mes</th><th>Estado</th><th class="n">Facturado</th><th class="n">Gastos</th><th class="n">IVA</th><th class="n">ISR</th><th class="n">Total</th></tr></thead>
@@ -1015,7 +1026,7 @@ function viewClienteAdmin(){
   <section class="card hero">
     <div class="stack" style="gap:6px">
       <div class="row between"><h2 style="font-size:1.3rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
-      <span class="small muted">${esc(c.rfc)} · ${c.tipo==="PM"?"Persona moral":"Persona física"}${c.email_cliente?" · acceso: "+esc(c.email_cliente):" · sin acceso de cliente"}</span>
+      <span class="small muted">${c.rfc?esc(c.rfc)+" · ":""}${c.tipo==="PM"?"Persona moral":"Persona física"}${c.email_cliente?" · acceso: "+esc(c.email_cliente):" · sin acceso de cliente"}</span>
       <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${REGS[x].c}</span>`).join("")}</span>
     </div>
     ${resumenHero(c,r,p)}
@@ -1039,7 +1050,7 @@ function viewPanelCliente(){
   const tabs=[["hoja","Este mes"],["historial","Todos mis meses"]];
   if(S.tabC==="calculo")S.tabC="hoja";
   return`${quien()}
-  <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.4rem">${esc(c.nombre)}</h2><p class="small">${esc(c.rfc)} · ${(c.regimenes||[]).map(x=>REGS[x].c).join(", ")}</p></div>
+  <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.4rem">${esc(c.nombre)}</h2><p class="small">${c.rfc?esc(c.rfc)+" · ":""}${(c.regimenes||[]).map(x=>REGS[x].c).join(", ")}</p></div>
   ${cs.length>1?`<div class="seg">${cs.map(x=>`<button data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${esc(x.nombre)}</button>`).join("")}</div>`:""}
   ${barraMes()}
   <div class="banner ${msg[0]}"><div class="stack" style="gap:2px"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span></div></div>
@@ -1070,7 +1081,7 @@ function formCliente(c){
     <div class="seg" role="group" aria-label="Tipo de contribuyente"><button type="button" data-act="cTipo" data-t="PM" aria-pressed="${c.tipo==="PM"}">Persona moral</button><button type="button" data-act="cTipo" data-t="PF" aria-pressed="${c.tipo==="PF"}">Persona física</button></div>
     <input type="hidden" name="tipo" id="cTipo" value="${c.tipo}">
     <div class="field"><label for="cNom">Nombre o razón social</label><input id="cNom" name="nombre" required value="${esc(c.nombre)}" autocomplete="off"></div>
-    <div class="field"><label for="cRfc">RFC</label><input id="cRfc" name="rfc" required minlength="12" maxlength="13" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
+    <div class="field"><label for="cRfc">RFC (opcional)</label><input id="cRfc" name="rfc" maxlength="13" placeholder="Puedes dejarlo vacío" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
     <fieldset><legend>Regímenes</legend>
       <div class="checks" id="regPM"${c.tipo==="PM"?"":" hidden"}><p class="small muted" style="margin:0">Selecciona uno, dos o los tres.</p>${regsHTML("PM")}</div>
       <div class="checks" id="regPF"${c.tipo==="PF"?"":" hidden"}>${regsHTML("PF")}</div>
@@ -1169,7 +1180,7 @@ function xlsCliente(){
     out.push({n:(c.tipo==="PM"?"PM ":"PF ")+REGS[reg].c,filas:f});
   }
   out.push({n:"Meses "+YEAR,filas:[["MES","ESTADO","FACTURADO","GASTOS","IVA","ISR","TOTAL"],...MESES.map((n,i)=>{const mm=i+1,rr=calc(c,mm),vv=vals(c,mm);return[n,ESTADOS[periodo(c.id,mm).estado].l,r2(rr.E.base),r2(rr.G.base),r2(vv.iva),r2(vv.isr),r2(vv.total)]})]});
-  libro(("PRECIERRE-"+c.rfc+"-"+MESES[m-1]+"-"+YEAR).replace(/[^A-Za-z0-9-]/g,""),out);
+  libro(("PRECIERRE-"+(c.rfc||c.nombre)+"-"+MESES[m-1]+"-"+YEAR).replace(/[^A-Za-z0-9-]/g,""),out);
 }
 function xlsTablero(){
   const filas=[["CLIENTE","RFC","TIPO","REGÍMENES","ESTADO","FACTURADO","GASTOS","ISR PROBABLE","IVA PROBABLE","RETENCIONES","TOTAL","IVA A FAVOR"],
@@ -1179,13 +1190,14 @@ function xlsTablero(){
 /* ================= XML del SAT ================= */
 async function importar(files){
   const c=S.clientes[S.cid];if(!c)return;
+  if(!c.rfc){S.importAnio=false;toast(esAdmin()?"Para subir XML agrega primero el RFC del cliente (toca Editar).":"Para subir XML tu contador debe agregar tu RFC.");return}
   const anio=!!S.importAnio&&esAdmin();S.importAnio=false;
   if(!anio&&!puedeCapturar(c.id,S.m)){toast("La captura de este mes está cerrada.");return}
   toast("Leyendo archivos…",60000);
   const raw=await leerArchivos(files),docs=[];let mal=0;
   for(const r of raw){if(r.err){mal++;continue}try{docs.push(parseCFDI(r.text))}catch(e){mal++}}
   docs.sort((x,y)=>x.fecha.localeCompare(y.fecha));
-  const rfc=c.rfc.toUpperCase(),ya=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.uuid_cfdi).map(x=>x.uuid_cfdi));
+  const rfc=(c.rfc||"").toUpperCase(),ya=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.uuid_cfdi).map(x=>x.uuid_cfdi));
   const R={ok:0,rep:0,otroMes:0,otroAnio:0,cerrado:0,ajeno:0,otros:0,mal},porMes={};
   try{
     for(const d of docs){
@@ -1409,9 +1421,11 @@ document.addEventListener("submit",async e=>{
   if(fid==="fCliente"){
     const rfc=(d.rfc||"").trim().toUpperCase().replace(/\s/g,"");
     const regs=fd.getAll("reg").filter(r=>REGS[r]&&REGS[r].t===d.tipo);
-    if(!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfc)){toast("Revisa el RFC: 12 caracteres para persona moral, 13 para persona física.");return}
-    if(d.tipo==="PM"&&rfc.length!==12){toast("Una persona moral tiene RFC de 12 caracteres.");return}
-    if(d.tipo==="PF"&&rfc.length!==13){toast("Una persona física tiene RFC de 13 caracteres.");return}
+    if(rfc){
+      if(!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfc)){toast("Revisa el RFC: 12 caracteres para persona moral, 13 para persona física. También puedes dejarlo vacío.");return}
+      if(d.tipo==="PM"&&rfc.length!==12){toast("Una persona moral tiene RFC de 12 caracteres.");return}
+      if(d.tipo==="PF"&&rfc.length!==13){toast("Una persona física tiene RFC de 13 caracteres.");return}
+    }
     if(!regs.length){toast("Selecciona al menos un régimen.");return}
     const prev=d.id?S.clientes[d.id]:null;
     const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo:d.tipo,regimenes:regs,coef:num(d.coef),coef_aut:num(d.coef_aut),email_cliente:(d.email_cliente||"").trim().toLowerCase()||null});
