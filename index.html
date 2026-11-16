@@ -605,6 +605,7 @@ function vals(c,m){const p=periodo(c.id,m);if(p.estado==="declarado"&&p.resumen)
 const totalMes=(c,m)=>vals(c,m).total;
 const venceDe=m=>{const nm=m===12?1:m+1,ny=m===12?YEAR+1:YEAR;return new Date(ny,nm-1,17)};
 function diasPara(m){const h=new Date();h.setHours(0,0,0,0);return Math.round((venceDe(m)-h)/864e5)}
+const hoyTxt=()=>{const d=new Date();return d.getDate()+" de "+MESES[d.getMonth()].toLowerCase()+" de "+d.getFullYear()};
 const venceTxt=m=>{const d=venceDe(m);return"17 de "+MESES[d.getMonth()].toLowerCase()+" de "+d.getFullYear()};
 
 /* ================= Lectura de CFDI ================= */
@@ -831,12 +832,11 @@ function viewActualizar(){
 }
 /* ================= Vistas del Área de trabajo ================= */
 function barraMes(){
-  const d=diasPara(S.m);
   return`<div class="period">
     <button class="btn ghost sm" data-act="mesPrev" aria-label="Mes anterior"${S.m<=1?" disabled":""}>‹</button>
     <select id="mes" data-change="mes" aria-label="Mes">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===S.m?" selected":""}>${n} ${YEAR}</option>`).join("")}</select>
     <button class="btn ghost sm" data-act="mesNext" aria-label="Mes siguiente"${S.m>=12?" disabled":""}>›</button>
-    <div class="due">Se declara a más tardar el <b>${venceTxt(S.m)}</b>${d>=0?` · <span class="chip ${d<=3?"pay":d<=10?"warn":"mute"}">${d===0?"hoy":d===1?"mañana":"faltan "+d+" días"}</span>`:` · <span class="chip mute">ya venció</span>`}</div></div>`;
+    <div class="due">${hoyTxt()}</div></div>`;
 }
 const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales"><div class="row" style="gap:8px"><button class="btn sm" data-act="ayuda">? Ayuda</button><button class="btn sm" data-act="salir">Salir</button></div></div>
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:-12px"><span class="chip">${esAdmin()?"Administrador":"Cliente"}</span>${MODO_DEMO?`<span class="chip warn">Modo demostración</span>`:""}<span class="small muted" style="overflow-wrap:anywhere">${esc(S.auth.email)}</span></div>`;
@@ -906,7 +906,7 @@ function accionesAdmin(c,p){
   const P={
     bloqueado:["Siguiente paso: deja que el cliente capture","Al abrir la captura, el cliente podrá agregar sus ingresos y gastos de "+mes+". Si tú capturas todo, puedes saltar directo al precierre.",go("abierto","Abrir captura para el cliente")+alt("precierre","Saltar y hacer el precierre yo")],
     abierto:["El cliente está capturando","Cuando tenga todo, haz el precierre: el cliente ya no podrá agregar ni cambiar nada y tú revisas el cálculo.",go("precierre","Cerrar captura y hacer precierre")+alt("bloqueado","Pausar la captura")],
-    precierre:["Revisa y declara antes del "+venceTxt(p.mes),"Revisa la hoja y el cálculo. Cuando presentes la declaración en el SAT, márcalo aquí y los montos quedan guardados.",go("declarado","Ya lo declaré")+alt("abierto","Dejar que el cliente capture otra vez")],
+    precierre:["Revisa y declara","Revisa la hoja y el cálculo. Cuando presentes la declaración en el SAT, márcalo aquí y los montos quedan guardados.",go("declarado","Ya lo declaré")+alt("abierto","Dejar que el cliente capture otra vez")],
     declarado:["Mes terminado","Declarado"+(p.resumen&&p.resumen.fecha?" el "+esc(p.resumen.fecha):"")+". Los montos quedan guardados tal como se declararon y nadie puede cambiar la hoja.",alt("precierre","Necesito corregir algo")]}[e];
   return`<div class="stack" style="gap:6px"><strong>${P[0]}</strong><span class="small muted">${P[1]}</span></div><div class="stack" style="gap:6px">${P[2]}</div>`;
 }
@@ -1306,7 +1306,7 @@ const act={
       ["Agrega tus ingresos","Toca “+ Agregar un ingreso”, escribe qué fue y el importe sin IVA. Indica si ya te pagaron."],
       ["Agrega tus gastos","Toca “+ Agregar un gasto”. Los gastos con factura e IVA hacen que pagues menos IVA."],
       ["O sube tus facturas","Si tienes los XML del SAT, súbelos y se agregan solos."],
-      ["Listo","Tu contador revisa y hace el precierre antes del día 17. En “Todos mis meses” ves tu historial."]];
+      ["Listo","Tu contador revisa y hace el precierre. En “Todos mis meses” ves tu historial."]];
     const P=esAdmin()?pasosA:pasosC;
     openSheet("Cómo se usa",`<ol class="howto">${P.map(([t,d])=>`<li><b>${t}</b><span>${d}</span></li>`).join("")}</ol>
       ${esAdmin()?`<div class="card stack" style="padding:16px;gap:8px"><b>Significado de las letras</b><span class="small"><b>C</b> ya me pagaron · <b>I</b> todavía no me pagan · <b>MA</b> me pagaron una factura de otro mes · <b>RET</b> me retuvieron impuestos</span></div>`:""}
