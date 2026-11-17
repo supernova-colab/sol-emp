@@ -180,7 +180,7 @@ dl.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;overflow-wr
 .wrap{padding-bottom:140px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:15;background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
 .mono{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;margin-top:4px;border:0;background:transparent;padding:0;cursor:pointer;text-align:left;font:inherit;color:inherit}
-.mono img{width:150px;height:auto;flex:none;filter:drop-shadow(0 8px 14px rgba(21,25,42,.12))}
+.mono img{width:175px;height:auto;flex:none;filter:drop-shadow(0 8px 14px rgba(21,25,42,.12))}
 .mono-t{background:var(--accent-soft);color:var(--accent);font-size:.9rem;padding:8px 16px;border-radius:999px}
 .mono .bub{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:0 6px 18px rgba(21,25,42,.06)}
 .mono .bub b{display:block;font-size:.98rem}
@@ -908,7 +908,7 @@ function viewLogin(){
     <div class="stack" style="gap:6px;align-items:center">
       ${S.login!=="entrar"?`<button class="btn ghost" data-act="lgModo" data-m="entrar">Ya tengo cuenta</button>`:`<button class="btn ghost" data-act="lgModo" data-m="registro">Crear mi cuenta</button><button class="btn ghost" data-act="lgModo" data-m="recuperar">Olvidé mi contraseña</button>`}
     </div>
-    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png" alt="" width="150"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
+    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
 function viewTablero(){
   const cs=clientesOrden(),pm=cs.filter(c=>c.tipo==="PM"),pf=cs.filter(c=>c.tipo==="PF");
