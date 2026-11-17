@@ -908,7 +908,7 @@ function viewLogin(){
     <div class="stack" style="gap:6px;align-items:center">
       ${S.login!=="entrar"?`<button class="btn ghost" data-act="lgModo" data-m="entrar">Ya tengo cuenta</button>`:`<button class="btn ghost" data-act="lgModo" data-m="registro">Crear mi cuenta</button><button class="btn ghost" data-act="lgModo" data-m="recuperar">Olvidé mi contraseña</button>`}
     </div>
-    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png" alt="" width="150"><span class="mono-t">¿Necesitas ayuda? <b>Tócame</b></span></button></div>`;
+    <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png" alt="" width="150"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
 function viewTablero(){
   const cs=clientesOrden(),pm=cs.filter(c=>c.tipo==="PM"),pf=cs.filter(c=>c.tipo==="PF");
