@@ -589,16 +589,16 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
   const retMes=suma(c.id,reg,mes,mes,"cobr").isrRet,retAnt=(reg==="612"||reg==="626")?A("isr_ret_ant"):0,ret=retMes+retAnt;
   let rows=[],isr=0;
   if(reg==="601"||reg==="624"){
-    const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=A("ing_ant");
-    const total=ingMes+ingAnt,coef=num(reg==="624"&&c.coef_aut?c.coef_aut:c.coef),util=Math.max(0,total)*coef,base=Math.max(0,util-ptu-perd);
+    const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=A("ing_ant"),rend=A("rendimientos");
+    const total=ingMes+ingAnt+rend,coef=num(reg==="624"&&c.coef_aut?c.coef_aut:c.coef),util=Math.max(0,total)*coef,base=Math.max(0,util-ptu-perd);
     isr=base*0.30;
-    rows=[["Ingresos acumulables del mes",ingMes],["Más: ingresos de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos",total],
+    rows=[["Ingresos acumulables del mes",ingMes],["Más: ingresos de meses anteriores",ingAnt,"","ing_ant"],["Más: rendimientos",rend,"","rendimientos"],["Igual: total de ingresos",total],
       ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util],["Menos: PTU acumulada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else if(reg==="626"){
-    const dep=A("depreciacion"),iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd);
+    const dep=A("depreciacion"),iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),rend=A("rendimientos"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA+rend,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd);
     isr=base*0.30;
-    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Menos: gastos pagados del mes",-gM],["Menos: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
+    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Más: rendimientos",rend,"","rendimientos"],["Igual: total de ingresos",ing],["Menos: gastos pagados del mes",-gM],["Menos: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
       ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
   }else{
     const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes)),dep=A("depreciacion");
@@ -846,7 +846,7 @@ const COLS_ACT=[
   ["coef","Coef. ut.",r=>r==="601"||r==="624"],
   ["ptu","PTU",r=>true],
   ["perdidas","Pérdidas fisc.",r=>true],
-  ["rendimientos","Rendimientos",r=>false],
+  ["rendimientos","Rendimientos",r=>r!=="612"],
   ["pagos_ant","PP ant. ISR",r=>true],
   ["isr_ret_ant","ISR ret. mes ant.",r=>r==="612"||r==="626"],
   ["comp","Comp. ISR",r=>true],
