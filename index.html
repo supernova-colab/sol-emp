@@ -259,7 +259,8 @@ table.act{min-width:1180px}
 table.act td{padding:8px 8px}
 table.act .ycell{width:108px}
 table.act .ycell.coef{width:86px}
-table.act td.na{background:repeating-linear-gradient(135deg,var(--line) 0 6px,transparent 6px 12px);background-color:var(--bg)}
+table.act td.na{background:#B9BEC9}
+table.act th.pa{text-align:center!important;letter-spacing:.08em;text-transform:uppercase;font-size:.72rem;border-bottom:1px solid var(--line)}
 table.act .emp{position:sticky;left:0;background:var(--surface);min-width:150px;white-space:normal;z-index:1;border-right:1px solid var(--line)}
 table.act th.emp{background:var(--bg)}
 #mesesPF{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;min-height:44px}
@@ -585,7 +586,7 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
   // Nada se arrastra en automático de meses anteriores: el contador lo captura en las celdas amarillas
   const A=k=>aj(c.id,mes,reg,k);
   const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=A("pagos_ant");
-  const retMes=suma(c.id,reg,mes,mes,"cobr").isrRet,retAnt=A("isr_ret_ant"),ret=retMes+retAnt;
+  const retMes=suma(c.id,reg,mes,mes,"cobr").isrRet,retAnt=(reg==="612"||reg==="626")?A("isr_ret_ant"):0,ret=retMes+retAnt;
   let rows=[],isr=0;
   if(reg==="601"||reg==="624"){
     const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=A("ing_ant");
@@ -607,7 +608,7 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
       ["Igual: base gravable",base],...tarifaRows(t,k),["ISR causado acumulado",t.isr]];
   }
   const pago=Math.max(0,isr-pagosAnt-comp-ret);
-  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido del mes",-retMes],["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"],["ISR neto a pagar",pago,"total"]);
+  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido del mes",-retMes],...(reg==="612"||reg==="626"?[["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"]]:[]),["ISR neto a pagar",pago,"total"]);
   return{reg,pago,isr,rows};
 })}
 function ivaFavorAnt(c,mes){ // saldo a favor que viene de meses anteriores
@@ -845,8 +846,9 @@ const COLS_ACT=[
   ["coef","Coef. ut.",r=>r==="601"||r==="624"],
   ["ptu","PTU",r=>true],
   ["perdidas","Pérdidas fisc.",r=>true],
+  ["rendimientos","Rendimientos",r=>false],
   ["pagos_ant","PP ant. ISR",r=>true],
-  ["isr_ret_ant","ISR ret. meses ant.",r=>true],
+  ["isr_ret_ant","ISR ret. mes ant.",r=>r==="612"||r==="626"],
   ["comp","Comp. ISR",r=>true],
   ["iva_favor_ant","Sdo. a f. IVA",r=>true]];
 function viewActualizar(){
@@ -872,7 +874,7 @@ function viewActualizar(){
   ${barraMes()}
   ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa del ISR (normalmente el mismo mes).</span></div>
     <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
-  ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp">Empresa</th>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
+  ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp" rowspan="2">Empresa</th><th class="pa" colspan="${COLS_ACT.length}">Puntos a actualizar</th></tr><tr>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
     <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${f.c.tipo} · ${REGS[f.r].c}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap(f.r))).join("")}</tr>`).join("")}</tbody></table></div>
     <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Los meses ya declarados no se pueden modificar.</p>`
     :`<div class="card empty"><p class="muted">Primero agrega clientes.</p></div>`}`;
