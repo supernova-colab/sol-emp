@@ -852,7 +852,7 @@ function viewServicios(){
 function viewContacto(){
   const maps="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(FIRMA.dir);
   return`<div class="mid">${topMini()}
-  <div class="sec-t"><span class="eyebrow">Contacto</span><h2 style="font-size:1.6rem">Estamos para ayudarte</h2><p>Llámanos, escríbenos o visítanos en Xalapa.</p></div>
+  <div class="sec-t"><span class="eyebrow">Contacto</span><h2 style="font-size:1.6rem">Estamos para ayudarte</h2><p>Llámanos o escríbenos.</p></div>
   <section class="card ct-list">
     <a class="ct" href="tel:+52${FIRMA.tel}"><span class="ib">${ic("phone")}</span><span class="info"><span class="small muted">Teléfono</span><b>${FIRMA.telTxt}</b></span><span class="go">${ic("arrow")}</span></a>
     <a class="ct" href="https://wa.me/${FIRMA.wa}" target="_blank" rel="noopener"><span class="ib">${ic("chat")}</span><span class="info"><span class="small muted">WhatsApp</span><b>${FIRMA.waTxt}</b></span><span class="go">${ic("arrow")}</span></a>
@@ -1491,6 +1491,7 @@ document.addEventListener("change",async e=>{
         const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;
       }
       toast("Guardado");
+      if(t.dataset.act2&&t.type!=="checkbox"){const cid=t.dataset.act2.split("|")[0];document.querySelectorAll('.okchk input').forEach(cb=>{if(cb.dataset.act2.split("|")[0]===cid){cb.checked=true;cb.parentNode.lastChild.textContent=" Actualizado"}})}
     }catch(er){toast(errTxt(er),5000)}
     if(t.dataset.change==="mesesPF"||t.type==="checkbox"){const y=scrollY;render();scrollTo(0,y)}
     return;
