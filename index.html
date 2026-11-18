@@ -299,6 +299,14 @@ html,body{overflow-x:hidden}
 .checkcard input{margin-top:3px;width:20px;height:20px;accent-color:var(--accent);flex:none}
 .checkcard:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
 .grid-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table.adm{min-width:900px}
+table.adm td{vertical-align:middle}
+table.adm tr.inact td{opacity:.55}
+table.cat{min-width:760px}
+.nota{display:block;margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--warn-soft);color:var(--ink);font-size:.8rem;white-space:normal}
+.ab{display:inline-block;font-weight:700;font-size:.78rem;letter-spacing:.02em;white-space:nowrap}
+.okchk{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:.84rem}
+.okchk input{width:18px;height:18px}
 table.xl{border-collapse:separate;border-spacing:0;min-width:720px;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
 table.xl th{background:var(--bg);color:var(--muted);font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
 table.xl th.grp{text-align:center;color:var(--accent);border-bottom:1px solid var(--line)}
@@ -481,7 +489,7 @@ const Local={
   },
   async saveMov(m,auth){const d=this.load_();m=clone(m);if(!auth.admin)m.capturado_por="cliente";
     if(m.id&&d.movs[m.id])this._check(d.movs[m.id],auth);this._check(m,auth);
-    if(!m.id)m.id=uid("m");d.movs[m.id]=m;this.save_();return m},
+    if(!m.id)m.id=uid("m");m.creado=new Date().toISOString();d.movs[m.id]=m;this.save_();return m},
   async deleteMov(m,auth){const d=this.load_();this._check(d.movs[m.id]||m,auth);delete d.movs[m.id];this.save_()}
 };
 let sb=null,sbCargando=null;
@@ -505,8 +513,9 @@ async function getSb(){
 const Remote={
   async session(){
     const{data}=await (await getSb()).auth.getSession();const u=data&&data.session&&data.session.user;if(!u)return null;
-    const r=await (await getSb()).from("admins").select("email").limit(1);
-    return{email:(u.email||"").toLowerCase(),admin:!r.error&&!!(r.data&&r.data.length)};
+    const r=await (await getSb()).from("admins").select("*").eq("email",(u.email||"").toLowerCase()).limit(1);
+    const a=!r.error&&r.data&&r.data[0];
+    return{email:(u.email||"").toLowerCase(),admin:!!a,nombre:a&&a.nombre||""};
   },
   async signIn(email,pw){const{error}=await (await getSb()).auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
   async signUp(email,pw){const{data,error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error;
@@ -518,13 +527,23 @@ const Remote={
     for(const r of[c,p,m])if(r.error)throw r.error;
     return{clientes:c.data,periodos:p.data,movs:m.data};
   },
-  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;const{data,error}=await (await getSb()).from("clientes").upsert(row).select().single();if(error)throw error;return data},
+  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad"])},
   async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
   async setPeriodo(p){const{data,error}=await (await getSb()).from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
   async saveMov(m,auth){const row=clone(m);if(!auth.admin)row.capturado_por="cliente";if(!row.id)delete row.id;
-    const{data,error}=await (await getSb()).from("movimientos").upsert(row).select().single();if(error)throw error;return data},
+    return upsertFlex("movimientos",row,["nota"])},
   async deleteMov(m){const{error}=await (await getSb()).from("movimientos").delete().eq("id",m.id);if(error)throw error}
 };
+// Si aún no se agregan las columnas nuevas en Supabase, guarda sin ellas (y avisa una vez)
+async function upsertFlex(tabla,row,nuevas){
+  let r=await (await getSb()).from(tabla).upsert(row).select().single();
+  if(r.error&&/column|schema cache|PGRST204/i.test(r.error.message||r.error.code||"")){
+    const extra={};nuevas.forEach(k=>{if(k in row){extra[k]=row[k];delete row[k]}});
+    r=await (await getSb()).from(tabla).upsert(row).select().single();
+    if(!r.error){if(!upsertFlex.aviso){upsertFlex.aviso=1;toast("Falta correr el SQL nuevo en Supabase para guardar situación, actividad y notas.",6000)}return Object.assign(r.data,extra)}
+  }
+  if(r.error)throw r.error;return r.data;
+}
 const API=MODO_DEMO?Local:Remote;
 function errTxt(e){
   const m=String((e&&(e.message||e.code))||"");
@@ -732,6 +751,21 @@ const SERVICIOS=[
   {i:"board",t:"Capacitación al personal",d:"Cursos prácticos para que tu equipo administrativo trabaje con orden y cumpla a tiempo."},
   {i:"clip",t:"Trámites",d:"RFC, e.firma, avisos ante el SAT, registros ante el IMSS y gestiones con dependencias locales."},
   {i:"cap",t:"Capacitación profesional",d:"Formación práctica para contadores, estudiantes y recién egresados que quieren crecer en la profesión."}];
+const CATALOGO=[
+  {per:"PM",ab:"PM RGL",reg:"601",act:"Empresarial",rf:"Persona moral régimen general de ley"},
+  {per:"PM",ab:"PM RGL SC",reg:"601",act:"Servicios",rf:"Persona moral régimen general de ley"},
+  {per:"PM",ab:"PM AUTOTR.",reg:"624",act:"Autotransporte",rf:"Persona moral régimen general de ley"},
+  {per:"PM",ab:"PM RESICO",reg:"626",act:"Empresarial",rf:"Persona moral régimen simplificado de confianza"},
+  {per:"PM",ab:"PM RESICO SC",reg:"626",act:"Servicios",rf:"Persona moral régimen simplificado de confianza"},
+  {per:"PF",ab:"PF RGL",reg:"612",act:"Empresarial / servicios",rf:"Régimen de las actividades empresariales y profesionales"}];
+const abrev=(c,r)=>r==="601"?"PM RGL"+(c.actividad==="Servicios"?" SC":""):r==="624"?"PM AUTOTR.":r==="626"?"PM RESICO"+(c.actividad==="Servicios"?" SC":""):"PF RGL";
+const activo=c=>c.activo!==false;
+function ultimaMod(c){
+  let t="";Object.values(S.movs).forEach(x=>{if(x.cliente_id===c.id){const f=(x.creado||x.fecha||"").slice(0,10);if(f>t)t=f}});
+  for(let m=1;m<=12;m++){const a=(periodo(c.id,m).ajustes||{})._mod;if(a&&a>t)t=a}
+  if(!t)return"—";const[y,mo,d]=t.split("-");return`${d}/${mo}/${y}`;
+}
+const actualizado=(c,m)=>!!(periodo(c.id,m).ajustes||{})._act;
 const FAQ=[
   ["¿Cómo entro a la app?","Con el correo que le diste al despacho. La primera vez toca “Crear mi cuenta”, confirma el enlace que llega a tu correo y después entra con tu contraseña."],
   ["Olvidé mi contraseña","En la pantalla para entrar toca “Olvidé mi contraseña” y te llega un enlace a tu correo para poner una nueva. Revisa también la carpeta de Spam."],
@@ -870,12 +904,12 @@ function viewActualizar(){
   return`${quien()}
   <div class="row between"><button class="btn ghost" data-act="tablero">← Clientes</button></div>
   <div class="sec-t"><span class="eyebrow">Actualización de precierres</span><h2 style="font-size:1.5rem">Datos de arranque del mes</h2>
-    <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen.</p></div>
+    <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen. Al capturar, la empresa queda como <b>Actualizado</b>; también puedes marcarlo tú en la última columna.</p></div>
   ${barraMes()}
   ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa del ISR (normalmente el mismo mes).</span></div>
     <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
-  ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp" rowspan="2">Empresa</th><th class="pa" colspan="${COLS_ACT.length}">Puntos a actualizar</th></tr><tr>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
-    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${f.c.tipo} · ${REGS[f.r].c}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap(f.r))).join("")}</tr>`).join("")}</tbody></table></div>
+  ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp" rowspan="2">Empresa</th><th class="pa" colspan="${COLS_ACT.length}">Puntos a actualizar</th><th rowspan="2">Estatus</th></tr><tr>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
+    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${f.c.tipo} · ${REGS[f.r].c}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap(f.r))).join("")}<td>${f.primero?`<label class="okchk"><input type="checkbox" data-act2="${esc(f.c.id)}||_act"${actualizado(f.c,S.m)?" checked":""}${periodo(f.c.id,S.m).estado==="declarado"?" disabled":""}> ${actualizado(f.c,S.m)?"Actualizado":"Pendiente"}</label>`:""}</td></tr>`).join("")}</tbody></table></div>
     <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Los meses ya declarados no se pueden modificar.</p>`
     :`<div class="card empty"><p class="muted">Primero agrega clientes.</p></div>`}`;
 }
@@ -913,36 +947,38 @@ function viewLogin(){
     <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
 function viewTablero(){
-  const cs=clientesOrden(),pm=cs.filter(c=>c.tipo==="PM"),pf=cs.filter(c=>c.tipo==="PF");
-  let lista=S.apartado==="PM"?pm:pf;
-  if(S.apartado==="PM"&&S.filtroReg!=="todos")lista=lista.filter(c=>(c.regimenes||[]).includes(S.filtroReg));
-  const tot=cs.reduce((t,c)=>t+totalMes(c,S.m),0);
-  const listos=cs.filter(c=>["precierre","declarado"].includes(periodo(c.id,S.m).estado)).length;
-  const decl=cs.filter(c=>periodo(c.id,S.m).estado==="declarado").length;
-  return`${quien()}${barraMes()}
+  const cs=clientesOrden(),act=cs.filter(activo);
+  const tot=act.reduce((t,c)=>t+totalMes(c,S.m),0);
+  const pend=act.filter(c=>!actualizado(c,S.m)).length;
+  const nombreAdm=S.auth&&S.auth.nombre||"";
+  return`${quien()}
+  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.5rem">${nombreAdm?esc(nombreAdm):"Clientes"}</h2>${nombreAdm?"":`<p class="small">${esc(S.auth?S.auth.email:"")}</p>`}</div>
+  ${barraMes()}
   <section class="tiles">
-    <div class="tile"><span>Total probable · ${MESES[S.m-1]}</span><b>${money(tot)}</b></div>
-    <div class="tile"><span>Precierres listos</span><b>${listos} de ${cs.length}</b></div>
-    <div class="tile"><span>Declarados</span><b>${decl} de ${cs.length}</b></div>
-    <div class="tile"><span>Captura abierta</span><b>${cs.filter(c=>periodo(c.id,S.m).estado==="abierto").length}</b></div>
+    <div class="tile"><span>Total impuestos · ${MESES[S.m-1]}</span><b>${money(tot)}</b></div>
+    <div class="tile"><span>Pendientes de actualizar</span><b>${pend} de ${act.length}</b></div>
   </section>
-  <div class="apart" role="group" aria-label="Apartado">
-    <button data-act="apartado" data-a="PM" aria-pressed="${S.apartado==="PM"}"><b>Persona moral</b><span>${pm.length} cliente${pm.length===1?"":"s"} · General, Autotransporte, RESICO</span></button>
-    <button data-act="apartado" data-a="PF" aria-pressed="${S.apartado==="PF"}"><b>Persona física</b><span>${pf.length} cliente${pf.length===1?"":"s"} · Régimen general</span></button>
-  </div>
-  ${S.apartado==="PM"?`<div class="seg" role="group" aria-label="Filtrar por régimen">${[["todos","Todos"],...REGS_DE("PM").map(k=>[k,REGS[k].c])].map(([k,l])=>`<button data-act="filtroReg" data-r="${k}" aria-pressed="${S.filtroReg===k}">${l}</button>`).join("")}</div>`:""}
   <section class="stack">
-    <div class="sec-h"><h2>${S.apartado==="PM"?"Personas morales":"Personas físicas"}</h2><button class="btn ghost" data-act="nuevoCliente">+ Agregar</button></div>
-    ${lista.length?`<div class="list">${lista.map(c=>{const p=periodo(c.id,S.m);return`
-      <button class="client" data-act="abrir" data-id="${esc(c.id)}">
-        <span class="avatar" aria-hidden="true">${esc((c.nombre.trim()[0]||"?").toUpperCase())}</span>
-        <span class="info"><strong>${esc(c.nombre)}</strong><span class="small muted">${c.rfc?esc(c.rfc):"Sin RFC"}</span>
-          <span class="tags">${(c.regimenes||[]).map(r=>`<span class="chip mute">${REGS[r].c}</span>`).join("")}</span></span>
-        <span class="amt"><b>${money(totalMes(c,S.m))}</b>${estadoChip(p.estado)}</span></button>`}).join("")}</div>`
-    :`<div class="card empty"><p class="muted">Todavía no hay ${S.apartado==="PM"?"personas morales":"personas físicas"}${S.filtroReg!=="todos"&&S.apartado==="PM"?" en este régimen":""}.${!cs.length?" Empieza agregando a tu primer cliente; si tienes dudas, toca “? Ayuda” arriba.":""}</p>
-      <button class="btn primary" data-act="nuevoCliente">Agregar cliente</button>${!cs.length&&MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
+    <div class="sec-h"><h2>Clientes</h2></div>
+    ${cs.length?`<div class="grid-wrap"><table class="xl adm"><thead><tr><th class="rn">No.</th><th>Nombre</th><th>Situación</th><th>Tipo</th><th>Última modif.</th><th>Estatus</th><th class="n">Total impuestos</th><th></th></tr></thead>
+      <tbody>${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<tr class="xr${on?"":" inact"}" data-act="abrir" data-id="${esc(c.id)}">
+        <td class="rn">${i+1}</td><td class="wrapc"><b>${esc(c.nombre)}</b>${c.rfc?`<br><span class="small muted">${esc(c.rfc)}</span>`:""}</td>
+        <td><span class="chip ${on?"favor":"mute"}">${on?"Activo":"Inactivo"}</span></td>
+        <td>${(c.regimenes||[]).map(r=>`<span class="ab">${abrev(c,r)}</span>`).join("<br>")}</td>
+        <td>${ultimaMod(c)}</td>
+        <td><span class="chip ${ok?"favor":"warn"}">${ok?"Actualizado":"Pendiente de actualizar"}</span></td>
+        <td class="n"><b>${money(totalMes(c,S.m))}</b></td>
+        <td><span class="btn sm primary">Accesar</span></td></tr>`}).join("")}</tbody></table></div>
+      <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Toca un cliente para entrar.</p>`
+    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Regístralo con el botón de abajo o desde el catálogo.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
+    <button class="btn primary full" data-act="nuevoCliente">+ Registrar un nuevo cliente</button>
   </section>
-  ${cs.length?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="actualizar">Actualizar precierres (ingresos y pagos anteriores, PTU, pérdidas…)</button><button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button></div>`:""}`;
+  <section class="stack">
+    <div class="sec-t"><h2 style="font-size:1.15rem">Tipos de cliente</h2><p class="small">Toca <b>Crear</b> para registrar un cliente de ese tipo.</p></div>
+    <div class="grid-wrap"><table class="xl cat"><thead><tr><th class="rn">No.</th><th>Tipo / persona</th><th>Abreviatura</th><th>Régimen fiscal</th><th>Actividad</th><th></th></tr></thead>
+      <tbody>${CATALOGO.map((k,i)=>`<tr><td class="rn">${i+1}</td><td>${k.per==="PM"?"Moral":"Física"}</td><td><span class="ab">${k.ab}</span></td><td class="wrapc">${k.rf}</td><td>${k.act}</td><td><button class="btn sm" data-act="crearTipo" data-i="${i}">Crear</button></td></tr>`).join("")}</tbody></table></div>
+  </section>
+  ${cs.length?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="actualizar">Actualización de precierres</button><button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button></div>`:""}`;
 }
 function pasos(e){
   const n=ESTADOS[e].paso;
@@ -977,11 +1013,11 @@ function resumenHero(c,r,p){
     </div>`;
 }
 function listaCliente(c,m){
-  const ms=movsDe(c.id,m),edit=puedeCapturar(c.id,m),I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
+  const ms=movsDe(c.id,m),edit=!S.preview&&puedeCapturar(c.id,m),I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
   const lbl={C:["favor","Ya pagada"],I:["pay","Pendiente de pago"],MA:["","Pago de otro mes"]};
   const item=x=>{const[,mo,d]=x.fecha.split("-"),e=est(x);return`<button class="inv" data-act="mov" data-id="${esc(x.id)}">
     <span class="info"><strong>${esc(x.concepto||"Sin concepto")}</strong><span class="small muted">${d}/${mo}${x.rfc?" · "+esc(x.rfc):""}</span>
-      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${lbl[e][0]}">${lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}</span></span>
+      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${lbl[e][0]}">${lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}${x.nota?'<span class="chip warn">Con nota</span>':""}</span></span>
     <span class="amt"><b>${money(x.subtotal)}</b><span class="small muted">+ IVA ${money(x.iva)}</span></span></button>`};
   const sec=(t,sub,a,vacio)=>`<section class="stack"><div class="sec-t"><h2 style="font-size:1.1rem">${t}</h2><p class="small">${sub}</p></div>
     ${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<div class="card empty" style="padding:22px"><p class="muted">${vacio}</p></div>`}</section>`;
@@ -999,7 +1035,7 @@ function hoja(c,m){
   const I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
   const regTd=x=>varios?`<td>${esc(REGS[x.regimen]?REGS[x.regimen].c:"—")}</td>`:"";
   const who=x=>`<td><span class="who">${x.capturado_por==="cliente"?"Cliente":"Despacho"}</span></td>`;
-  const cnc=x=>`<td class="wrapc">${esc(x.concepto||"—")}${x.rfc?`<br><span class="small muted">${esc(x.rfc)}</span>`:""}</td>`;
+  const cnc=x=>`<td class="wrapc">${esc(x.concepto||"—")}${x.rfc?`<br><span class="small muted">${esc(x.rfc)}</span>`:""}${x.nota?`<span class="nota">Nota: ${esc(x.nota)}</span>`:""}</td>`;
   const v=n=>n?money(n):"—";
   let eI=0,eV=0,cI=0,cV=0,rV=0,rI=0;
   const filasI=I.map((x,i)=>{const e=est(x),el=e!=="MA",co=e!=="I";
@@ -1064,12 +1100,12 @@ function viewClienteAdmin(){
   const p=periodo(c.id,S.m),r=calc(c,S.m);
   const tabs=[["hoja","Hoja"],["calculo","Cálculo"],["historial","Meses"]];
   return`${quien()}
-  <div class="row between"><button class="btn ghost" data-act="tablero">← ${c.tipo==="PM"?"Personas morales":"Personas físicas"}</button><button class="btn ghost" data-act="editCliente">Editar cliente</button></div>
+  <div class="row between" style="flex-wrap:wrap;gap:8px"><button class="btn ghost" data-act="tablero">← Panel</button><div class="row" style="gap:8px"><button class="btn ghost" data-act="verCliente">Ver como cliente</button><button class="btn ghost" data-act="editCliente">Editar cliente</button></div></div>
   <section class="card hero">
     <div class="stack" style="gap:6px">
       <div class="row between"><h2 style="font-size:1.3rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
       <span class="small muted">${c.rfc?esc(c.rfc)+" · ":""}${c.tipo==="PM"?"Persona moral":"Persona física"}${c.email_cliente?" · acceso: "+esc(c.email_cliente):" · sin acceso de cliente"}</span>
-      <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${REGS[x].c}</span>`).join("")}</span>
+      <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${abrev(c,x)}</span>`).join("")}${activo(c)?"":'<span class="chip mute">Inactivo</span>'}</span>
     </div>
     ${resumenHero(c,r,p)}
     ${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}
@@ -1080,7 +1116,8 @@ function viewClienteAdmin(){
   <section class="stack">${S.tabC==="hoja"?hoja(c,S.m):S.tabC==="calculo"?tabCalculo(c,r):tabHistorial(c)}</section>`;
 }
 function viewPanelCliente(){
-  const cs=clientesOrden();
+  const prev=S.preview&&esAdmin();
+  const cs=prev?[S.clientes[S.cid]].filter(Boolean):clientesOrden();
   if(!cs.length)return`${quien()}<section class="card empty"><h2>Tu cuenta todavía no está ligada</h2>
     <p class="muted">Pide al despacho que registre tu correo <b>${esc(S.auth.email)}</b> en tu ficha de cliente. En cuanto lo haga, aquí verás tus meses.</p>
     <button class="btn" data-act="recargar">Ya me avisaron, actualizar</button></section>${firma()}`;
@@ -1091,7 +1128,7 @@ function viewPanelCliente(){
     declarado:["ok","Mes declarado","Tu declaración de "+MESES[S.m-1].toLowerCase()+" ya se presentó."]}[p.estado];
   const tabs=[["hoja","Este mes"],["historial","Todos mis meses"]];
   if(S.tabC==="calculo")S.tabC="hoja";
-  return`${quien()}
+  return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
   <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.4rem">${esc(c.nombre)}</h2><p class="small">${c.rfc?esc(c.rfc)+" · ":""}${(c.regimenes||[]).map(x=>REGS[x].c).join(", ")}</p></div>
   ${cs.length>1?`<div class="seg">${cs.map(x=>`<button data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${esc(x.nombre)}</button>`).join("")}</div>`:""}
   ${barraMes()}
@@ -1103,7 +1140,7 @@ function viewPanelCliente(){
 function viewTrabajo(){
   if(!S.listo)return`${topMini()}<div class="card empty"><p class="muted">Cargando…</p></div>`;
   if(!S.auth)return viewLogin();
-  if(esAdmin())return S.vista==="cliente"?viewClienteAdmin():S.vista==="actualizar"?viewActualizar():viewTablero();
+  if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
 function render(){
@@ -1116,7 +1153,7 @@ function render(){
 function openSheet(title,html){$("#sheetTitle").textContent=title;$("#sheetBody").innerHTML=html;$("#sheet").hidden=false}
 function closeSheet(){$("#sheet").hidden=true;S.confirm=null;S.mov=null;render()}
 function formCliente(c){
-  c=c||{nombre:"",rfc:"",tipo:S.apartado,regimenes:S.apartado==="PF"?["612"]:[],coef:"",coef_aut:"",email_cliente:""};
+  c=c||{nombre:"",rfc:"",tipo:S.apartado,regimenes:S.apartado==="PF"?["612"]:[],coef:"",coef_aut:"",email_cliente:"",actividad:"Empresarial",activo:true};
   const regsHTML=t=>REGS_DE(t).map(k=>`<label class="checkcard"><input type="checkbox" name="reg" value="${k}"${(c.regimenes||[]).includes(k)?" checked":""}><span class="stack" style="gap:2px"><b>${REGS[k].c}</b><span class="small muted">${REGS[k].n}</span></span></label>`).join("");
   openSheet(c.id?"Editar cliente":"Nuevo cliente",`<form id="fCliente">
     <input type="hidden" name="id" value="${esc(c.id||"")}">
@@ -1130,6 +1167,8 @@ function formCliente(c){
     </fieldset>
     <div class="two"><div class="field" id="wCoef"><label for="cCoef">Coeficiente general de ley</label><input id="cCoef" name="coef" type="number" step="0.0001" min="0" max="1" inputmode="decimal" value="${esc(c.coef||"")}" placeholder="0.0685"></div>
       <div class="field" id="wCoefA"><label for="cCoefA">Coeficiente autotransporte</label><input id="cCoefA" name="coef_aut" type="number" step="0.0001" min="0" max="1" inputmode="decimal" value="${esc(c.coef_aut||"")}" placeholder="0.0473"></div></div>
+    <div class="two"><div class="field" id="wAct"${c.tipo==="PM"?"":" hidden"}><label for="cAct">Actividad</label><select id="cAct" name="actividad">${["Empresarial","Servicios"].map(a=>`<option${(c.actividad||"Empresarial")===a?" selected":""}>${a}</option>`).join("")}</select></div>
+      <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div></div>
     <div class="field"><label for="cMail">Correo del cliente para su acceso (opcional)</label><input id="cMail" name="email_cliente" type="email" value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@correo.com"></div>
     <button class="btn primary full" type="submit">${c.id?"Guardar cambios":"Agregar cliente"}</button>
     ${c.id?`<button class="btn danger full" type="button" data-act="borrarCliente">${S.confirm==="cliente"?"Toca otra vez para borrar el cliente y todos sus meses":"Borrar cliente"}</button>`:""}
@@ -1140,9 +1179,10 @@ function syncClienteForm(){
   const t=$("#cTipo").value,box=t==="PM"?"#regPM":"#regPF";
   const sel=[...document.querySelectorAll(box+' input[name="reg"]:checked')].map(i=>i.value);
   $("#wCoef").hidden=!(t==="PM"&&sel.includes("601"));$("#wCoefA").hidden=!(t==="PM"&&sel.includes("624"));
+  const w=$("#wAct");if(w)w.hidden=t!=="PM";
 }
 function formMov(x){
-  const c=S.clientes[S.cid],m=x?x.mes:S.m,edit=x?puedeEditarMov(x):puedeCapturar(c.id,m);
+  const c=S.clientes[S.cid],m=x?x.mes:S.m,edit=!S.preview&&(x?puedeEditarMov(x):puedeCapturar(c.id,m));
   const tipo0=x?x.tipo:(S.mov&&S.mov.tipo)||"ingreso";
   x=x||{tipo:tipo0,estatus:"C",fecha:YEAR+"-"+pad(m)+"-"+pad(Math.min(15,new Date(YEAR,m,0).getDate())),concepto:"",rfc:"",regimen:(c.regimenes||[])[0],subtotal:"",iva:"",iva_ret:"",isr_ret:"",deducible:true};
   const last=new Date(YEAR,m,0).getDate(),dis=edit?"":" disabled",ing=x.tipo==="ingreso";
@@ -1169,8 +1209,9 @@ function formMov(x){
       <div class="field"><label for="mvIsr" id="lIsr">${ing?"ISR que te retuvieron":"ISR que retuviste"}</label><input id="mvIsr" name="isr_ret" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(x.isr_ret||"")}" placeholder="0"${dis}></div></div>
     <p class="small muted" style="margin:0" id="hRet">${ing?"":"Las retenciones que hiciste a proveedores se suman al total a pagar."}</p>
     <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo factura de este gasto (es deducible)</label>
+    <div class="field"><label for="mvNota">${esAdmin()?"Nota del cliente":"¿Alguna duda o nota para tu contador? (opcional)"}</label><textarea id="mvNota" name="nota" rows="2" placeholder="${esAdmin()?"Sin nota":"Ej. Esta factura es de un pago parcial"}"${dis}>${esc(x.nota||"")}</textarea></div>
     ${x.id?`<p class="small muted" style="margin:0">Capturó: ${x.capturado_por==="cliente"?"el cliente":"el despacho"}${x.uuid_cfdi?" · CFDI "+esc(x.uuid_cfdi):""}</p>`:""}
-    ${edit?`<button class="btn primary full" type="submit">${x.id?"Guardar cambios":"Agregar a la hoja"}</button>`:`<p class="note">${esAdmin()?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
+    ${edit?`<button class="btn primary full" type="submit">${x.id?"Guardar cambios":"Agregar a la hoja"}</button>`:`<p class="note">${S.preview?"Vista del cliente: solo para ver.":esAdmin()?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
     ${x.id&&edit?`<button class="btn danger full" type="button" data-act="borrarMov" data-id="${esc(x.id)}">${S.confirm===x.id?"Toca otra vez para borrar":"Borrar movimiento"}</button>`:""}
   </form>`);
   S.ivaAuto=x.iva===""||x.iva==null||Math.abs(num(x.iva)-num(x.subtotal)*0.16)<0.02;
@@ -1327,10 +1368,13 @@ const act={
   apartado(d){S.apartado=d.a;S.filtroReg="todos";render()},
   filtroReg(d){S.filtroReg=d.r;render()},
   abrir(d){S.cid=d.id;S.vista="cliente";S.tabC="hoja";render();scrollTo(0,0)},
-  tablero(){S.vista="tablero";render();scrollTo(0,0)},
+  tablero(){S.vista="tablero";S.preview=false;render();scrollTo(0,0)},
+  verCliente(){S.preview=true;S.tabC="hoja";render();scrollTo(0,0)},
+  salirVista(){S.preview=false;S.tabC="hoja";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
   nuevoCliente(){S.confirm=null;formCliente()},
+  crearTipo(d){const k=CATALOGO[+d.i];S.confirm=null;formCliente({nombre:"",rfc:"",tipo:k.per,regimenes:[k.reg],coef:"",coef_aut:"",email_cliente:"",actividad:k.per==="PM"?k.act:"Empresarial / servicios",activo:true})},
   editCliente(){S.confirm=null;formCliente(S.clientes[S.cid])},
   cTipo(d){$("#cTipo").value=d.t;document.querySelectorAll('[data-act="cTipo"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===d.t));
     $("#regPM").hidden=d.t!=="PM";$("#regPF").hidden=d.t!=="PF";syncClienteForm()},
@@ -1421,22 +1465,24 @@ document.addEventListener("change",async e=>{
     syncRet(true);return;
   }
   if(t.dataset.act2||t.dataset.change==="mesesPF"){
-    const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),num(t.value)]];
+    const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),t.type==="checkbox"?t.checked:num(t.value)]];
     try{
       for(const [cid,reg,key,val] of lista){
         const c=S.clientes[cid];
         if(key==="coef"){const nc=clone(c);if(reg==="624")nc.coef_aut=val;else nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=s2||nc;continue}
-        const p=clone(periodo(cid,S.m));p.ajustes=p.ajustes||{};
+        const p=clone(periodo(cid,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);
+        if(key==="_act"){p.ajustes._act=!!val;const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;continue}
+        p.ajustes._act=true;
         if(key==="iva_favor_ant")p.ajustes.iva_favor_ant=val;else{p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=val}
         const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;
       }
       toast("Guardado");
     }catch(er){toast(errTxt(er),5000)}
-    if(t.dataset.change==="mesesPF"){const y=scrollY;render();scrollTo(0,y)}
+    if(t.dataset.change==="mesesPF"||t.type==="checkbox"){const y=scrollY;render();scrollTo(0,y)}
     return;
   }
   if(t.dataset.aj){
-    const c=S.clientes[S.cid],[reg,key]=t.dataset.aj.split("|"),p=clone(periodo(c.id,S.m));p.ajustes=p.ajustes||{};
+    const c=S.clientes[S.cid],[reg,key]=t.dataset.aj.split("|"),p=clone(periodo(c.id,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);p.ajustes._act=true;
     if(reg){p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=num(t.value)}else p.ajustes[key]=num(t.value);
     try{const s2=await API.setPeriodo(p);S.periodos[pkey(c.id,S.m)]=s2||p;toast("Guardado")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y);return;
@@ -1476,7 +1522,7 @@ document.addEventListener("submit",async e=>{
     }
     if(!regs.length){toast("Selecciona al menos un régimen.");return}
     const prev=d.id?S.clientes[d.id]:null;
-    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo:d.tipo,regimenes:regs,coef:num(d.coef),coef_aut:num(d.coef_aut),email_cliente:(d.email_cliente||"").trim().toLowerCase()||null});
+    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo:d.tipo,regimenes:regs,coef:num(d.coef),coef_aut:num(d.coef_aut),email_cliente:(d.email_cliente||"").trim().toLowerCase()||null,actividad:d.tipo==="PM"?(d.actividad||"Empresarial"):"Empresarial / servicios",activo:d.activo!=="0"});
     if(d.id)c.id=d.id;
     $("#sheet").hidden=true;S.confirm=null;
     try{const s=await API.saveCliente(c);S.clientes[s.id]=s;S.apartado=s.tipo;if(!prev){S.cid=s.id;S.vista="cliente";S.tabC="hoja"}toast(prev?"Cliente actualizado":"Cliente agregado")}catch(er){toast(errTxt(er),5000)}
@@ -1488,7 +1534,7 @@ document.addEventListener("submit",async e=>{
     const m=Object.assign({},prev||{},{cliente_id:c.id,anio:YEAR,mes,fecha:d.fecha,tipo:d.tipo,regimen:d.regimen||(c.regimenes||[])[0],concepto:d.concepto.trim(),rfc:(d.rfc||"").trim().toUpperCase(),
       estatus:d.tipo==="ingreso"?(d.estatus||"C"):null,
       subtotal:sub,iva:d.iva===""?Math.round(sub*16)/100:num(d.iva),iva_ret:num(d.iva_ret),isr_ret:num(d.isr_ret),
-      deducible:d.tipo==="gasto"?!!d.deducible:true,capturado_por:prev?prev.capturado_por:(esAdmin()?"admin":"cliente")});
+      deducible:d.tipo==="gasto"?!!d.deducible:true,capturado_por:prev?prev.capturado_por:(esAdmin()?"admin":"cliente"),nota:(d.nota||"").trim()||null});
     if(d.id)m.id=d.id;else delete m.id;
     $("#sheet").hidden=true;S.confirm=null;S.mov=null;
     try{const s=await API.saveMov(m,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>s[k]=+s[k]);S.movs[s.id]=s;toast(prev?"Movimiento actualizado":"Agregado a la hoja")}catch(er){toast(errTxt(er),5000)}

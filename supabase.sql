@@ -118,3 +118,9 @@ create policy "cliente borra lo suyo" on movimientos for delete
 -- ---------- Administrador ----------
 -- Cambia este correo por el del contador. Para agregar más administradores, repite la línea.
 insert into admins (email) values ('CORREO_DEL_CONTADOR@ejemplo.com') on conflict do nothing;
+
+-- ===== Actualización (nov 2026): situación, actividad, notas y nombre del administrador =====
+alter table clientes add column if not exists activo boolean not null default true;
+alter table clientes add column if not exists actividad text;
+alter table movimientos add column if not exists nota text;
+alter table admins add column if not exists nombre text;
