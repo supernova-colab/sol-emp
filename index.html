@@ -301,7 +301,14 @@ html,body{overflow-x:hidden}
 .grid-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
 table.adm{min-width:900px}
 table.adm td{vertical-align:middle}
-table.adm tr.inact td{opacity:.55}
+table.adm tr.inact td:not(:nth-child(3)){opacity:.55}
+.sw{display:inline-flex;align-items:center;gap:8px;border:0;background:none;padding:4px 0;cursor:pointer;font:inherit;font-size:.84rem;white-space:nowrap}
+.sw i{position:relative;width:38px;height:22px;border-radius:999px;background:#C9CED8;transition:background .2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.sw[aria-checked="true"] i{background:var(--favor)}
+.sw[aria-checked="true"] i::after{transform:translateX(16px)}
+.tipo-op{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font:inherit;text-align:left;color:inherit}
+.tipo-op b{display:block}
 table.cat{min-width:760px}
 .nota{display:block;margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--warn-soft);color:var(--ink);font-size:.8rem;white-space:normal}
 .ab{display:inline-block;font-weight:700;font-size:.78rem;letter-spacing:.02em;white-space:nowrap}
@@ -963,7 +970,7 @@ function viewTablero(){
     ${cs.length?`<div class="grid-wrap"><table class="xl adm"><thead><tr><th class="rn">No.</th><th>Nombre</th><th>Situación</th><th>Tipo</th><th>Última modif.</th><th>Estatus</th><th class="n">Total impuestos</th><th></th></tr></thead>
       <tbody>${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<tr class="xr${on?"":" inact"}" data-act="abrir" data-id="${esc(c.id)}">
         <td class="rn">${i+1}</td><td class="wrapc"><b>${esc(c.nombre)}</b>${c.rfc?`<br><span class="small muted">${esc(c.rfc)}</span>`:""}</td>
-        <td><span class="chip ${on?"favor":"mute"}">${on?"Activo":"Inactivo"}</span></td>
+        <td><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button></td>
         <td>${(c.regimenes||[]).map(r=>`<span class="ab">${abrev(c,r)}</span>`).join("<br>")}</td>
         <td>${ultimaMod(c)}</td>
         <td><span class="chip ${ok?"favor":"warn"}">${ok?"Actualizado":"Pendiente de actualizar"}</span></td>
@@ -1170,7 +1177,11 @@ function formCliente(c){
     <div class="two"><div class="field" id="wAct"${c.tipo==="PM"?"":" hidden"}><label for="cAct">Actividad</label><select id="cAct" name="actividad">${["Empresarial","Servicios"].map(a=>`<option${(c.actividad||"Empresarial")===a?" selected":""}>${a}</option>`).join("")}</select></div>
       <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div></div>
     <div class="field"><label for="cMail">Correo del cliente para su acceso (opcional)</label><input id="cMail" name="email_cliente" type="email" value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@correo.com"></div>
-    <button class="btn primary full" type="submit">${c.id?"Guardar cambios":"Agregar cliente"}</button>
+    ${c.id?"":`<fieldset><legend>Antes de crear, confirma</legend><div class="checks">
+      <label class="check"><input type="checkbox" required> Revisé el nombre y el RFC</label>
+      <label class="check"><input type="checkbox" required> El tipo de persona, régimen y actividad son correctos</label>
+      <label class="check"><input type="checkbox" required> Capturé el coeficiente de utilidad (si aplica)</label></div></fieldset>`}
+    <button class="btn primary full" type="submit">${c.id?"Guardar cambios":"Crear cliente"}</button>
     ${c.id?`<button class="btn danger full" type="button" data-act="borrarCliente">${S.confirm==="cliente"?"Toca otra vez para borrar el cliente y todos sus meses":"Borrar cliente"}</button>`:""}
   </form>`);
   syncClienteForm();
@@ -1179,7 +1190,7 @@ function syncClienteForm(){
   const t=$("#cTipo").value,box=t==="PM"?"#regPM":"#regPF";
   const sel=[...document.querySelectorAll(box+' input[name="reg"]:checked')].map(i=>i.value);
   $("#wCoef").hidden=!(t==="PM"&&sel.includes("601"));$("#wCoefA").hidden=!(t==="PM"&&sel.includes("624"));
-  const w=$("#wAct");if(w)w.hidden=t!=="PM";
+  const w=$("#wAct");if(w)w.hidden=!(t==="PM"&&(sel.includes("601")||sel.includes("626")));
 }
 function formMov(x){
   const c=S.clientes[S.cid],m=x?x.mes:S.m,edit=!S.preview&&(x?puedeEditarMov(x):puedeCapturar(c.id,m));
@@ -1373,7 +1384,10 @@ const act={
   salirVista(){S.preview=false;S.tabC="hoja";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
-  nuevoCliente(){S.confirm=null;formCliente()},
+  nuevoCliente(){S.confirm=null;openSheet("¿Qué tipo de cliente vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
+  async toggleActivo(d){const c=S.clientes[d.id];if(!c)return;const nc=clone(c);nc.activo=!activo(c);
+    try{const s2=await API.saveCliente(nc);S.clientes[d.id]=Object.assign({},nc,s2||{});toast(activo(S.clientes[d.id])?"Cliente activo":"Cliente inactivo")}catch(er){toast(errTxt(er),5000)}
+    const y=scrollY;render();scrollTo(0,y)},
   crearTipo(d){const k=CATALOGO[+d.i];S.confirm=null;formCliente({nombre:"",rfc:"",tipo:k.per,regimenes:[k.reg],coef:"",coef_aut:"",email_cliente:"",actividad:k.per==="PM"?k.act:"Empresarial / servicios",activo:true})},
   editCliente(){S.confirm=null;formCliente(S.clientes[S.cid])},
   cTipo(d){$("#cTipo").value=d.t;document.querySelectorAll('[data-act="cTipo"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===d.t));
@@ -1525,7 +1539,7 @@ document.addEventListener("submit",async e=>{
     const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo:d.tipo,regimenes:regs,coef:num(d.coef),coef_aut:num(d.coef_aut),email_cliente:(d.email_cliente||"").trim().toLowerCase()||null,actividad:d.tipo==="PM"?(d.actividad||"Empresarial"):"Empresarial / servicios",activo:d.activo!=="0"});
     if(d.id)c.id=d.id;
     $("#sheet").hidden=true;S.confirm=null;
-    try{const s=await API.saveCliente(c);S.clientes[s.id]=s;S.apartado=s.tipo;if(!prev){S.cid=s.id;S.vista="cliente";S.tabC="hoja"}toast(prev?"Cliente actualizado":"Cliente agregado")}catch(er){toast(errTxt(er),5000)}
+    try{const s=await API.saveCliente(c);S.clientes[s.id]=s;S.apartado=s.tipo;if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Cliente actualizado":"Cliente creado: ya aparece en la tabla")}catch(er){toast(errTxt(er),5000)}
     render();return;
   }
   if(fid==="fMov"){

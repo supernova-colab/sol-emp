@@ -1,6 +1,6 @@
 // Guarda la app para que abra rápido y sin internet; siempre intenta traer la versión nueva primero.
 // Solo maneja archivos de la propia app: la base de datos y las librerías externas van directo a internet.
-const CACHE="sol-emp-v26";
+const CACHE="sol-emp-v27";
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["./","./index.html","./manifest.webmanifest","./icon-192.png","./monigote.png?v=2"].map(u=>new Request(u,{cache:"reload"})))));self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
 self.addEventListener("fetch",e=>{
