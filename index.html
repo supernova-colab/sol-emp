@@ -921,12 +921,12 @@ function viewActualizar(){
     :`<div class="card empty"><p class="muted">Primero agrega clientes.</p></div>`}`;
 }
 /* ================= Vistas del Área de trabajo ================= */
-function barraMes(){
+function barraMes(sinFecha){
   return`<div class="period">
     <button class="btn ghost sm" data-act="mesPrev" aria-label="Mes anterior"${S.m<=1?" disabled":""}>‹</button>
     <select id="mes" data-change="mes" aria-label="Mes">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===S.m?" selected":""}>${n} ${YEAR}</option>`).join("")}</select>
     <button class="btn ghost sm" data-act="mesNext" aria-label="Mes siguiente"${S.m>=12?" disabled":""}>›</button>
-    <div class="due">${hoyTxt()}</div></div>`;
+    ${sinFecha?"":`<div class="due">${hoyTxt()}</div>`}</div>`;
 }
 const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales"><div class="row" style="gap:8px"><button class="btn sm" data-act="ayuda">? Ayuda</button><button class="btn sm" data-act="salir">Salir</button></div></div>
   <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:-12px"><span class="chip">${esAdmin()?"Administrador":"Cliente"}</span>${MODO_DEMO?`<span class="chip warn">Modo demostración</span>`:""}<span class="small muted" style="overflow-wrap:anywhere">${esc(S.auth.email)}</span></div>`;
@@ -955,16 +955,10 @@ function viewLogin(){
 }
 function viewTablero(){
   const cs=clientesOrden(),act=cs.filter(activo);
-  const tot=act.reduce((t,c)=>t+totalMes(c,S.m),0);
-  const pend=act.filter(c=>!actualizado(c,S.m)).length;
   const nombreAdm=S.auth&&S.auth.nombre||"";
   return`${quien()}
   <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.5rem">${nombreAdm?esc(nombreAdm):"Clientes"}</h2>${nombreAdm?"":`<p class="small">${esc(S.auth?S.auth.email:"")}</p>`}</div>
-  ${barraMes()}
-  <section class="tiles">
-    <div class="tile"><span>Total impuestos · ${MESES[S.m-1]}</span><b>${money(tot)}</b></div>
-    <div class="tile"><span>Pendientes de actualizar</span><b>${pend} de ${act.length}</b></div>
-  </section>
+  ${barraMes(true)}
   <section class="stack">
     <div class="sec-h"><h2>Clientes</h2></div>
     ${cs.length?`<div class="grid-wrap"><table class="xl adm"><thead><tr><th class="rn">No.</th><th>Nombre</th><th>Situación</th><th>Tipo</th><th>Última modif.</th><th>Estatus</th><th class="n">Total impuestos</th><th></th></tr></thead>
