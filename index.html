@@ -567,6 +567,17 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard-mod{font-size:.78rem;color:var(--muted)}
 .ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
 .pill.sm{padding:6px 12px;font-size:.82rem}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:8px 2px;border:0;background:none;color:var(--accent);font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.grupo{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.grupo>summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px;cursor:pointer}
+.grupo>summary::-webkit-details-marker{display:none}
+.g-txt{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.g-txt>b{font-family:var(--font-d);font-size:1.12rem;overflow-wrap:anywhere}
+.g-txt>span:not(.g-row){font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
+.g-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:4px}
+.g-chev{color:var(--muted);transition:transform .2s;margin-top:4px}
+.grupo[open] .g-chev{transform:rotate(90deg)}
+.g-body{display:flex;flex-direction:column;gap:10px;padding:0 12px 14px;border-top:1px solid var(--line);padding-top:12px;background:var(--bg)}
 .tools{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .tool{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
 .tool:last-child{border-bottom:0}
@@ -747,7 +758,7 @@ const Remote={
     for(const r of[c,p,m])if(r.error)throw r.error;
     return{clientes:c.data,periodos:p.data,movs:m.data};
   },
-  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal"])},
+  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal","titular"])},
   async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
   async setPeriodo(p){const{data,error}=await (await getSb()).from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
   async saveMov(m,auth){const row=clone(m);if(!auth.admin)row.capturado_por="cliente";if(!row.id)delete row.id;
@@ -1216,6 +1227,30 @@ function viewLogin(){
     </div>
     <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
+function tarjetaEmpresa(c,i){const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}">
+      <button class="ccard-main" data-act="abrir" data-id="${esc(c.id)}">
+        <span class="ccard-top">${i?`<span class="ccard-n">${i}</span>`:""}<b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
+        <span class="ccard-sub">${(c.regimenes||[]).map(r=>abrev(c,r)).join(" · ")}${c.email_cliente&&i?" · "+esc(c.email_cliente):""}</span>
+        <span class="ccard-row"><span class="pill ${ok?"ok":"pend"} sm">${ok?"Actualizado":"Pendiente de actualizar"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(totalMes(c,S.m))}</b></span></span>
+        <span class="ccard-mod">Última modificación: ${ultimaMod(c)}</span>
+      </button>
+      <div class="ccard-foot"><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button>
+        <button class="btn sm primary" data-act="abrir" data-id="${esc(c.id)}">Accesar</button></div></div>`}
+document.addEventListener("toggle",e=>{const d=e.target;if(d.classList&&d.classList.contains("grupo")){S.abiertos=S.abiertos||{};S.abiertos[d.dataset.k]=d.open}},true);
+function listaGrupos(cs){
+  const g=new Map();cs.forEach(c=>{const k=(c.email_cliente||"").toLowerCase()||"_"+c.id;if(!g.has(k))g.set(k,[]);g.get(k).push(c)});
+  let n=0;S.abiertos=S.abiertos||{};
+  return`<div class="clist">${[...g.entries()].map(([k,arr])=>{n++;
+    if(arr.length===1)return tarjetaEmpresa(arr[0],n);
+    const nom=arr.map(x=>x.titular).find(Boolean)||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
+    const tot=arr.reduce((t,c)=>t+(activo(c)?totalMes(c,S.m):0),0);
+    return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}"><summary>
+      <span class="ccard-n">${n}</span>
+      <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${nom!==k?" · "+esc(k):""}</span>
+        <span class="g-row"><span class="pill ${pend?"pend":"ok"} sm">${pend?pend+" pendiente"+(pend===1?"":"s"):"Todas actualizadas"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(tot)}</b></span></span></span>
+      <span class="g-chev">${ic("arrow")}</span></summary>
+      <div class="g-body">${arr.map(c=>tarjetaEmpresa(c,0)).join("")}</div></details>`}).join("")}</div>`;
+}
 function viewTablero(){
   const cs=clientesOrden(),nombreAdm=S.auth&&S.auth.nombre||"";
   const pend=cs.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
@@ -1229,15 +1264,7 @@ function viewTablero(){
       <p><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
       <p>Una vez concluido el mes, ya no se podrá actualizar o agregar nada.</p>
     </div>
-    ${cs.length?`<div class="clist">${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}">
-      <button class="ccard-main" data-act="abrir" data-id="${esc(c.id)}">
-        <span class="ccard-top"><span class="ccard-n">${i+1}</span><b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
-        <span class="ccard-sub">${(c.regimenes||[]).map(r=>abrev(c,r)).join(" · ")}${c.email_cliente?" · "+esc(c.email_cliente):""}</span>
-        <span class="ccard-row"><span class="pill ${ok?"ok":"pend"} sm">${ok?"Actualizado":"Pendiente de actualizar"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(totalMes(c,S.m))}</b></span></span>
-        <span class="ccard-mod">Última modificación: ${ultimaMod(c)}</span>
-      </button>
-      <div class="ccard-foot"><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button>
-        <button class="btn sm primary" data-act="abrir" data-id="${esc(c.id)}">Accesar</button></div></div>`}).join("")}</div>`
+    ${cs.length?listaGrupos(cs)
     :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar nuevo cliente”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
   <section class="stack" style="gap:10px">
@@ -1437,11 +1464,10 @@ function viewClienteAdmin(){
   const otras=c.email_cliente?clientesOrden().filter(x=>x.id!==c.id&&(x.email_cliente||"")===c.email_cliente):[];
   const uc=ultimaCaptura(c);
   return`${quien()}
-  <div class="actbar"><button class="btn" data-act="tablero">← Panel</button><button class="btn" data-act="verCliente">Ver como cliente</button><button class="btn" data-act="editCliente">Editar empresa</button><button class="btn" data-act="descargas">Excel / PDF</button></div>
+  <button class="back" data-act="tablero">‹ Mis clientes</button>
   <div class="sec-t" style="gap:8px">
     <div class="row between" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><h2 style="font-size:1.5rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
     <span class="small muted">${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
-    ${otras.length?`<span class="small muted">Este cliente también tiene: ${otras.map(x=>esc(x.nombre)).join(", ")}</span>`:""}
     <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">${precierreTag(c,S.m)}<span class="small muted">${uc?"Última captura: "+uc:"Sin capturas todavía"}</span></div>${LEYENDA_ACT}
   </div>
   ${barraMes(true)}
@@ -1449,7 +1475,14 @@ function viewClienteAdmin(){
   ${limiteCard(c,S.m)}
   ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["act","Actualización"],["calculo","Cálculo"],["excel","Excel"],["historial","Meses"]])}
   <section class="stack">${S.tabC==="ing"||S.tabC==="gas"?panelMovs(c,S.m,S.tabC):S.tabC==="act"?actualizacionEmpresa(c):S.tabC==="calculo"?tabCalculo(c,r):S.tabC==="excel"?`<p class="small muted" style="margin:0">Así queda el precierre, igual que su Excel. Desliza hacia los lados para verlo completo.</p><div class="xlview"><div class="pdoc">${precierreHTML(c,S.m)}</div></div>`:tabHistorial(c)}</section>
-  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>`;
+  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>
+  ${otras.length?`<section class="stack" style="gap:10px"><div class="sec-h"><h2 style="font-size:1.1rem">Otras empresas de ${esc(c.titular||"este cliente")}</h2></div><div class="tools">${otras.map(x=>`<button class="tool" data-act="abrir" data-id="${esc(x.id)}"><span><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div></section>`:""}
+  <section class="stack" style="gap:10px"><div class="sec-h"><h2 style="font-size:1.1rem">Opciones de la empresa</h2></div>
+    <div class="tools">
+      <button class="tool" data-act="verCliente"><span><b>Ver como cliente</b><span>Mira la app tal como la ve tu cliente</span></span><span class="go">${ic("arrow")}</span></button>
+      <button class="tool" data-act="editCliente"><span><b>Editar empresa</b><span>Nombre, correo, régimen, coeficiente y retenciones</span></span><span class="go">${ic("arrow")}</span></button>
+      <button class="tool" data-act="descargas"><span><b>Descargar Excel o PDF</b><span>Precierre de ${MESES[S.m-1].toLowerCase()}</span></span><span class="go">${ic("arrow")}</span></button>
+    </div></section>`;
 }
 function viewPanelCliente(){
   const prev=S.preview&&esAdmin();
@@ -1535,6 +1568,7 @@ function formCliente(c,regIni){
     <div class="two"><div class="field"><label for="cRfc">RFC (opcional)</label><input id="cRfc" name="rfc" maxlength="13" placeholder="Opcional" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
       <div class="field" id="wCoef"${reg==="601"?"":" hidden"}><label for="cCoef">Coeficiente de utilidad</label><input id="cCoef" name="coef" class="money coef" type="text" inputmode="decimal" value="${num(c.coef)?num(c.coef).toFixed(4):""}" placeholder="0.0000"></div></div>
     <div class="field"><label for="cMail">Correo del cliente (obligatorio)</label><input id="cMail" name="email_cliente" type="email" required value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@gmail.com, hotmail, icloud…"><span class="small muted" id="mailHint"></span></div>
+    <div class="field"><label for="cTit">Nombre del cliente (dueño)</label><input id="cTit" name="titular" value="${esc(c.titular||"")}" autocomplete="off" placeholder="Ej. Juan Pérez · opcional"><span class="small muted">Si una persona tiene varias empresas, usa el mismo correo y nombre: en tu panel salen juntas.</span></div>
     <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div>
     <fieldset><legend>Características fiscales</legend>
       <div class="fisc"><label class="check"><input type="checkbox" name="rivaOn" id="rivaOn"${f.retIva.aplica?" checked":""}> Le retienen IVA por sus ingresos</label><div class="pct"><input class="money" data-d="4" name="rivaPct" id="rivaPct" type="text" inputmode="decimal" value="${f.retIva.pct||""}" placeholder="0"><span>%</span></div></div>
@@ -1553,7 +1587,7 @@ function mailHint(){
   const i=$("#cMail"),h=$("#mailHint");if(!i||!h)return;
   const v=i.value.trim().toLowerCase(),id=($("#fCliente [name=id]")||{}).value;
   const otras=v?clientesOrden().filter(x=>x.id!==id&&(x.email_cliente||"").toLowerCase()===v):[];
-  h.innerHTML=otras.length?`Este correo ya tiene acceso a: <b>${otras.map(x=>esc(x.nombre)).join(", ")}</b>. Esta empresa se agregará a su cuenta.`
+  h.innerHTML=otras.length?`Este correo ya tiene acceso a: <b>${otras.map(x=>esc(x.nombre)).join(", ")}</b>. Esta empresa se agregará a su cuenta.`+(()=>{const t=$("#cTit"),n=otras.map(x=>x.titular).find(Boolean);if(t&&n&&!t.value)t.value=n;return""})()
     :/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?"Con este correo el cliente crea su cuenta y ve sus empresas. Sirve cualquier correo (Gmail, Hotmail, Outlook, iCloud, Yahoo…).":"";
 }
 function syncClienteForm(defaults){
@@ -2119,7 +2153,7 @@ document.addEventListener("submit",async e=>{
     }
     if(reg==="601"&&!num(d.coef)&&!confirm("No capturaste el coeficiente de utilidad. ¿Guardar así y capturarlo después?"))return;
     const prev=d.id?S.clientes[d.id]:null;
-    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo,regimenes:[reg],coef:reg==="601"?num(d.coef):0,coef_aut:0,email_cliente:mail,
+    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo,regimenes:[reg],coef:reg==="601"?num(d.coef):0,coef_aut:0,email_cliente:mail,titular:(d.titular||"").trim()||null,
       actividad:reg==="601"?(d.actividad||"Empresarial"):reg==="606"?"Arrendamiento":"Empresarial",activo:d.activo!=="0",
       fiscal:{iva:[!!d.rivaOn,num(d.rivaPct)],isr:[!!d.risrOn,num(d.risrPct)]}});
     if(d.id)c.id=d.id;

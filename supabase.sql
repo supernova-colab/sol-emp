@@ -141,3 +141,6 @@ language sql stable security definer set search_path = public as $$
   select exists (select 1 from periodos where cliente_id = cid and anio = a and mes = m and estado = 'abierto')
      and (now() at time zone 'America/Mexico_City')::date <= (make_date(a, m, 1) + interval '1 month' - interval '1 day')::date;
 $$;
+
+-- 20 nov (2): nombre del dueño para agrupar sus empresas
+alter table clientes add column if not exists titular text;
