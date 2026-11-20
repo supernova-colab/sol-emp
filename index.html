@@ -574,6 +574,12 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .tool b{font-weight:700}.tool span span{font-size:.82rem;color:var(--muted)}
 .tool:disabled{opacity:.45}
 @media (min-width:900px){.clist{display:grid;grid-template-columns:1fr 1fr}}
+.tabs.many{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs.many::-webkit-scrollbar{display:none}
+.tabs.many button{flex:0 0 auto;padding:4px 16px}
+table.actm th.cur{background:var(--accent-soft);color:var(--accent)}
+table.actm td.emp{min-width:230px;font-size:.8rem}
+table.actm tr.ivar input.ycell{background:#F6C445}
 </style>
 </head>
 <body>
@@ -843,7 +849,7 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
   let rows=[],isr=0,pago=0,extra={};
   if(reg==="601"){
     const ingMes=suma(c.id,reg,mes,mes,"elab").base,otros=A("otros_ing"),ingAnt=A("ing_ant"),total=ingMes+otros+ingAnt;
-    const coef=num(c.coef),util=total*coef,ret=retMes+retAnt,base=util-ptu-perd-ret-rend;
+    const coef=A("coef")||num(c.coef),util=total*coef,ret=retMes+retAnt,base=util-ptu-perd-ret-rend;
     isr=base*CFG.tasaPM/100;pago=Math.max(0,Math.round(isr-pagosAnt-comp));
     rows=[["Ingresos acumulables del mes",ingMes],["Más: otros ingresos adicionales",otros,"","otros_ing"],["Más: ingresos acumulables de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos",total,"sum"],
       ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util,"sum"],["Menos: PTU acumulada",-ptu,"","ptu"],
@@ -899,7 +905,7 @@ function calc(c,mes){
   const E=suma(c.id,null,mes,mes,"elab"),Co=suma(c.id,null,mes,mes,"cobr");
   const n=Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.mes===mes).length;
   const notes=[];
-  if((c.regimenes||[]).includes("601")&&!num(c.coef))notes.push("Falta el coeficiente de utilidad: agrégalo en Editar empresa o en Actualización de precierres.");
+  if((c.regimenes||[]).includes("601")&&!num(c.coef)&&!aj(c.id,mes,"601","coef"))notes.push("Falta el coeficiente de utilidad: agrégalo en Editar empresa o en Actualización de precierres.");
   // Ingresos del mes para el resumen: lo que cuenta para ISR en el régimen
   const ingRes=(c.regimenes||[]).includes("601")?E.base:Co.base;
   return{iva,regs,isr,ret,total:isr+iva.cargo+ret,n,E,Co,G:Gm,ing:ingRes,notes};
@@ -1157,7 +1163,7 @@ function viewActualizar(){
     if(!aplica)return`<td class="na" aria-label="No aplica"></td>`;
     const decl=periodo(f.c.id,S.m).estado==="declarado";
     let v;
-    if(k==="coef")v=num(f.c.coef);
+    if(k==="coef")v=aj(f.c.id,S.m,f.r,"coef")||num(f.c.coef);
     else if(k==="iva_favor_ant")v=num(ajustes(f.c.id,S.m).iva_favor_ant);
     else v=aj(f.c.id,S.m,f.r,k);
     if(k==="iva_favor_ant"&&!f.primero)return`<td class="na" aria-label="Se captura en la primera fila de la empresa"></td>`;
@@ -1390,6 +1396,26 @@ function tabHistorial(c){
     <tbody>${rows}<tr class="trt"><td>Año</td><td></td><td class="n">${money(ti)}</td><td class="n">${money(tg)}</td><td class="n">${money(tv)}</td><td class="n">${money(tr)}</td><td class="n">${money(tt)}</td></tr></tbody></table></div>
     <p class="small muted" style="margin:0">Toca un mes para abrirlo. Los meses declarados conservan lo que se declaró.</p>`;
 }
+// Hoja de ACTUALIZACIÓN de una empresa: conceptos de su régimen × 12 meses (igual que el Excel)
+const ACT_LBL={ing_ant:"Ingresos acumulables meses ant.",otros_ing:"Otros ingresos adicionales",gas_ant:"Deducc. acumulables meses ant.",otras_ded:"Otras deducciones adicionales",
+  depreciacion:"Depreciación",coef:"Coeficiente de utilidad",ptu:"P.T.U. acumulada",perdidas:"Pérdidas fiscales",rendimientos:"Rendimientos acumulados (*)",
+  pagos_ant:"Pagos provis. acumulados mes. ant.",isr_ret_ant:"ISR retenido de meses anteriores (*)",comp:"Compensación ISR a favor",iva_favor_ant:"Saldo a favor de IVA meses ant."};
+function actualizacionEmpresa(c){
+  const reg=regDe(c),cols=COLS_ACT.filter(([,,ap])=>ap.includes(reg));
+  const celda=(k,m)=>{
+    const decl=periodo(c.id,m).estado==="declarado";
+    const v=k==="iva_favor_ant"?num(ajustes(c.id,m).iva_favor_ant):k==="coef"?(aj(c.id,m,reg,"coef")||num(c.coef)):aj(c.id,m,reg,k);
+    if(decl)return`<td class="n">${k==="coef"?v.toFixed(4):v?money(v):"—"}</td>`;
+    return`<td><input class="ycell money${k==="coef"?" coef":""}${k==="iva_favor_ant"?" iva":""}" type="text" inputmode="decimal" value="${k==="coef"?(v?v.toFixed(4):""):fmtN(v)}" placeholder="${k==="coef"?"0.0000":"0.00"}" data-act2="${esc(c.id)}|${reg}|${k}|${m}" aria-label="${esc(ACT_LBL[k])} ${MESES[m-1]}"></td>`;
+  };
+  return`<section class="card stack">
+    <div class="stack" style="gap:2px"><b style="font-family:var(--font-d);font-size:1.1rem">${esc(c.nombre.toUpperCase())}</b><span class="small muted">ACTUALIZACIÓN DEL PAGO PROVISIONAL · ${esc(REGS[reg].n.toUpperCase())}</span></div>
+    ${reg==="601"?`<div class="row between" style="gap:12px;flex-wrap:wrap"><b>¿La empresa tiene actividad de autotransporte?</b><div class="seg" role="group"><button type="button" data-act="setAut" data-v="si" aria-pressed="${esAut(c)}">Sí</button><button type="button" data-act="setAut" data-v="no" aria-pressed="${!esAut(c)}">No</button></div></div>`:""}
+    <p class="small muted" style="margin:0">Lo que escribes se guarda solo y se conecta con el precierre de cada mes. Desliza hacia los lados para ver todos los meses.</p>
+    <div class="grid-wrap"><table class="xl act actm"><thead><tr><th class="emp">Concepto</th>${MESES.map((n,i)=>`<th class="n${i+1===S.m?" cur":""}">${n}</th>`).join("")}</tr></thead>
+    <tbody>${cols.map(([k])=>`<tr${k==="iva_favor_ant"?' class="ivar"':""}><td class="emp"><b>${ACT_LBL[k].toUpperCase()}</b></td>${MESES.map((_,i)=>celda(k,i+1)).join("")}</tr>`).join("")}</tbody></table></div>
+    <p class="small" style="margin:0;color:var(--pay);font-weight:700">(*) Puede tener cantidad desde el primer mes.</p></section>`;
+}
 // Pestaña de ingresos o gastos: botón de agregar y la tabla
 function panelMovs(c,m,k){
   const ing=k==="ing",edit=!S.preview&&puedeCapturar(c.id,m);
@@ -1403,11 +1429,11 @@ function panelMovs(c,m,k){
       <div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Importe</th><th class="n">IVA</th><th></th></tr></thead><tbody>${pend.map(x=>`<tr><td class="nw">${fechaCorta(x.fecha)}</td><td class="cc"><b>${esc(x.concepto||"")}</b></td><td class="n">${money(x.subtotal)}</td><td class="n">${money(x.iva)}</td><td class="acc"><button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button></td></tr>`).join("")}</tbody></table></div></section>`:""}
     ${ing?"":`<p class="note info">Para bajar el IVA es necesario meter facturas de gasto con IVA <b>pagadas</b>.</p>`}`;
 }
-const tabsHTML=tabs=>`<div class="tabs" role="tablist" style="grid-template-columns:repeat(${tabs.length},1fr)">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>`;
+const tabsHTML=tabs=>`<div class="tabs${tabs.length>4?" many":""}" role="tablist" style="grid-template-columns:repeat(${tabs.length},1fr)">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>`;
 function viewClienteAdmin(){
   const c=S.clientes[S.cid];if(!c){S.vista="tablero";return viewTablero()}
   const p=periodo(c.id,S.m),r=calc(c,S.m),f=fiscal(c);
-  if(!["ing","gas","calculo","excel","historial"].includes(S.tabC))S.tabC="ing";
+  if(!["ing","gas","act","calculo","excel","historial"].includes(S.tabC))S.tabC="ing";
   const otras=c.email_cliente?clientesOrden().filter(x=>x.id!==c.id&&(x.email_cliente||"")===c.email_cliente):[];
   const uc=ultimaCaptura(c);
   return`${quien()}
@@ -1421,8 +1447,8 @@ function viewClienteAdmin(){
   ${barraMes(true)}
   <section class="card hero">${resumenHero(c,r,p)}${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}</section>
   ${limiteCard(c,S.m)}
-  ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["calculo","Cálculo"],["excel","Excel"],["historial","Meses"]])}
-  <section class="stack">${S.tabC==="ing"||S.tabC==="gas"?panelMovs(c,S.m,S.tabC):S.tabC==="calculo"?tabCalculo(c,r):S.tabC==="excel"?`<p class="small muted" style="margin:0">Así queda el precierre, igual que su Excel. Desliza hacia los lados para verlo completo.</p><div class="xlview"><div class="pdoc">${precierreHTML(c,S.m)}</div></div>`:tabHistorial(c)}</section>
+  ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["act","Actualización"],["calculo","Cálculo"],["excel","Excel"],["historial","Meses"]])}
+  <section class="stack">${S.tabC==="ing"||S.tabC==="gas"?panelMovs(c,S.m,S.tabC):S.tabC==="act"?actualizacionEmpresa(c):S.tabC==="calculo"?tabCalculo(c,r):S.tabC==="excel"?`<p class="small muted" style="margin:0">Así queda el precierre, igual que su Excel. Desliza hacia los lados para verlo completo.</p><div class="xlview"><div class="pdoc">${precierreHTML(c,S.m)}</div></div>`:tabHistorial(c)}</section>
   <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>`;
 }
 function viewPanelCliente(){
@@ -1911,6 +1937,15 @@ const act={
     const y=scrollY;render();scrollTo(0,y)},
   crearTipo(d){const k=CATALOGO[+d.i];S.confirm=null;formCliente(null,k.reg)},
   tarifas(){S.vista="tarifas";render();scrollTo(0,0)},
+  async setAut(d){const c=S.clientes[S.cid];const nc=clone(c);nc.actividad=d.v==="si"?"Autotransporte":"Empresarial";
+    const f=fiscal(nc);nc.fiscal={iva:[f.aut,f.aut?CFG.retAut:0],isr:[false,0]};
+    try{const s2=await API.saveCliente(nc);const cc=S.clientes[c.id]=normCliente(Object.assign({},nc,s2||{}));
+      // Recalcula la retención de IVA de sus ingresos en los meses que no están declarados
+      for(const x of Object.values(S.movs)){if(x.cliente_id!==c.id||x.tipo!=="ingreso"||periodo(c.id,x.mes).estado==="declarado")continue;
+        const iv=est(x)==="I"?0:(d.v==="si"?Math.round(x.subtotal*CFG.retAut)/100:0);if(Math.abs(iv-(+x.iva_ret||0))<0.005)continue;
+        const n=clone(x);n.iva_ret=iv;const s3=await API.saveMov(n,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>s3[k]=+s3[k]);S.movs[x.id]=Object.assign({},n,s3)}
+      toast(d.v==="si"?"Marcada como autotransporte: retiene 4 % de IVA":"Ya no es autotransporte")}catch(e){toast(errTxt(e),5000)}
+    const y=scrollY;render();scrollTo(0,y)},
   async tarifasBase(){CFG=clone(CFG_BASE);try{await API.saveConfig(CFG);toast("Tablas regresadas a los valores originales")}catch(e){toast("No se guardó: falta correr el SQL nuevo en Supabase.",6000)}render()},
   abre(d){S.abre[d.k]=!S.abre[d.k];const y=scrollY;render();scrollTo(0,y)},
   descargas(){openSheet("Descargar precierre",`<div class="stack" style="gap:12px"><button class="tile-btn" data-act="xlsCliente"><b>Excel</b><span>Con el formato del despacho</span></button><button class="tile-btn" data-act="pdfCliente"><b>PDF</b><span>Para imprimir o enviar</span></button></div>`)},
@@ -2020,15 +2055,17 @@ document.addEventListener("change",async e=>{
   if(t.id==="mvReg"){syncMov(true);return}
   if(t.dataset.act2||t.dataset.change==="mesesPF"){
     const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),t.type==="checkbox"?t.checked:num(t.value)]];
+    const S_m=S.m;
     try{
-      for(const [cid,reg,key,val] of lista){
+      for(const item of lista){
+        let[cid,reg,key,a4,a5]=item,mm=S.m,val=a4;if(item.length===5){mm=+a4||S.m;val=a5}
         const c=S.clientes[cid];
-        if(key==="coef"){const nc=clone(c);nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=normCliente(Object.assign({},nc,s2||{}));continue}
-        const p=clone(periodo(cid,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);
-        if(key==="_act"){p.ajustes._act=!!val;const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;continue}
+        if(key==="coef"&&mm>=defM){const nc=clone(c);nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=normCliente(Object.assign({},nc,s2||{}))}
+        const p=clone(periodo(cid,mm));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);
+        if(key==="_act"){p.ajustes._act=!!val;const s2=await API.setPeriodo(p);S.periodos[pkey(cid,mm)]=s2||p;continue}
         p.ajustes._act=true;
         if(key==="iva_favor_ant")p.ajustes.iva_favor_ant=val;else{p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=val}
-        const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;
+        const s2=await API.setPeriodo(p);S.periodos[pkey(cid,mm)]=s2||p;
       }
       toast("Guardado");
       if(t.dataset.act2&&t.type!=="checkbox"){const cid=t.dataset.act2.split("|")[0];document.querySelectorAll('.okchk input').forEach(cb=>{if(cb.dataset.act2.split("|")[0]===cid){cb.checked=true;cb.parentNode.lastChild.textContent=" Actualizado"}})}
