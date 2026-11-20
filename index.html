@@ -531,6 +531,37 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .xlview{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;background:#E9ECF2;padding:10px}
 .xlview .pdoc{padding:0;align-items:stretch}.xlview .pp{min-width:980px;max-width:none}
 .tabs button{font-size:.84rem}
+.mvcard{container:mvq/inline-size}
+@container mvq (max-width:1100px){
+  .mvcard .grid-wrap,.card .grid-wrap:has(table.mv){overflow:visible;border:0}
+  table.mv{min-width:0;font-size:.88rem}
+  table.mv thead{display:none}
+  table.mv tbody tr{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:14px 2px;border-bottom:1px solid var(--line)}
+  table.mv tbody td{padding:0;border:0;min-width:0}
+  table.mv td.cc{grid-column:1;grid-row:1}
+  table.mv td.ne{grid-column:2;grid-row:1;font-size:1rem}
+  table.mv td.nw{grid-column:1;grid-row:2;font-size:.8rem}
+  table.mv td.ch{grid-column:2;grid-row:2;text-align:right;max-width:170px}
+  table.mv td.ch .tchip{white-space:normal}
+  table.mv td.im,table.mv td.iv,table.mv td.rt2{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted)}
+  table.mv td.im::before,table.mv td.iv::before,table.mv td.rt2::before{content:attr(data-l)}
+  table.mv td.acc{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:4px}
+  table.mv td.acc .mini{margin:0}
+  table.mv tfoot tr{display:flex;justify-content:space-between;gap:10px}
+  table.mv tfoot td.e{display:none}
+  table.mv tfoot td{padding:8px 2px}
+}
+@container mvq (min-width:600px) and (max-width:1100px){
+  table.mv tbody tr{grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px 18px;padding:16px 4px}
+  table.mv td.cc{grid-column:1 / 4;grid-row:1}
+  table.mv td.ne{grid-column:4;grid-row:1;text-align:right}
+  table.mv td.nw{grid-column:1 / 4;grid-row:2}
+  table.mv td.ch{grid-column:4;grid-row:2}
+  table.mv td.im,table.mv td.iv,table.mv td.rt2{grid-column:auto;grid-row:3;flex-direction:column;justify-content:flex-start;gap:2px;color:var(--ink);font-size:.9rem}
+  table.mv td.im::before,table.mv td.iv::before,table.mv td.rt2::before{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  table.mv td.im{text-align:left}table.mv td.iv,table.mv td.rt2{text-align:left}
+  table.mv td.acc{grid-column:4;grid-row:3;align-self:end;margin:0}
+}
 @media (max-width:640px){
   .mvcard .grid-wrap,.card .grid-wrap:has(table.mv){overflow:visible;border:0}
   table.mv{min-width:0;font-size:.88rem}
@@ -552,7 +583,8 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 }
 .leyendas{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:14px;background:#FDEBD3;color:#7A3E06;border-left:5px solid #D97706}
 .leyendas p{margin:0;font-size:.92rem;line-height:1.4}
-.clist{display:flex;flex-direction:column;gap:12px}
+.clist{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+@media (min-width:900px){.clist{align-items:start}}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .ccard.inact{opacity:.6}
 .ccard-main{display:flex;flex-direction:column;gap:8px;width:100%;padding:16px;border:0;background:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
@@ -568,6 +600,26 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
 .pill.sm{padding:6px 12px;font-size:.82rem}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:8px 2px;border:0;background:none;color:var(--accent);font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qa button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 8px;border-radius:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.84rem;font-weight:600;line-height:1.2;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
+.qa button:active{transform:scale(.97)}
+.qa button:hover{border-color:var(--accent)}
+.qa i{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--accent-soft);color:var(--accent)}
+.qa .ic{width:22px;height:22px}
+.otras{display:flex;flex-direction:column;gap:8px}
+.otras-l{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.otras-l::-webkit-scrollbar{display:none}
+.otras-l button{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer;max-width:240px}
+.otras-l b{font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px}
+.otras-l span{font-size:.76rem;color:var(--muted)}
+.emp-lay{display:flex;flex-direction:column;gap:26px}
+.emp-side,.emp-main{display:flex;flex-direction:column;gap:22px;min-width:0}
+@media (min-width:700px) and (max-width:899px){.wrap{max-width:820px}}
+@media (min-width:1100px){
+  .wrap{max-width:1300px}
+  .emp-lay{display:grid;grid-template-columns:360px minmax(0,1fr);gap:28px;align-items:start}
+  .emp-side .rt{grid-template-columns:1fr 1fr}
+}
 .grupo{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .grupo>summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px;cursor:pointer}
 .grupo>summary::-webkit-details-marker{display:none}
@@ -995,6 +1047,9 @@ const FIRMA={nombre:"Sol-Emp Integradora de Servicios S.C.",lema:"Honestidad y P
   dir:"Helsinki #2, esq. Ciudad del Vaticano, Fracc. Monte Magno, C.P. 91193, Xalapa, Veracruz",
   fb:"https://www.facebook.com/integradorasolemp",tw:"https://twitter.com/Solemp_SC",li:"https://www.linkedin.com/in/sol-emp-integradora-de-servicios-s-c-599046bb/"};
 const ICON={
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  pen:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  down:'<path d="M12 3v12M7 10l5 5 5-5M4 20h16"/>',
   home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
   brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
   calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h1M12 12h1M16 12h0M8 16h1M12 16h1M16 16h0"/>',
@@ -1465,24 +1520,26 @@ function viewClienteAdmin(){
   const uc=ultimaCaptura(c);
   return`${quien()}
   <button class="back" data-act="tablero">‹ Mis clientes</button>
+  <div class="emp-lay"><aside class="emp-side">
   <div class="sec-t" style="gap:8px">
     <div class="row between" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><h2 style="font-size:1.5rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
-    <span class="small muted">${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
+    <span class="small muted">${c.titular?esc(c.titular)+" · ":""}${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
     <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">${precierreTag(c,S.m)}<span class="small muted">${uc?"Última captura: "+uc:"Sin capturas todavía"}</span></div>${LEYENDA_ACT}
   </div>
+  <div class="qa">
+    <button data-act="verCliente"><i>${ic("eye")}</i><span>Ver como cliente</span></button>
+    <button data-act="editCliente"><i>${ic("pen")}</i><span>Editar empresa</span></button>
+    <button data-act="descargas"><i>${ic("down")}</i><span>Excel / PDF</span></button>
+  </div>
+  ${otras.length?`<div class="otras"><span class="eyebrow">Otras empresas de ${esc(c.titular||"este cliente")}</span><div class="otras-l">${otras.map(x=>`<button data-act="abrir" data-id="${esc(x.id)}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></div>`:""}
   ${barraMes(true)}
   <section class="card hero">${resumenHero(c,r,p)}${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}</section>
   ${limiteCard(c,S.m)}
+  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>
+  </aside><div class="emp-main">
   ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["act","Actualización"],["calculo","Cálculo"],["excel","Excel"],["historial","Meses"]])}
   <section class="stack">${S.tabC==="ing"||S.tabC==="gas"?panelMovs(c,S.m,S.tabC):S.tabC==="act"?actualizacionEmpresa(c):S.tabC==="calculo"?tabCalculo(c,r):S.tabC==="excel"?`<p class="small muted" style="margin:0">Así queda el precierre, igual que su Excel. Desliza hacia los lados para verlo completo.</p><div class="xlview"><div class="pdoc">${precierreHTML(c,S.m)}</div></div>`:tabHistorial(c)}</section>
-  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>
-  ${otras.length?`<section class="stack" style="gap:10px"><div class="sec-h"><h2 style="font-size:1.1rem">Otras empresas de ${esc(c.titular||"este cliente")}</h2></div><div class="tools">${otras.map(x=>`<button class="tool" data-act="abrir" data-id="${esc(x.id)}"><span><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div></section>`:""}
-  <section class="stack" style="gap:10px"><div class="sec-h"><h2 style="font-size:1.1rem">Opciones de la empresa</h2></div>
-    <div class="tools">
-      <button class="tool" data-act="verCliente"><span><b>Ver como cliente</b><span>Mira la app tal como la ve tu cliente</span></span><span class="go">${ic("arrow")}</span></button>
-      <button class="tool" data-act="editCliente"><span><b>Editar empresa</b><span>Nombre, correo, régimen, coeficiente y retenciones</span></span><span class="go">${ic("arrow")}</span></button>
-      <button class="tool" data-act="descargas"><span><b>Descargar Excel o PDF</b><span>Precierre de ${MESES[S.m-1].toLowerCase()}</span></span><span class="go">${ic("arrow")}</span></button>
-    </div></section>`;
+  </div></div>`;
 }
 function viewPanelCliente(){
   const prev=S.preview&&esAdmin();
