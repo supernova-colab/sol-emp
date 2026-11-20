@@ -550,6 +550,30 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
   table.mv tfoot td.e{display:none}
   table.mv tfoot td{padding:8px 2px}
 }
+.leyendas{display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:14px;background:#FDEBD3;color:#7A3E06;border-left:5px solid #D97706}
+.leyendas p{margin:0;font-size:.92rem;line-height:1.4}
+.clist{display:flex;flex-direction:column;gap:12px}
+.ccard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.ccard.inact{opacity:.6}
+.ccard-main{display:flex;flex-direction:column;gap:8px;width:100%;padding:16px;border:0;background:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
+.ccard-top{display:flex;align-items:center;gap:10px}
+.ccard-top b{flex:1;font-family:var(--font-d);font-size:1.12rem;overflow-wrap:anywhere}
+.ccard-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.8rem;flex:none}
+.ccard-sub{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
+.ccard-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ccard-tot{display:flex;flex-direction:column;align-items:flex-end}
+.ccard-tot span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.ccard-tot b{font-family:var(--font-d);font-size:1.2rem}
+.ccard-mod{font-size:.78rem;color:var(--muted)}
+.ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
+.pill.sm{padding:6px 12px;font-size:.82rem}
+.tools{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.tool{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
+.tool:last-child{border-bottom:0}
+.tool>span:first-child{display:flex;flex-direction:column;gap:2px}
+.tool b{font-weight:700}.tool span span{font-size:.82rem;color:var(--muted)}
+.tool:disabled{opacity:.45}
+@media (min-width:900px){.clist{display:grid;grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -1187,38 +1211,38 @@ function viewLogin(){
     <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
 function viewTablero(){
-  const cs=clientesOrden();
-  const nombreAdm=S.auth&&S.auth.nombre||"";
+  const cs=clientesOrden(),nombreAdm=S.auth&&S.auth.nombre||"";
+  const pend=cs.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
   return`${quien()}
-  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${nombreAdm?esc(nombreAdm):"Clientes"}</h2>${nombreAdm?"":`<p class="small">${esc(S.auth?S.auth.email:"")}</p>`}</div>
-  <div class="bigbtns">
-    <button class="tile-btn primary" data-act="nuevoCliente"><b>+ Registrar nuevo cliente</b><span>Elige el régimen y listo</span></button>
-    <button class="tile-btn" data-act="actualizar"${cs.length?"":" disabled"}><b>Actualización de precierres</b><span>Captura de meses anteriores</span></button>
-    <button class="tile-btn" data-act="tarifas"><b>Tablas y tarifas</b><span>ISR personas físicas y morales</span></button>
-    <button class="tile-btn" data-act="xlsTablero"${cs.length?"":" disabled"}><b>Descargar Excel</b><span>Resumen de ${MESES[S.m-1].toLowerCase()}</span></button>
-  </div>
+  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${nombreAdm?esc(nombreAdm):"Mis clientes"}</h2></div>
+  <button class="btn primary full big" data-act="nuevoCliente">+ Registrar nuevo cliente</button>
   ${barraMes(true)}
-  <section class="stack">
-    <div class="sec-h"><h2>Clientes</h2><span class="small muted">${cs.length} empresa${cs.length===1?"":"s"}</span></div>
-    ${cs.length?`<div class="grid-wrap"><table class="xl adm"><thead><tr><th class="rn">No.</th><th>Nombre</th><th>Situación</th><th>Tipo</th><th>Última modif.</th><th>Estatus</th><th class="n">Total impuestos</th><th></th></tr></thead>
-      <tbody>${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<tr class="xr${on?"":" inact"}" data-act="abrir" data-id="${esc(c.id)}">
-        <td class="rn">${i+1}</td><td class="wrapc"><b>${esc(c.nombre)}</b>${c.email_cliente?`<br><span class="small muted">${esc(c.email_cliente)}</span>`:""}</td>
-        <td><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button></td>
-        <td>${(c.regimenes||[]).map(r=>`<span class="ab">${abrev(c,r)}</span>`).join("<br>")}</td>
-        <td>${ultimaMod(c)}</td>
-        <td><span class="chip ${ok?"favor":"warn"}">${ok?"Actualizado":"Pendiente de actualizar"}</span></td>
-        <td class="n"><b>${money(totalMes(c,S.m))}</b></td>
-        <td><span class="btn sm primary">Accesar</span></td></tr>`}).join("")}</tbody></table></div>
-      <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Toca una empresa para entrar.</p>`
-    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Regístralo con el botón de arriba o desde la tabla de regímenes.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
+  <section class="stack" style="gap:14px">
+    <div class="sec-h"><h2>Clientes</h2><span class="small muted">${cs.length} empresa${cs.length===1?"":"s"}${pend?" · "+pend+" pendiente"+(pend===1?"":"s"):""}</span></div>
+    <div class="leyendas">
+      <p><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
+      <p>Una vez concluido el mes, ya no se podrá actualizar o agregar nada.</p>
+    </div>
+    ${cs.length?`<div class="clist">${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}">
+      <button class="ccard-main" data-act="abrir" data-id="${esc(c.id)}">
+        <span class="ccard-top"><span class="ccard-n">${i+1}</span><b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
+        <span class="ccard-sub">${(c.regimenes||[]).map(r=>abrev(c,r)).join(" · ")}${c.email_cliente?" · "+esc(c.email_cliente):""}</span>
+        <span class="ccard-row"><span class="pill ${ok?"ok":"pend"} sm">${ok?"Actualizado":"Pendiente de actualizar"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(totalMes(c,S.m))}</b></span></span>
+        <span class="ccard-mod">Última modificación: ${ultimaMod(c)}</span>
+      </button>
+      <div class="ccard-foot"><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button>
+        <button class="btn sm primary" data-act="abrir" data-id="${esc(c.id)}">Accesar</button></div></div>`}).join("")}</div>`
+    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar nuevo cliente”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
-  <section class="stack">
-    <div class="sec-t"><h2 style="font-size:1.15rem">Regímenes</h2><p class="small">Toca <b>Crear</b> para registrar una empresa de ese régimen.</p></div>
-    <div class="grid-wrap"><table class="xl cat"><thead><tr><th class="rn">No.</th><th>Tipo / persona</th><th>Abreviatura</th><th>Régimen fiscal</th><th>Actividad</th><th></th></tr></thead>
-      <tbody>${CATALOGO.map((k,i)=>`<tr><td class="rn">${i+1}</td><td>${k.per==="PM"?"Moral":"Física"}</td><td><span class="ab">${k.ab}</span></td><td class="wrapc">${k.rf}</td><td class="wrapc">${k.act}</td><td><button class="btn sm primary" data-act="crearTipo" data-i="${i}">Crear</button></td></tr>`).join("")}</tbody></table></div>
+  <section class="stack" style="gap:10px">
+    <div class="sec-h"><h2 style="font-size:1.1rem">Herramientas</h2></div>
+    <div class="tools">
+      <button class="tool" data-act="actualizar"${cs.length?"":" disabled"}><span><b>Actualización de precierres</b><span>Captura lo de meses anteriores (celdas amarillas)</span></span><span class="go">${ic("arrow")}</span></button>
+      <button class="tool" data-act="tarifas"><span><b>Tablas y tarifas</b><span>Tarifas de ISR de personas físicas y morales</span></span><span class="go">${ic("arrow")}</span></button>
+      <button class="tool" data-act="xlsTablero"${cs.length?"":" disabled"}><span><b>Descargar Excel</b><span>Resumen de todos los clientes de ${MESES[S.m-1].toLowerCase()}</span></span><span class="go">${ic("arrow")}</span></button>
+    </div>
   </section>`;
 }
-// Estatus del precierre que ve todo mundo: verde actualizado, naranja pendiente
 const precierreTag=(c,m)=>actualizado(c,m)?`<span class="pill ok">Precierre actualizado</span>`:`<span class="pill pend">Precierre pendiente por actualizar</span>`;
 const LEYENDA_ACT=`<p class="small muted" style="margin:0">Los precierres se actualizan una vez terminado el mes anterior.</p>`;
 function limiteCard(c,m){
