@@ -124,3 +124,20 @@ alter table clientes add column if not exists activo boolean not null default tr
 alter table clientes add column if not exists actividad text;
 alter table movimientos add column if not exists nota text;
 alter table admins add column if not exists nombre text;
+
+-- ===== Actualización (20 nov 2026): 5 regímenes, tablas y tarifas, tasas de IVA y cobros a crédito =====
+alter table clientes add column if not exists fiscal jsonb;
+alter table movimientos add column if not exists tasa_iva text;
+alter table movimientos add column if not exists ref_id uuid;
+create table if not exists config (clave text primary key, valor jsonb not null, actualizado timestamptz default now());
+alter table config enable row level security;
+drop policy if exists "config leer" on config;
+create policy "config leer" on config for select using (auth.role() = 'authenticated');
+drop policy if exists "config admin" on config;
+create policy "config admin" on config for all using (es_admin()) with check (es_admin());
+-- El cliente solo puede capturar hasta el último día del mes (hora de México)
+create or replace function captura_abierta(cid uuid, a int, m int) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from periodos where cliente_id = cid and anio = a and mes = m and estado = 'abierto')
+     and (now() at time zone 'America/Mexico_City')::date <= (make_date(a, m, 1) + interval '1 month' - interval '1 day')::date;
+$$;

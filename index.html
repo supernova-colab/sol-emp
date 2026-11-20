@@ -382,6 +382,111 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
   .pc-box .pc-head{grid-column:1 / -1}
   .nav .in{max-width:520px}
 }
+/* ===== Rediseño nov 2026 ===== */
+.bigbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bigbtns.two{grid-template-columns:1fr 1fr}
+.tile-btn{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-height:84px;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--surface);text-align:left;cursor:pointer;color:var(--ink);font:inherit;box-shadow:0 1px 2px rgba(21,25,42,.04)}
+.tile-btn b{font-family:var(--font-d);font-size:1.02rem;line-height:1.25}
+.tile-btn span{font-size:.8rem;color:var(--muted)}
+.tile-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tile-btn.primary span{color:#DCE3F5}
+.tile-btn:disabled{opacity:.45;cursor:default}
+.bigbar{display:flex;gap:10px}
+.btn.big{min-height:54px;font-size:1.02rem;padding:12px 20px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;font-weight:700;font-size:.92rem}
+.pill::before{content:"";width:10px;height:10px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--favor-soft);color:var(--favor)}
+.pill.pend{background:#FDEBD3;color:#B45309}
+.banner.danger{background:var(--pay-soft);color:var(--pay)}
+.note.danger{background:var(--pay-soft);color:var(--pay)}
+.lim{display:flex;flex-direction:column;gap:10px}
+.lim .bar{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.lim .bar i{display:block;height:100%;background:var(--favor);border-radius:999px}
+.lim.near .bar i{background:#D97706}.lim.over .bar i{background:var(--pay)}
+.emps{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.emp-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);text-align:left;cursor:pointer;font:inherit;color:var(--ink)}
+.emp-card span{font-size:.8rem;color:var(--muted)}
+.emp-card[aria-pressed="true"]{border:2px solid var(--accent);background:var(--accent-soft)}
+.grp{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.grp-h{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:none;padding:4px 2px;cursor:pointer;text-align:left;font:inherit;color:var(--ink)}
+.grp-h>span:first-child{display:flex;flex-direction:column;gap:2px}
+.grp-h b{font-family:var(--font-d);font-size:1.1rem}
+.grp-t{font-family:var(--font-d);font-weight:700;font-size:1.1rem;white-space:nowrap;display:flex;align-items:center;gap:10px}
+.grp-t i{font-style:normal;color:var(--accent);font-size:.9rem}
+.grp-b{border-top:1px solid var(--line);padding-top:12px}
+.inv-w{display:flex;flex-direction:column;gap:8px}
+.btn.cobrar{align-self:flex-end;background:var(--favor-soft);color:var(--favor);border-color:transparent}
+.regs{display:grid;gap:8px}
+.regcard{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer}
+.regcard input{margin-top:3px;width:20px;height:20px;accent-color:var(--accent);flex:none}
+.regcard>span{display:flex;flex-direction:column;gap:2px}
+.regcard:has(input:checked){border:2px solid var(--accent);background:var(--accent-soft)}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pillopt{position:relative}
+.pillopt input{position:absolute;opacity:0;inset:0}
+.pillopt span{display:flex;align-items:center;justify-content:center;min-height:46px;border:1px solid var(--line);border-radius:12px;font-weight:600;font-size:.9rem;text-align:center;padding:6px}
+.pillopt input:checked+span{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pillopt input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.fisc{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:6px 0}
+.fisc .pct{display:flex;align-items:center;gap:6px}.fisc .pct input{width:96px;text-align:right}
+.fisc-info{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.seg4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg4 button{min-height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-weight:600;cursor:pointer;color:var(--muted);font-size:.9rem}
+.seg4 button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg.big button{flex:1;min-height:48px;font-size:1rem;font-weight:600}
+.moneyin{display:flex;align-items:center;gap:8px}
+.moneyin span{font-weight:700;color:var(--muted)}
+.moneyin input{flex:1}
+input[readonly]{background:var(--bg);color:var(--muted)}
+table.calc tr.sum td{font-weight:600}
+table.calc tr.hd td{padding-top:16px;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border-bottom:0}
+input.ycell.money{text-align:right}
+@media (min-width:900px){.bigbtns{grid-template-columns:repeat(4,1fr)}.bigbtns.two{grid-template-columns:1fr 1fr}}
+/* Vista de PDF */
+#printArea{position:fixed;inset:0;z-index:60;background:#E9ECF2;overflow:auto;-webkit-overflow-scrolling:touch}
+#printArea[hidden]{display:none!important}
+.pbar{position:sticky;top:0;display:flex;gap:10px;justify-content:center;padding:12px;background:rgba(233,236,242,.95);backdrop-filter:blur(6px);z-index:2}
+.pdoc{display:flex;flex-direction:column;gap:18px;padding:0 12px 40px;align-items:center}
+.pp{background:#fff;color:#15192A;width:100%;max-width:1060px;padding:28px 30px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.08);font:11px/1.45 "IBM Plex Sans",system-ui,sans-serif}
+.pp header{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start;border-bottom:3px solid #3F5A9E;padding-bottom:14px;margin-bottom:10px}
+.pp h1{font:800 20px/1.2 Manrope,system-ui,sans-serif;color:#1F2A4D;margin:0 0 8px}
+.pp header p{margin:2px 0}
+.pp .tag{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:999px;font-weight:700;font-size:10px}
+.pp .tag.ok{background:#E3F4EA;color:#1E7B4F}.pp .tag.pend{background:#FDEBD3;color:#B45309}
+.pp table{border-collapse:collapse}
+.pp .box td{border:1px solid #D5DAE5;padding:5px 10px}
+.pp .box td:first-child{background:#F3F5F9;font-weight:700}
+.pp .box td:last-child{text-align:right;font-weight:700;color:#3F5A9E;min-width:110px}
+.pp .box tr.ptot td:last-child{color:#C0392B;font-size:13px}
+.pp .ley{font-style:italic;color:#6B7280;margin:8px 0}
+.pp .mov{width:100%}
+.pp .mov th{background:#3F5A9E;color:#fff;font-size:9.5px;padding:5px 6px;border:1px solid #D5DAE5}
+.pp .mov td{border:1px solid #D5DAE5;padding:4px 6px;text-align:right;white-space:nowrap}
+.pp .mov td:first-child,.pp .mov td:nth-child(11){text-align:left;white-space:normal}
+.pp .mov td.c{text-align:center}
+.pp .mov .gap{border:0;background:transparent;width:10px}
+.pp .mov tr.ptot td{background:#E8ECF6;font-weight:700}
+.pp .cols{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;margin-top:18px;align-items:start}
+.pp .calc{width:100%}
+.pp .calc th{background:#3F5A9E;color:#fff;text-align:left;padding:6px 8px}
+.pp .calc td{border:1px solid #D5DAE5;padding:4px 8px}
+.pp .calc td:last-child{text-align:right;white-space:nowrap;width:120px}
+.pp .calc tr.y td:last-child{background:#FFF2CC}
+.pp .calc tr.ptot td{background:#E8ECF6;font-weight:700}.pp .calc tr.ptot td:last-child{color:#C0392B}
+.pp .calc tr.hd td{font-weight:700;background:#F3F5F9;text-align:left!important;color:#1F2A4D!important;font-size:11px;letter-spacing:0;padding:4px 8px}
+.pp .pie{margin-top:16px;color:#6B7280;font-style:italic}
+body.printing{overflow:hidden}
+@media print{
+  @page{size:landscape;margin:10mm}
+  body.printing>*:not(#printArea){display:none!important}
+  body.printing{overflow:visible;background:#fff}
+  #printArea{position:static;background:#fff;overflow:visible}
+  .pbar{display:none}
+  .pdoc{padding:0;gap:0}
+  .pp{box-shadow:none;max-width:none;padding:0;border-radius:0}
+  .pp:not(:last-child){page-break-after:always}
+  .pp *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
@@ -426,35 +531,47 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 let toastT;
 function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),ms)}
 
-/* ================= Tablas fiscales 2026 ================= */
-// Tarifa mensual ISR 2026 (Anexo 8 RMF 2026): [límite inferior, cuota fija, % excedente]
-const TARIFA=[[0.01,0,1.92],[844.60,16.22,6.40],[7168.52,420.95,10.88],[12598.03,1011.68,16.00],[14644.65,1339.14,17.92],[17533.65,1856.84,21.36],[35362.84,5665.16,23.52],[55736.69,10457.09,30.00],[106410.51,25659.23,32.00],[141880.67,37009.69,34.00],[425642.00,133488.54,35.00]];
+/* ================= Tablas fiscales (el administrador las actualiza en "Tablas y tarifas") ================= */
 const YEAR=2026;
 const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const CFG_BASE={
+  // Tarifa mensual ISR personas físicas (art. 96 LISR), igual que en los Excel del despacho: [límite inferior, cuota fija, % sobre excedente]
+  tarifaPF:[[0,0,1.92],[844.59,16.22,6.40],[7168.51,420.95,10.88],[12598.02,1011.68,16.00],[14644.64,1339.14,17.92],[17533.64,1856.85,21.36],[35362.83,5665.16,23.52],[55736.68,10457.09,30.00],[106410.50,25659.23,32.00],[141880.67,37009.69,34.00],[425641.99,133488.54,35.00]],
+  tasaPM:30,                                   // tasa de ISR personas morales
+  resicoPF:[[25000,1.00],[50000,1.10],[83333.33,1.50],[208333.33,2.00],[3500000,2.50]], // RESICO PF mensual: [hasta, %]
+  limPM:35000000,limPF:3500000,                // límites anuales de ingresos RESICO
+  retAut:4,retIvaPF:10.666667,retIsrPF:10,retIsrResico:1.25,iva:16
+};
+let CFG=JSON.parse(JSON.stringify(CFG_BASE));
+// Regímenes: uno por empresa
 const REGS={
-  "601":{t:"PM",c:"General de ley",n:"Régimen general de ley (personas morales)"},
-  "624":{t:"PM",c:"Autotransporte",n:"Autotransporte de carga (coordinados)"},
-  "626":{t:"PM",c:"RESICO",n:"RESICO personas morales"},
-  "612":{t:"PF",c:"Régimen general",n:"Régimen general (actividad empresarial y profesional)"}};
+  "601":{t:"PM",ab:"PM RGL",c:"Régimen general de ley",n:"Persona moral régimen general de ley"},
+  "626":{t:"PM",ab:"PM RESICO",c:"RESICO",n:"Persona moral régimen simplificado de confianza"},
+  "612":{t:"PF",ab:"PF RGL",c:"Actividades empresariales y profesionales",n:"Persona física régimen de las actividades empresariales y profesionales"},
+  "606":{t:"PF",ab:"PF ARREND",c:"Arrendamiento",n:"Persona física régimen de arrendamiento"},
+  "626F":{t:"PF",ab:"PF RESICO",c:"RESICO",n:"Persona física régimen simplificado de confianza"}};
 const REGS_DE=t=>Object.keys(REGS).filter(k=>REGS[k].t===t);
+const ACTS_601=["Empresarial","Autotransporte","Servicios"];
 const ESTADOS={
   bloqueado:{l:"Captura cerrada",k:"mute",paso:0},
   abierto:{l:"Captura abierta",k:"warn",paso:1},
   precierre:{l:"Precierre",k:"",paso:2},
   declarado:{l:"Declarado",k:"favor",paso:3}};
+// Tarifa del art. 96 con k meses; redondea marginal y cuota fija a pesos, como el Excel
 function tarifa(base,k){
   if(base<=0)return{li:0,exc:0,pct:0,marg:0,cuota:0,isr:0};
-  let r=TARIFA[0];for(const t of TARIFA)if(base>=t[0]*k)r=t;
-  const li=r[0]*k,exc=base-li,marg=exc*r[2]/100,cuota=r[1]*k;
+  let r=CFG.tarifaPF[0];for(const t of CFG.tarifaPF)if(base>=t[0]*k)r=t;
+  const li=r[0]*k,exc=base-li,marg=Math.round(exc*r[2]/100),cuota=Math.round(r[1]*k);
   return{li,exc,pct:r[2],marg,cuota,isr:marg+cuota};
 }
+function tasaResicoPF(ing){for(const[h,p]of CFG.resicoPF)if(ing<=h)return p;return CFG.resicoPF[CFG.resicoPF.length-1][1]}
 
 /* ================= Estado ================= */
 const now=new Date();
 let defM=now.getMonth()+1; // mes actual
 if(now.getFullYear()>YEAR)defM=12;if(now.getFullYear()<YEAR)defM=1;
 const S={sec:"trabajo",auth:null,listo:false,clientes:{},periodos:{},movs:{},m:defM,apartado:"PM",filtroReg:"todos",
-  vista:"tablero",cid:null,tabC:"hoja",confirm:null,mov:null,login:"entrar"};
+  vista:"tablero",cid:null,tabC:"hoja",confirm:null,mov:null,login:"entrar",abre:{ing:true,gas:false}};
 const pkey=(cid,m)=>cid+":"+YEAR+":"+m;
 const periodo=(cid,m)=>S.periodos[pkey(cid,m)]||{cliente_id:cid,anio:YEAR,mes:m,estado:"bloqueado",resumen:null};
 const movsDe=(cid,m)=>Object.values(S.movs).filter(x=>x.cliente_id===cid&&(!m||x.mes===m)).sort((a,b)=>a.fecha.localeCompare(b.fecha)||(a.tipo<b.tipo?1:-1));
@@ -464,9 +581,9 @@ const esAdmin=()=>!!(S.auth&&S.auth.admin);
 function puedeCapturar(cid,m){
   const e=periodo(cid,m).estado;
   if(esAdmin())return e!=="declarado";
-  return e==="abierto";
+  return e==="abierto"&&!mesTerminado(m); // el cliente solo captura hasta el último día del mes
 }
-const puedeEditarMov=x=>esAdmin()?periodo(x.cliente_id,x.mes).estado!=="declarado":(x.capturado_por==="cliente"&&periodo(x.cliente_id,x.mes).estado==="abierto");
+const puedeEditarMov=x=>esAdmin()?periodo(x.cliente_id,x.mes).estado!=="declarado":(x.capturado_por==="cliente"&&puedeCapturar(x.cliente_id,x.mes));
 
 /* ================= Capa de datos ================= */
 const LKEY="solemp.v2";
@@ -492,12 +609,14 @@ const Local={
   _check(m,auth){ // las mismas reglas que la base de datos real
     if(auth.admin)return;
     const p=this.load_().periodos[pkey(m.cliente_id,m.mes)];
-    if(!p||p.estado!=="abierto"||m.capturado_por!=="cliente")throw{code:"cerrado"};
+    if(!p||p.estado!=="abierto"||m.capturado_por!=="cliente"||new Date()>new Date(m.anio,m.mes,0,23,59,59))throw{code:"cerrado"};
   },
   async saveMov(m,auth){const d=this.load_();m=clone(m);if(!auth.admin)m.capturado_por="cliente";
     if(m.id&&d.movs[m.id])this._check(d.movs[m.id],auth);this._check(m,auth);
     if(!m.id)m.id=uid("m");m.creado=new Date().toISOString();d.movs[m.id]=m;this.save_();return m},
-  async deleteMov(m,auth){const d=this.load_();this._check(d.movs[m.id]||m,auth);delete d.movs[m.id];this.save_()}
+  async deleteMov(m,auth){const d=this.load_();this._check(d.movs[m.id]||m,auth);delete d.movs[m.id];this.save_()},
+  async loadConfig(){return this.load_().config||null},
+  async saveConfig(v){this.load_().config=clone(v);this.save_()}
 };
 let sb=null,sbCargando=null;
 // Carga la librería de Supabase (con un segundo servidor de respaldo) y crea la conexión una sola vez.
@@ -526,7 +645,8 @@ const Remote={
   },
   async signIn(email,pw){const{error}=await (await getSb()).auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
   async signUp(email,pw){const{data,error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error;
-    if(data&&data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length)throw new Error("already registered")},
+    if(data&&data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length)throw new Error("already registered");
+    return!!(data&&data.session)},
   async reset(email){const{error}=await (await getSb()).auth.resetPasswordForEmail(email,{redirectTo:location.href.split("#")[0]});if(error)throw error},
   async signOut(){await (await getSb()).auth.signOut()},
   async load(){
@@ -534,12 +654,14 @@ const Remote={
     for(const r of[c,p,m])if(r.error)throw r.error;
     return{clientes:c.data,periodos:p.data,movs:m.data};
   },
-  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad"])},
+  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal"])},
   async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
   async setPeriodo(p){const{data,error}=await (await getSb()).from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
   async saveMov(m,auth){const row=clone(m);if(!auth.admin)row.capturado_por="cliente";if(!row.id)delete row.id;
-    return upsertFlex("movimientos",row,["nota"])},
-  async deleteMov(m){const{error}=await (await getSb()).from("movimientos").delete().eq("id",m.id);if(error)throw error}
+    return upsertFlex("movimientos",row,["nota","tasa_iva","ref_id"])},
+  async deleteMov(m){const{error}=await (await getSb()).from("movimientos").delete().eq("id",m.id);if(error)throw error},
+  async loadConfig(){const r=await (await getSb()).from("config").select("valor").eq("clave","tarifas").limit(1);return !r.error&&r.data&&r.data[0]?r.data[0].valor:null},
+  async saveConfig(v){const{error}=await (await getSb()).from("config").upsert({clave:"tarifas",valor:v},{onConflict:"clave"});if(error)throw error}
 };
 // Si aún no se agregan las columnas nuevas en Supabase, guarda sin ellas (y avisa una vez)
 async function upsertFlex(tabla,row,nuevas){
@@ -547,7 +669,7 @@ async function upsertFlex(tabla,row,nuevas){
   if(r.error&&/column|schema cache|PGRST204/i.test(r.error.message||r.error.code||"")){
     const extra={};nuevas.forEach(k=>{if(k in row){extra[k]=row[k];delete row[k]}});
     r=await (await getSb()).from(tabla).upsert(row).select().single();
-    if(!r.error){if(!upsertFlex.aviso){upsertFlex.aviso=1;toast("Falta correr el SQL nuevo en Supabase para guardar situación, actividad y notas.",6000)}return Object.assign(r.data,extra)}
+    if(!r.error){if(!upsertFlex.aviso){upsertFlex.aviso=1;toast("Falta correr el SQL nuevo en Supabase: algunos datos no se guardaron.",6000)}return Object.assign(r.data,extra)}
   }
   if(r.error)throw r.error;return r.data;
 }
@@ -564,33 +686,57 @@ function errTxt(e){
   if(/fetch|network|Load failed/i.test(m))return"Sin conexión. Revisa tu internet e inténtalo de nuevo.";
   return"No se pudo completar: "+m;
 }
+// Clientes antiguos: "624" (autotransporte) pasa a régimen general con actividad Autotransporte
+function normCliente(c){
+  let rg=(c.regimenes||[]).slice();
+  if(rg.includes("624")){rg=rg.filter(r=>r!=="624");if(!rg.includes("601"))rg.unshift("601");c.actividad="Autotransporte";if(!num(c.coef))c.coef=c.coef_aut}
+  if(c.actividad==="Empresarial / servicios"&&c.tipo==="PM")c.actividad="Empresarial";
+  c.regimenes=rg.filter(r=>REGS[r]);if(!c.regimenes.length)c.regimenes=[c.tipo==="PF"?"612":"601"];
+  return c;
+}
 async function recargar(){
   if(!S.auth)return;
   const r=await API.load(S.auth);
   S.clientes={};r.clientes.forEach(c=>S.clientes[c.id]=c);
   S.periodos={};r.periodos.forEach(p=>S.periodos[pkey(p.cliente_id,p.mes)]=p);
-  S.movs={};r.movs.forEach(m=>{m.subtotal=+m.subtotal;m.iva=+m.iva;m.iva_ret=+m.iva_ret;m.isr_ret=+m.isr_ret;S.movs[m.id]=m});
+  S.movs={};r.movs.forEach(m=>{m.subtotal=+m.subtotal;m.iva=+m.iva;m.iva_ret=+m.iva_ret;m.isr_ret=+m.isr_ret;if(m.regimen==="624")m.regimen="601";S.movs[m.id]=m});
+  Object.values(S.clientes).forEach(normCliente);
+  try{const v=await API.loadConfig();if(v)CFG=Object.assign(JSON.parse(JSON.stringify(CFG_BASE)),v)}catch(e){}
   if(!esAdmin()){const cs=clientesOrden();if(!S.cid||!S.clientes[S.cid])S.cid=cs.length?cs[0].id:null}
 }
 
-/* ================= Cálculo (igual que la hoja de precierre) =================
-   Ingresos: C = de contado (elaborada y cobrada), I = no pagado (elaborada, sin cobrar),
-   MA = cobro de meses anteriores (cobrada; se facturó en otro mes).
-   PM general y autotransporte: ISR con coeficiente sobre facturas elaboradas.
-   RESICO PM y PF: ISR sobre lo cobrado menos gastos pagados. IVA siempre sobre lo cobrado. */
+/* ================= Cálculo (igual que los Excel de precierre del despacho) =================
+   Ingresos: C = contado (facturado y cobrado), I = crédito (facturado, sin cobrar),
+   MA = complemento de pago (cobro de una factura de meses anteriores).
+   PM régimen general: ISR con coeficiente sobre lo facturado (C + crédito).
+   PM RESICO, PF y arrendamiento: ISR sobre lo cobrado (C + MA). IVA siempre sobre lo cobrado. */
 const est=x=>x.estatus||"C";
-// Retenciones que le hacen al cliente cuando la factura lleva RET = SÍ
-function tasasRet(c,reg){
-  if(reg==="624")return{iva:4,isr:0,txt:"4 % de IVA (flete)"};
-  if(c.tipo==="PF")return{iva:10.6667,isr:10,txt:"10.6667 % de IVA y 10 % de ISR"};
-  return{iva:0,isr:0,txt:"este régimen normalmente no lleva retención; captúrala a mano si aplica"};
+const regDe=c=>(c.regimenes||[])[0]||"601";
+const esAut=c=>(c.regimenes||[]).includes("601")&&c.actividad==="Autotransporte";
+// Características fiscales de la empresa (el despacho puede cambiarlas en Editar empresa)
+function fiscal(c){
+  const r=regDe(c),f=c.fiscal||{};
+  const def=r==="601"?(esAut(c)?{iva:[true,CFG.retAut],isr:[false,0]}:{iva:[false,0],isr:[false,0]})
+    :r==="626"?{iva:[false,0],isr:[false,0]}
+    :r==="626F"?{iva:[true,CFG.retIvaPF],isr:[true,CFG.retIsrResico]}
+    :{iva:[true,CFG.retIvaPF],isr:[true,CFG.retIsrPF]};
+  const g=(k,i)=>f[k]&&f[k][i]!=null?f[k][i]:def[k][i];
+  return{aut:esAut(c),retIva:{aplica:!!g("iva",0),pct:num(g("iva",1))},retIsr:{aplica:!!g("isr",0),pct:num(g("isr",1))},
+    devengado:r==="601",auto:esAut(c)};
 }
 const tieneRet=x=>(+x.iva_ret||0)>0||(+x.isr_ret||0)>0;
+function retDe(c,sub,estatus,retSi){ // retenciones de una factura de ingreso
+  const f=fiscal(c);if(estatus==="I")return{iva:0,isr:0};
+  const on=f.aut||retSi;
+  return{iva:on&&f.retIva.aplica?Math.round(sub*f.retIva.pct)/100:0,isr:on&&f.retIsr.aplica&&!f.aut?Math.round(sub*f.retIsr.pct)/100:0};
+}
+const IVA_TASAS=[["16","16 %"],["0","0 %"],["exento","Exento"],["manual","Manual"]];
+const tasaDe=x=>x.tasa_iva||(num(x.subtotal)&&Math.abs(num(x.iva)-num(x.subtotal)*0.16)>0.02?(num(x.iva)?"manual":"0"):"16");
 function suma(cid,reg,a,b,modo){
   const o={base:0,iva:0,ivaRet:0,isrRet:0,n:0};
   for(const x of Object.values(S.movs)){
     if(x.cliente_id!==cid||x.mes<a||x.mes>b)continue;
-    if(reg&&x.regimen!==reg)continue;
+    if(reg&&x.regimen&&x.regimen!==reg)continue;
     if(modo==="elab"){if(x.tipo!=="ingreso"||est(x)==="MA")continue}
     else if(modo==="cobr"){if(x.tipo!=="ingreso"||est(x)==="I")continue}
     else{if(x.tipo!=="gasto")continue;if(modo==="gded"&&x.deducible===false)continue}
@@ -600,52 +746,62 @@ function suma(cid,reg,a,b,modo){
 }
 const ajustes=(cid,m)=>periodo(cid,m).ajustes||{};
 const aj=(cid,m,reg,k)=>num(((ajustes(cid,m)[reg])||{})[k]);
-const tarifaRows=(t,k)=>[["Límite inferior ("+k+(k>1?" meses)":" mes)"),-t.li,"sub"],["Excedente",t.exc,"sub"],["% sobre excedente",t.pct.toFixed(2)+" %","sub"],["Impuesto marginal",t.marg,"sub"],["Cuota fija",t.cuota,"sub"]];
 let MEMO={};
 function memo(k,f){if(!(k in MEMO))MEMO[k]=f();return MEMO[k]}
-function pagoISR(c,reg,m){ // lo que se pagó (o se pagaría) de ISR en el mes m
-  const p=periodo(c.id,m);
-  if(p.estado==="declarado"&&p.resumen&&p.resumen.isrReg&&p.resumen.isrReg[reg]!=null)return p.resumen.isrReg[reg];
-  return calcISR(c,reg,m).pago;
-}
 function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
-  // Nada se arrastra en automático de meses anteriores: el contador lo captura en las celdas amarillas
+  // Lo de meses anteriores no se arrastra solo: el despacho lo captura en las celdas amarillas
   const A=k=>aj(c.id,mes,reg,k);
-  const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=A("pagos_ant");
-  const retMes=suma(c.id,reg,mes,mes,"cobr").isrRet,retAnt=(reg==="612"||reg==="626")?A("isr_ret_ant"):0,ret=retMes+retAnt;
-  let rows=[],isr=0;
-  if(reg==="601"||reg==="624"){
-    const ingMes=suma(c.id,reg,mes,mes,"elab").base,ingAnt=A("ing_ant"),rend=A("rendimientos");
-    const total=ingMes+ingAnt+rend,coef=num(reg==="624"&&c.coef_aut?c.coef_aut:c.coef),util=Math.max(0,total)*coef,base=Math.max(0,util-ptu-perd);
-    isr=base*0.30;
-    rows=[["Ingresos acumulables del mes",ingMes],["Más: ingresos de meses anteriores",ingAnt,"","ing_ant"],["Más: rendimientos",rend,"","rendimientos"],["Igual: total de ingresos",total],
-      ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util],["Menos: PTU acumulada",-ptu,"","ptu"],
-      ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
+  const ptu=A("ptu"),perd=A("perdidas"),comp=A("comp"),pagosAnt=A("pagos_ant"),rend=A("rendimientos"),retAnt=A("isr_ret_ant");
+  const Co=suma(c.id,reg,mes,mes,"cobr"),Gd=suma(c.id,reg,mes,mes,"gded"),retMes=Co.isrRet;
+  let rows=[],isr=0,pago=0,extra={};
+  if(reg==="601"){
+    const ingMes=suma(c.id,reg,mes,mes,"elab").base,otros=A("otros_ing"),ingAnt=A("ing_ant"),total=ingMes+otros+ingAnt;
+    const coef=num(c.coef),util=total*coef,ret=retMes+retAnt,base=util-ptu-perd-ret-rend;
+    isr=base*CFG.tasaPM/100;pago=Math.max(0,Math.round(isr-pagosAnt-comp));
+    rows=[["Ingresos acumulables del mes",ingMes],["Más: otros ingresos adicionales",otros,"","otros_ing"],["Más: ingresos acumulables de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos",total,"sum"],
+      ["Por: coeficiente de utilidad",coef.toFixed(4),"sub"],["Igual: utilidad fiscal del periodo",util,"sum"],["Menos: PTU acumulada",-ptu,"","ptu"],
+      ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Menos: ISR retenido del mes",-retMes],["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"],["Menos: rendimientos acumulados",-rend,"","rendimientos"],
+      ["Igual: base del pago provisional",base,"sum"],["Por: tasa de ISR "+CFG.tasaPM+" %",isr],["Menos: pagos provisionales de meses anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
+    extra={ingMes,coef};
   }else if(reg==="626"){
-    const dep=A("depreciacion"),iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),rend=A("rendimientos"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA+rend,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd);
-    isr=base*0.30;
-    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Más: rendimientos",rend,"","rendimientos"],["Igual: total de ingresos",ing],["Menos: gastos pagados del mes",-gM],["Menos: gastos de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],
-      ["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base],["Por: tasa de ISR 30 %",isr]];
-  }else{
-    const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes)),dep=A("depreciacion");
-    const iM=suma(c.id,reg,mes,mes,"cobr").base,iA=A("ing_ant"),gM=suma(c.id,reg,mes,mes,"gded").base,gA=A("gas_ant"),ing=iM+iA,gas=gM+gA,base=Math.max(0,ing-gas-dep-ptu-perd),t=tarifa(base,k);
-    isr=t.isr;
-    rows=[["Ingresos cobrados del mes",iM],["Más: ingresos de meses anteriores",iA,"","ing_ant"],["Igual: total de ingresos",ing],["Menos: deducciones del mes",-gM],["Menos: deducciones de meses anteriores",-gA,"","gas_ant"],["Menos: depreciación",-dep,"","depreciacion"],["Menos: PTU pagada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],
-      ["Igual: base gravable",base],...tarifaRows(t,k),["ISR causado acumulado",t.isr]];
+    const ingMes=Co.base+A("otros_ing"),ingAnt=A("ing_ant"),total=ingMes+ingAnt;
+    const dedMes=Gd.base+A("otras_ded"),dedAnt=A("gas_ant"),dep=A("depreciacion"),totalDed=dedMes+dedAnt+dep;
+    const base=total-totalDed-ptu-perd-rend;isr=base*CFG.tasaPM/100;
+    pago=Math.max(0,isr-retMes-retAnt-pagosAnt-comp);
+    rows=[["Ingresos cobrados del mes",Co.base],["Más: otros ingresos adicionales",A("otros_ing"),"","otros_ing"],["Más: ingresos acumulables de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos acumulables",total,"sum"],
+      ["Deducciones del mes (gastos pagados)",Gd.base],["Más: otras deducciones adicionales",A("otras_ded"),"","otras_ded"],["Más: deducciones de meses anteriores",dedAnt,"","gas_ant"],["Más: depreciación",dep,"","depreciacion"],["Igual: total de deducciones acumuladas",totalDed,"sum"],
+      ["Menos: PTU acumulada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],["Menos: rendimientos acumulados",-rend,"","rendimientos"],["Igual: base del pago provisional",base,"sum"],
+      ["ISR determinado ("+CFG.tasaPM+" %)",isr],["Menos: ISR retenido del mes",-retMes],["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"],["Menos: pagos provisionales de meses anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
+  }else if(reg==="612"){
+    const k=Math.min(12,Math.max(1,Math.round(A("meses"))||mes));
+    const otros=A("otros_ing"),ingMes=Co.base+otros,ingAnt=A("ing_ant"),total=ingMes+ingAnt;
+    const dep=A("depreciacion"),dedMes=Gd.base+A("otras_ded")+dep,dedAnt=A("gas_ant"),totalDed=dedMes+dedAnt;
+    const base=total-totalDed-ptu-perd-rend,t=tarifa(base,k);isr=t.isr;
+    pago=Math.max(0,isr-retMes-retAnt-pagosAnt-comp);
+    rows=[["Ingresos cobrados del mes",Co.base],["Más: otros ingresos adicionales",otros,"","otros_ing"],["Más: ingresos acumulables de meses anteriores",ingAnt,"","ing_ant"],["Igual: total de ingresos acumulables",total,"sum"],
+      ["Deducciones del mes (gastos pagados)",Gd.base],["Más: otras deducciones adicionales",A("otras_ded"),"","otras_ded"],["Más: depreciación",dep,"","depreciacion"],["Más: deducciones de meses anteriores",dedAnt,"","gas_ant"],["Igual: total de deducciones acumuladas",totalDed,"sum"],
+      ["Menos: PTU acumulada",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],["Menos: rendimientos acumulados",-rend,"","rendimientos"],["Igual: base del pago provisional",base,"sum"],
+      ["Tarifa art. 96 · "+k+(k>1?" meses":" mes"),"","sub"],["Límite inferior",t.li,"sub"],["Excedente",t.exc,"sub"],["% sobre excedente",t.pct.toFixed(2)+" %","sub"],["Impuesto marginal",t.marg,"sub"],["Cuota fija",t.cuota,"sub"],
+      ["ISR determinado",isr],["Menos: ISR retenido del mes",-retMes],["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"],["Menos: pagos provisionales de meses anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
+    extra={k};
+  }else if(reg==="606"){
+    const dep=A("depreciacion"),ded=Gd.base+dep,base=Co.base-ded-ptu-perd,t=tarifa(base,1);isr=t.isr;
+    pago=Math.max(0,isr-retMes-comp);
+    rows=[["Ingresos cobrados del mes",Co.base],["Deducciones del mes (gastos pagados)",Gd.base],["Más: depreciación",dep,"","depreciacion"],["Igual: deducciones del mes",ded,"sum"],
+      ["Menos: PTU",-ptu,"","ptu"],["Menos: pérdidas fiscales",-perd,"","perdidas"],["Igual: base del pago provisional",base,"sum"],
+      ["Tarifa art. 96 · mensual","","sub"],["Límite inferior",t.li,"sub"],["Excedente",t.exc,"sub"],["% sobre excedente",t.pct.toFixed(2)+" %","sub"],["Impuesto marginal",t.marg,"sub"],["Cuota fija",t.cuota,"sub"],
+      ["ISR determinado",isr],["Menos: ISR retenido",-retMes],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
+  }else{ // 626F RESICO persona física
+    const otros=A("otros_ing"),ing=Co.base+otros,tasa=ing>0?tasaResicoPF(ing):0;isr=Math.round(ing*tasa)/100;
+    pago=Math.max(0,isr-retMes-comp);
+    rows=[["Ingresos cobrados del mes",Co.base],["Más: otros ingresos adicionales",otros,"","otros_ing"],["Igual: ingresos del mes",ing,"sum"],["Por: tasa RESICO",tasa.toFixed(2)+" %","sub"],
+      ["ISR determinado",isr],["Menos: ISR retenido",-retMes],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
   }
-  const pago=Math.max(0,isr-pagosAnt-comp-ret);
-  rows.push(["Menos: pagos provisionales anteriores",-pagosAnt,"","pagos_ant"],["Menos: compensación de ISR a favor",-comp,"","comp"],["Menos: ISR retenido del mes",-retMes],...(reg==="612"||reg==="626"?[["Menos: ISR retenido de meses anteriores",-retAnt,"","isr_ret_ant"]]:[]),["ISR neto a pagar",pago,"total"]);
-  return{reg,pago,isr,rows};
+  return{reg,pago,isr,rows,...extra};
 })}
-function ivaFavorAnt(c,mes){ // saldo a favor que viene de meses anteriores
-  if(mes<=1)return 0;
-  const p=periodo(c.id,mes-1);
-  if(p.estado==="declarado"&&p.resumen&&p.resumen.ivaFavor!=null)return p.resumen.ivaFavor;
-  return calcIVA(c,mes-1).favor;
-}
 function calcIVA(c,mes){return memo("iva|"+c.id+"|"+mes,()=>{
   const C=suma(c.id,null,mes,mes,"cobr"),G=suma(c.id,null,mes,mes,"gded");
-  const ant=num(ajustes(c.id,mes).iva_favor_ant); // solo lo que captura el contador
+  const ant=num(ajustes(c.id,mes).iva_favor_ant); // solo lo que captura el despacho
   const o={tras:C.iva,ret:C.ivaRet,acred:G.iva,ant};o.neto=o.tras-o.ret-o.acred-o.ant;
   o.cargo=Math.max(0,o.neto);o.favor=Math.max(0,-o.neto);return o;
 })}
@@ -656,18 +812,26 @@ function calc(c,mes){
   const E=suma(c.id,null,mes,mes,"elab"),Co=suma(c.id,null,mes,mes,"cobr");
   const n=Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.mes===mes).length;
   const notes=[];
-  if((c.regimenes||[]).includes("601")&&!num(c.coef))notes.push("Falta el coeficiente de utilidad: agrégalo en Editar cliente.");
-  if((c.regimenes||[]).includes("624")&&!num(c.coef_aut||c.coef))notes.push("Falta el coeficiente de autotransporte: agrégalo en Editar cliente.");
-  return{iva,regs,isr,ret,total:isr+iva.cargo+ret,n,E,Co,G:Gm,notes};
+  if((c.regimenes||[]).includes("601")&&!num(c.coef))notes.push("Falta el coeficiente de utilidad: agrégalo en Editar empresa o en Actualización de precierres.");
+  // Ingresos del mes para el resumen: lo que cuenta para ISR en el régimen
+  const ingRes=(c.regimenes||[]).includes("601")?E.base:Co.base;
+  return{iva,regs,isr,ret,total:isr+iva.cargo+ret,n,E,Co,G:Gm,ing:ingRes,notes};
 }
 function resumenDe(c,m){const r=calc(c,m),isrReg={};r.regs.forEach(x=>isrReg[x.reg]=x.pago);
   return{total:r.total,isr:r.isr,iva:r.iva.neto,ivaFavor:r.iva.favor,ret:r.ret,isrReg,fecha:new Date().toISOString().slice(0,10)}}
 function vals(c,m){const p=periodo(c.id,m);if(p.estado==="declarado"&&p.resumen)return{...p.resumen,decl:true};const r=calc(c,m);return{total:r.total,isr:r.isr,iva:r.iva.neto,ivaFavor:r.iva.favor,ret:r.ret,decl:false}}
 const totalMes=(c,m)=>vals(c,m).total;
-const venceDe=m=>{const nm=m===12?1:m+1,ny=m===12?YEAR+1:YEAR;return new Date(ny,nm-1,17)};
-function diasPara(m){const h=new Date();h.setHours(0,0,0,0);return Math.round((venceDe(m)-h)/864e5)}
+// Límite anual de ingresos RESICO: lo que lleva el año y cuánto le queda
+function limiteResico(c,mes){
+  const reg=(c.regimenes||[]).find(r=>r==="626"||r==="626F");if(!reg)return null;
+  const lim=reg==="626"?num(CFG.limPM):num(CFG.limPF);let suma12=0;
+  for(let m=1;m<=mes;m++)suma12+=suma(c.id,reg,m,m,"cobr").base+aj(c.id,m,reg,"otros_ing");
+  const conAnt=aj(c.id,mes,reg,"ing_ant")+suma(c.id,reg,mes,mes,"cobr").base+aj(c.id,mes,reg,"otros_ing");
+  const usado=Math.max(suma12,conAnt);return{reg,lim,usado,disp:lim-usado,pct:lim?usado/lim:0};
+}
 const hoyTxt=()=>{const d=new Date();return d.getDate()+" de "+MESES[d.getMonth()].toLowerCase()+" de "+d.getFullYear()};
-const venceTxt=m=>{const d=venceDe(m);return"17 de "+MESES[d.getMonth()].toLowerCase()+" de "+d.getFullYear()};
+const finMes=m=>new Date(YEAR,m,0,23,59,59);
+const mesTerminado=m=>new Date()>finMes(m);
 
 /* ================= Lectura de CFDI ================= */
 function parseCFDI(text){
@@ -759,13 +923,12 @@ const SERVICIOS=[
   {i:"clip",t:"Trámites",d:"RFC, e.firma, avisos ante el SAT, registros ante el IMSS y gestiones con dependencias locales."},
   {i:"cap",t:"Capacitación profesional",d:"Formación práctica para contadores, estudiantes y recién egresados que quieren crecer en la profesión."}];
 const CATALOGO=[
-  {per:"PM",ab:"PM RGL",reg:"601",act:"Empresarial",rf:"Persona moral régimen general de ley"},
-  {per:"PM",ab:"PM RGL SC",reg:"601",act:"Servicios",rf:"Persona moral régimen general de ley"},
-  {per:"PM",ab:"PM AUTOTR.",reg:"624",act:"Autotransporte",rf:"Persona moral régimen general de ley"},
+  {per:"PM",ab:"PM RGL",reg:"601",act:"Empresarial / autotransporte / servicios",rf:"Persona moral régimen general de ley"},
   {per:"PM",ab:"PM RESICO",reg:"626",act:"Empresarial",rf:"Persona moral régimen simplificado de confianza"},
-  {per:"PM",ab:"PM RESICO SC",reg:"626",act:"Servicios",rf:"Persona moral régimen simplificado de confianza"},
-  {per:"PF",ab:"PF RGL",reg:"612",act:"Empresarial / servicios",rf:"Régimen de las actividades empresariales y profesionales"}];
-const abrev=(c,r)=>r==="601"?"PM RGL"+(c.actividad==="Servicios"?" SC":""):r==="624"?"PM AUTOTR.":r==="626"?"PM RESICO"+(c.actividad==="Servicios"?" SC":""):"PF RGL";
+  {per:"PF",ab:"PF RGL",reg:"612",act:"Empresarial / servicios",rf:"Régimen de las actividades empresariales y profesionales"},
+  {per:"PF",ab:"PF ARREND",reg:"606",act:"Arrendamiento",rf:"Persona física régimen de arrendamiento"},
+  {per:"PF",ab:"PF RESICO",reg:"626F",act:"Empresarial / servicios",rf:"Persona física régimen simplificado de confianza"}];
+const abrev=(c,r)=>r==="601"?(c.actividad==="Autotransporte"?"PM AUTOTR.":c.actividad==="Servicios"?"PM RGL SERV.":"PM RGL"):(REGS[r]?REGS[r].ab:r);
 const activo=c=>c.activo!==false;
 function ultimaMod(c){
   let t="";Object.values(S.movs).forEach(x=>{if(x.cliente_id===c.id){const f=(x.creado||x.fecha||"").slice(0,10);if(f>t)t=f}});
@@ -777,8 +940,9 @@ const FAQ=[
   ["¿Cómo entro a la app?","Con el correo que le diste al despacho. La primera vez toca “Crear mi cuenta”, confirma el enlace que llega a tu correo y después entra con tu contraseña."],
   ["Olvidé mi contraseña","En la pantalla para entrar toca “Olvidé mi contraseña” y te llega un enlace a tu correo para poner una nueva. Revisa también la carpeta de Spam."],
   ["¿Por qué no puedo agregar ingresos o gastos?","Tu contador abre la captura de cada mes. Si está cerrada, o el mes ya pasó a precierre, ya no se pueden agregar datos. Escríbenos si necesitas que la abramos."],
-  ["¿Qué pongo en “¿Ya te pagaron?”","Si ya cobraste la factura, elige “Sí”. Si todavía no te pagan, elige “Todavía no”. Si en este mes cobraste una factura de otro mes, elige “Me pagaron algo de otro mes”."],
-  ["¿Puedo subir mis facturas del SAT?","Sí. Toca “Subir mis facturas” y elige los XML o el ZIP que descargas del SAT. La app los acomoda solos como ingresos o gastos."],
+  ["¿Contado, crédito o complemento de pago?","Contado: ya te pagaron. Crédito: todavía no te pagan. Complemento de pago: en este mes te pagaron una factura de otro mes."],
+  ["¿Hasta cuándo puedo capturar?","Hasta el último día del mes. Una vez concluido el mes, ya no se puede actualizar ni agregar nada."],
+  ["¿Qué es “Pasar a cobrado”?","Cuando facturaste a crédito y después te pagan, toca “Pasar a cobrado” en esa factura. Se registra el complemento de pago en el mes en que te pagaron."],
   ["¿El cálculo de impuestos es el definitivo?","Es un cálculo estimado. El monto final lo revisa y confirma tu contador antes de presentar la declaración."],
   ["¿Alguien más puede ver mi información?","No. Cada cliente solo ve lo suyo; únicamente tu contador tiene acceso a tus datos."]];
 const SECS=[["trabajo","Mi panel","calc"],["contacto","Contacto","phone"]];
@@ -879,19 +1043,24 @@ function viewContacto(){
 
 
 
-/* ================= Actualización de precierres ================= */
+/* ================= Actualización de precierres (los 13 conceptos) ================= */
+const TODOS=["601","626","612","606","626F"];
 const COLS_ACT=[
-  ["ing_ant","Ing. meses ant.",r=>true],
-  ["gas_ant","Ded. meses ant.",r=>r==="612"||r==="626"],
-  ["depreciacion","Depreciación",r=>r==="612"||r==="626"],
-  ["coef","Coef. ut.",r=>r==="601"||r==="624"],
-  ["ptu","PTU",r=>true],
-  ["perdidas","Pérdidas fisc.",r=>true],
-  ["rendimientos","Rendimientos",r=>r!=="612"],
-  ["pagos_ant","PP ant. ISR",r=>true],
-  ["isr_ret_ant","ISR ret. mes ant.",r=>r==="612"||r==="626"],
-  ["comp","Comp. ISR",r=>true],
-  ["iva_favor_ant","Sdo. a f. IVA",r=>true]];
+  ["ing_ant","Ing. meses ant.",["601","626","612"]],
+  ["otros_ing","Otros ing. adic.",["601","626","612","626F"]],
+  ["gas_ant","Ded. meses ant.",["626","612"]],
+  ["otras_ded","Otras ded. adic.",["626","612"]],
+  ["depreciacion","Depreciación",["626","612","606"]],
+  ["coef","Coef. ut.",["601"]],
+  ["ptu","PTU",["601","626","612","606"]],
+  ["perdidas","Pérdidas fisc.",["601","626","612","606"]],
+  ["rendimientos","Rendimientos",["601","626","612"]],
+  ["pagos_ant","PP ant. ISR",["601","626","612"]],
+  ["isr_ret_ant","ISR ret. meses ant.",["601","626","612"]],
+  ["comp","Comp. ISR",TODOS],
+  ["iva_favor_ant","Sdo. a f. IVA",TODOS]];
+// Números en casillas: con comas y 2 decimales (el coeficiente con 4)
+const fmtN=(v,d=2)=>v||v===0&&d===4?Number(v).toLocaleString("es-MX",{minimumFractionDigits:d,maximumFractionDigits:d}):"";
 function viewActualizar(){
   const filas=[];
   for(const c of clientesOrden())(c.regimenes||[]).forEach((r,i)=>filas.push({c,r,primero:i===0}));
@@ -901,24 +1070,25 @@ function viewActualizar(){
     if(!aplica)return`<td class="na" aria-label="No aplica"></td>`;
     const decl=periodo(f.c.id,S.m).estado==="declarado";
     let v;
-    if(k==="coef")v=num(f.r==="624"&&f.c.coef_aut?f.c.coef_aut:f.c.coef);
+    if(k==="coef")v=num(f.c.coef);
     else if(k==="iva_favor_ant")v=num(ajustes(f.c.id,S.m).iva_favor_ant);
     else v=aj(f.c.id,S.m,f.r,k);
     if(k==="iva_favor_ant"&&!f.primero)return`<td class="na" aria-label="Se captura en la primera fila de la empresa"></td>`;
     if(decl)return`<td class="n">${k==="coef"?v.toFixed(4):v?money(v):"—"}</td>`;
-    return`<td><input class="ycell${k==="coef"?" coef":""}" type="number" step="${k==="coef"?"0.0001":"0.01"}" min="0" inputmode="decimal" value="${v||""}" placeholder="${k==="coef"?"0.0000":"0.00"}" data-act2="${esc(f.c.id)}|${f.r}|${k}" aria-label="${esc(f.c.nombre)} ${k}"></td>`;
+    return`<td><input class="ycell money${k==="coef"?" coef":""}" type="text" inputmode="decimal" value="${k==="coef"?(v?v.toFixed(4):""):fmtN(v)}" placeholder="${k==="coef"?"0.0000":"0.00"}" data-act2="${esc(f.c.id)}|${f.r}|${k}" aria-label="${esc(f.c.nombre)} ${k}"></td>`;
   };
   return`${quien()}
-  <div class="row between"><button class="btn ghost" data-act="tablero">← Clientes</button></div>
-  <div class="sec-t"><span class="eyebrow">Actualización de precierres</span><h2 style="font-size:1.5rem">Datos de arranque del mes</h2>
-    <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen. Al capturar, la empresa queda como <b>Actualizado</b>; también puedes marcarlo tú en la última columna.</p></div>
-  ${barraMes()}
-  ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa del ISR (normalmente el mismo mes).</span></div>
+  <div class="bigbar"><button class="btn big" data-act="tablero">← Panel</button></div>
+  <div class="sec-t"><span class="eyebrow">Actualización de precierres</span><h2 style="font-size:1.5rem">Puntos a actualizar del mes</h2>
+    <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen. Al capturar, la empresa queda como <b>Actualizado</b>; también puedes marcarlo en la última columna.</p></div>
+  <p class="note info"><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
+  ${barraMes(true)}
+  ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de ISR de las personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa (normalmente el mismo mes).</span></div>
     <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
   ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp" rowspan="2">Empresa</th><th class="pa" colspan="${COLS_ACT.length}">Puntos a actualizar</th><th rowspan="2">Estatus</th></tr><tr>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
-    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${f.c.tipo} · ${REGS[f.r].c}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap(f.r))).join("")}<td>${f.primero?`<label class="okchk"><input type="checkbox" data-act2="${esc(f.c.id)}||_act"${actualizado(f.c,S.m)?" checked":""}${periodo(f.c.id,S.m).estado==="declarado"?" disabled":""}> ${actualizado(f.c,S.m)?"Actualizado":"Pendiente"}</label>`:""}</td></tr>`).join("")}</tbody></table></div>
+    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${abrev(f.c,f.r)}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap.includes(f.r))).join("")}<td>${f.primero?`<label class="okchk"><input type="checkbox" data-act2="${esc(f.c.id)}||_act"${actualizado(f.c,S.m)?" checked":""}${periodo(f.c.id,S.m).estado==="declarado"?" disabled":""}> ${actualizado(f.c,S.m)?"Actualizado":"Pendiente"}</label>`:""}</td></tr>`).join("")}</tbody></table></div>
     <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Los meses ya declarados no se pueden modificar.</p>`
-    :`<div class="card empty"><p class="muted">Primero agrega clientes.</p></div>`}`;
+    :`<div class="card empty"><p class="muted">Primero agrega empresas.</p></div>`}`;
 }
 /* ================= Vistas del Área de trabajo ================= */
 function barraMes(sinFecha){
@@ -942,11 +1112,11 @@ function viewLogin(){
     </section>${firma()}</div>`;
   const reg=S.login==="registro",rec=S.login==="recuperar";
   return`<div class="narrow"><div class="sec-t" style="padding-top:12px"><span class="eyebrow">Bienvenido</span><h2 style="font-size:1.6rem">${reg?"Crea tu cuenta":rec?"Recupera tu contraseña":"Inicia sesión"}</h2>
-      <p>${reg?"Usa el mismo correo que le diste al despacho.":rec?"Te enviaremos un enlace a tu correo.":"Entra con tu correo y contraseña."}</p></div>
+      <p>${reg?"Escribe el correo que le diste al despacho (Gmail, Hotmail, iCloud o cualquier otro) y elige una contraseña de al menos 6 caracteres.":rec?"Te enviaremos un enlace a tu correo.":"Entra con tu correo y contraseña."}</p></div>
     <section class="card"><form id="fLogin">
       <div class="field"><label for="lgMail">Correo</label><input id="lgMail" name="email" type="email" autocomplete="email" required></div>
       ${rec?"":`<div class="field"><label for="lgPw">Contraseña</label><input id="lgPw" name="pw" type="password" minlength="6" autocomplete="${reg?"new-password":"current-password"}" required></div>`}
-      <button class="btn primary full" type="submit">${reg?"Crear cuenta":rec?"Enviar enlace":"Entrar"}</button>
+      <button class="btn primary full big" type="submit">${reg?"Crear mi cuenta":rec?"Enviar enlace":"Entrar"}</button>
     </form></section>
     <div class="stack" style="gap:6px;align-items:center">
       ${S.login!=="entrar"?`<button class="btn ghost" data-act="lgModo" data-m="entrar">Ya tengo cuenta</button>`:`<button class="btn ghost" data-act="lgModo" data-m="registro">Crear mi cuenta</button><button class="btn ghost" data-act="lgModo" data-m="recuperar">Olvidé mi contraseña</button>`}
@@ -954,32 +1124,47 @@ function viewLogin(){
     <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
 function viewTablero(){
-  const cs=clientesOrden(),act=cs.filter(activo);
+  const cs=clientesOrden();
   const nombreAdm=S.auth&&S.auth.nombre||"";
   return`${quien()}
-  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.5rem">${nombreAdm?esc(nombreAdm):"Clientes"}</h2>${nombreAdm?"":`<p class="small">${esc(S.auth?S.auth.email:"")}</p>`}</div>
+  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${nombreAdm?esc(nombreAdm):"Clientes"}</h2>${nombreAdm?"":`<p class="small">${esc(S.auth?S.auth.email:"")}</p>`}</div>
+  <div class="bigbtns">
+    <button class="tile-btn primary" data-act="nuevoCliente"><b>+ Registrar nuevo cliente</b><span>Elige el régimen y listo</span></button>
+    <button class="tile-btn" data-act="actualizar"${cs.length?"":" disabled"}><b>Actualización de precierres</b><span>Captura de meses anteriores</span></button>
+    <button class="tile-btn" data-act="tarifas"><b>Tablas y tarifas</b><span>ISR personas físicas y morales</span></button>
+    <button class="tile-btn" data-act="xlsTablero"${cs.length?"":" disabled"}><b>Descargar Excel</b><span>Resumen de ${MESES[S.m-1].toLowerCase()}</span></button>
+  </div>
   ${barraMes(true)}
   <section class="stack">
-    <div class="sec-h"><h2>Clientes</h2></div>
+    <div class="sec-h"><h2>Clientes</h2><span class="small muted">${cs.length} empresa${cs.length===1?"":"s"}</span></div>
     ${cs.length?`<div class="grid-wrap"><table class="xl adm"><thead><tr><th class="rn">No.</th><th>Nombre</th><th>Situación</th><th>Tipo</th><th>Última modif.</th><th>Estatus</th><th class="n">Total impuestos</th><th></th></tr></thead>
       <tbody>${cs.map((c,i)=>{const ok=actualizado(c,S.m),on=activo(c);return`<tr class="xr${on?"":" inact"}" data-act="abrir" data-id="${esc(c.id)}">
-        <td class="rn">${i+1}</td><td class="wrapc"><b>${esc(c.nombre)}</b>${c.rfc?`<br><span class="small muted">${esc(c.rfc)}</span>`:""}</td>
+        <td class="rn">${i+1}</td><td class="wrapc"><b>${esc(c.nombre)}</b>${c.email_cliente?`<br><span class="small muted">${esc(c.email_cliente)}</span>`:""}</td>
         <td><button class="sw" role="switch" aria-checked="${on}" data-act="toggleActivo" data-id="${esc(c.id)}" aria-label="Situación de ${esc(c.nombre)}"><i></i><span>${on?"Activo":"Inactivo"}</span></button></td>
         <td>${(c.regimenes||[]).map(r=>`<span class="ab">${abrev(c,r)}</span>`).join("<br>")}</td>
         <td>${ultimaMod(c)}</td>
         <td><span class="chip ${ok?"favor":"warn"}">${ok?"Actualizado":"Pendiente de actualizar"}</span></td>
         <td class="n"><b>${money(totalMes(c,S.m))}</b></td>
         <td><span class="btn sm primary">Accesar</span></td></tr>`}).join("")}</tbody></table></div>
-      <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Toca un cliente para entrar.</p>`
-    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Regístralo con el botón de abajo o desde el catálogo.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
-    <button class="btn primary full" data-act="nuevoCliente">+ Registrar un nuevo cliente</button>
+      <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Toca una empresa para entrar.</p>`
+    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Regístralo con el botón de arriba o desde la tabla de regímenes.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
   <section class="stack">
-    <div class="sec-t"><h2 style="font-size:1.15rem">Tipos de cliente</h2><p class="small">Toca <b>Crear</b> para registrar un cliente de ese tipo.</p></div>
+    <div class="sec-t"><h2 style="font-size:1.15rem">Regímenes</h2><p class="small">Toca <b>Crear</b> para registrar una empresa de ese régimen.</p></div>
     <div class="grid-wrap"><table class="xl cat"><thead><tr><th class="rn">No.</th><th>Tipo / persona</th><th>Abreviatura</th><th>Régimen fiscal</th><th>Actividad</th><th></th></tr></thead>
-      <tbody>${CATALOGO.map((k,i)=>`<tr><td class="rn">${i+1}</td><td>${k.per==="PM"?"Moral":"Física"}</td><td><span class="ab">${k.ab}</span></td><td class="wrapc">${k.rf}</td><td>${k.act}</td><td><button class="btn sm" data-act="crearTipo" data-i="${i}">Crear</button></td></tr>`).join("")}</tbody></table></div>
-  </section>
-  ${cs.length?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="actualizar">Actualización de precierres</button><button class="btn full" data-act="xlsTablero">Descargar ${MESES[S.m-1].toLowerCase()} en Excel</button></div>`:""}`;
+      <tbody>${CATALOGO.map((k,i)=>`<tr><td class="rn">${i+1}</td><td>${k.per==="PM"?"Moral":"Física"}</td><td><span class="ab">${k.ab}</span></td><td class="wrapc">${k.rf}</td><td class="wrapc">${k.act}</td><td><button class="btn sm primary" data-act="crearTipo" data-i="${i}">Crear</button></td></tr>`).join("")}</tbody></table></div>
+  </section>`;
+}
+// Estatus del precierre que ve todo mundo: verde actualizado, naranja pendiente
+const precierreTag=(c,m)=>actualizado(c,m)?`<span class="pill ok">Precierre actualizado</span>`:`<span class="pill pend">Precierre pendiente por actualizar</span>`;
+const LEYENDA_ACT=`<p class="small muted" style="margin:0">Los precierres se actualizan una vez terminado el mes anterior.</p>`;
+function limiteCard(c,m){
+  const L=limiteResico(c,m);if(!L)return"";
+  const pct=Math.min(1,L.pct),cls=L.pct>=1?"over":L.pct>=0.8?"near":"";
+  return`<section class="card lim ${cls}"><div class="row between" style="gap:10px;flex-wrap:wrap"><b>Límite de ingresos RESICO ${YEAR}</b><span class="small muted">${money(L.lim)}</span></div>
+    <div class="bar"><i style="width:${(pct*100).toFixed(1)}%"></i></div>
+    <div class="row between" style="gap:10px;flex-wrap:wrap"><span class="small">Llevas <b>${money(L.usado)}</b></span><span class="small">${L.disp>=0?"Te quedan <b>"+money(L.disp)+"</b>":"Rebasaste por <b>"+money(-L.disp)+"</b>"}</span></div>
+    ${L.pct>=1?`<p class="note danger" style="margin:0">Rebasaste el límite de RESICO. Habla con tu contador para el cambio de régimen.</p>`:L.pct>=0.8?`<p class="note" style="margin:0">Estás a punto de rebasar tu límite de RESICO.</p>`:""}</section>`;
 }
 function pasos(e){
   const n=ESTADOS[e].paso;
@@ -1013,30 +1198,39 @@ function resumenHero(c,r,p){
       </div>
     </div>`;
 }
+// Facturas a crédito de meses anteriores que todavía no se cobran
+function pendientesCobro(c){
+  const cobradas=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.ref_id).map(x=>x.ref_id));
+  return Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.tipo==="ingreso"&&est(x)==="I"&&!cobradas.has(x.id)).sort((a,b)=>a.fecha.localeCompare(b.fecha));
+}
 function listaCliente(c,m){
   const ms=movsDe(c.id,m),edit=!S.preview&&puedeCapturar(c.id,m),I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
-  const lbl={C:["favor","Ya pagada"],I:["pay","Pendiente de pago"],MA:["","Pago de otro mes"]};
-  const item=x=>{const[,mo,d]=x.fecha.split("-"),e=est(x);return`<button class="inv" data-act="mov" data-id="${esc(x.id)}">
+  const lbl={C:["favor","Contado"],I:["pay","Crédito · pendiente de cobro"],MA:["","Complemento de pago"]};
+  const cobradaEn=x=>{const r=Object.values(S.movs).find(y=>y.ref_id===x.id);return r?MESES[r.mes-1].toLowerCase():""};
+  const item=x=>{const[,mo,d]=x.fecha.split("-"),e=est(x),ce=x.tipo==="ingreso"&&e==="I"?cobradaEn(x):"";return`<div class="inv-w"><button class="inv" data-act="mov" data-id="${esc(x.id)}">
     <span class="info"><strong>${esc(x.concepto||"Sin concepto")}</strong><span class="small muted">${d}/${mo}${x.rfc?" · "+esc(x.rfc):""}</span>
-      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${lbl[e][0]}">${lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}${x.nota?'<span class="chip warn">Con nota</span>':""}</span></span>
-    <span class="amt"><b>${money(x.subtotal)}</b><span class="small muted">+ IVA ${money(x.iva)}</span></span></button>`};
-  const sec=(t,sub,a,vacio)=>`<section class="stack"><div class="sec-t"><h2 style="font-size:1.1rem">${t}</h2><p class="small">${sub}</p></div>
-    ${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<div class="card empty" style="padding:22px"><p class="muted">${vacio}</p></div>`}</section>`;
+      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${ce?"favor":lbl[e][0]}">${ce?"Cobrada en "+ce:lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tasaDe(x)!=="16"?`<span class="chip mute">IVA ${tasaDe(x)==="exento"?"exento":tasaDe(x)==="0"?"0 %":"manual"}</span>`:""}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}${x.nota?'<span class="chip warn">Con nota</span>':""}</span></span>
+    <span class="amt"><b>${money(x.subtotal)}</b><span class="small muted">IVA ${money(x.iva)}</span></span></button>
+    ${x.tipo==="ingreso"&&e==="I"&&!ce&&!S.preview?`<button class="btn sm cobrar" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button>`:""}</div>`};
   const tot=a=>a.reduce((t,x)=>t+(+x.subtotal||0),0);
-  return`${edit?`<div class="stack" style="gap:10px"><button class="btn primary full" data-act="nuevoMov" data-t="ingreso">+ Agregar un ingreso</button>
-      <button class="btn primary full" data-act="nuevoMov" data-t="gasto">+ Agregar un gasto</button>
-      <button class="btn full" data-act="subir">Subir mis facturas (XML o ZIP del SAT)</button></div>`:""}
-    ${sec("Tus ingresos","Total sin IVA: "+money(tot(I)),I,edit?"Aún no agregas ingresos este mes.":"No hay ingresos en este mes.")}
-    ${sec("Tus gastos","Total sin IVA: "+money(tot(G)),G,edit?"Aún no agregas gastos este mes.":"No hay gastos en este mes.")}
-    <p class="note info">Tip: mete tus gastos con factura y con IVA; así baja el IVA que pagas.</p>
-    <button class="btn full" data-act="xlsCliente">Descargar en Excel</button>`;
+  const grupo=(k,t,a,vacio)=>{const open=S.abre[k];return`<section class="grp${open?" open":""}">
+    <button class="grp-h" data-act="abre" data-k="${k}" aria-expanded="${!!open}"><span><b>${t}</b><span class="small muted">${a.length} ${a.length===1?"registro":"registros"} · toca para ${open?"ocultar":"ver"} el desglose</span></span><span class="grp-t">${money(tot(a))}<i>${open?"▴":"▾"}</i></span></button>
+    ${open?`<div class="grp-b">${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<p class="muted" style="margin:0;padding:6px 2px">${vacio}</p>`}</div>`:""}
+    ${edit?`<button class="btn primary full" data-act="nuevoMov" data-t="${k==="ing"?"ingreso":"gasto"}">+ Agregar ${k==="ing"?"ingreso":"gasto"}</button>`:""}</section>`};
+  const pend=edit&&m===defM?pendientesCobro(c).filter(x=>x.mes<m):[];
+  return`${grupo("ing","Ingresos",I,"No hay ingresos en este mes.")}
+    ${grupo("gas","Gastos",G,"No hay gastos en este mes.")}
+    ${pend.length?`<section class="card stack"><b>Facturas a crédito pendientes de cobro</b><span class="small muted">Cuando te paguen una, toca “Pasar a cobrado” y se registra el complemento de pago en ${MESES[m-1].toLowerCase()}.</span>
+      <div class="list">${pend.map(item).join("")}</div></section>`:""}
+    <p class="note info">Para bajar el IVA es necesario meter facturas de gasto con IVA <b>pagadas</b>.</p>
+    <div class="bigbtns two"><button class="tile-btn" data-act="xlsCliente"><b>Descargar Excel</b><span>Precierre del mes</span></button><button class="tile-btn" data-act="pdfCliente"><b>Descargar PDF</b><span>Para imprimir o enviar</span></button></div>`;
 }
 function hoja(c,m){
   const ms=movsDe(c.id,m),varios=(c.regimenes||[]).length>1,edit=puedeCapturar(c.id,m);
   const I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
   const regTd=x=>varios?`<td>${esc(REGS[x.regimen]?REGS[x.regimen].c:"—")}</td>`:"";
   const who=x=>`<td><span class="who">${x.capturado_por==="cliente"?"Cliente":"Despacho"}</span></td>`;
-  const cnc=x=>`<td class="wrapc">${esc(x.concepto||"—")}${x.rfc?`<br><span class="small muted">${esc(x.rfc)}</span>`:""}${x.nota?`<span class="nota">Nota: ${esc(x.nota)}</span>`:""}</td>`;
+  const cnc=x=>`<td class="wrapc">${esc(x.concepto||"—")}${x.rfc?`<br><span class="small muted">${esc(x.rfc)}</span>`:""}${tasaDe(x)!=="16"?`<br><span class="small muted">IVA ${tasaDe(x)==="exento"?"exento":tasaDe(x)==="0"?"0 %":"manual"}</span>`:""}${x.nota?`<span class="nota">Nota: ${esc(x.nota)}</span>`:""}</td>`;
   const v=n=>n?money(n):"—";
   let eI=0,eV=0,cI=0,cV=0,rV=0,rI=0;
   const filasI=I.map((x,i)=>{const e=est(x),el=e!=="MA",co=e!=="I";
@@ -1051,9 +1245,8 @@ function hoja(c,m){
       <td>${x.deducible===false?'<span class="chip pay">No</span>':'<span class="chip favor">Sí</span>'}</td>${who(x)}</tr>`}).join("");
   const vacio=(cols,t)=>`<tr><td class="rn">1</td><td colspan="${cols}" class="muted" style="white-space:normal;padding:20px 12px">${t}</td></tr>`;
   const ci=varios?11:10,cg=varios?8:7;
-  return`${edit?`<div class="actions"><button class="btn primary" data-act="nuevoMov" data-t="ingreso">+ Ingreso</button><button class="btn primary" data-act="nuevoMov" data-t="gasto">+ Gasto</button><button class="btn" data-act="subir">Subir XML de este mes</button><button class="btn" data-act="xlsCliente">Excel</button>${esAdmin()?`<button class="btn full2" data-act="subirAnio">Subir el año completo (ZIP del SAT)</button>`:""}</div>`
-      :`<div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="xlsCliente">Descargar en Excel</button></div>`}
-    <div class="sec-h"><h3 style="margin:0">Ingresos</h3><span class="small muted">C contado · I no pagado · MA cobro de meses anteriores</span></div>
+  return`${edit?`<div class="actions"><button class="btn primary big" data-act="nuevoMov" data-t="ingreso">+ Ingreso</button><button class="btn primary big" data-act="nuevoMov" data-t="gasto">+ Gasto</button></div>`:""}
+    <div class="sec-h"><h3 style="margin:0">Ingresos</h3><span class="small muted">C contado · I crédito · MA complemento de pago</span></div>
     <div class="grid-wrap"><table class="xl"><thead>
       <tr><th class="rn" rowspan="2">#</th><th rowspan="2">Concepto</th><th rowspan="2">Est.</th><th rowspan="2">Ret</th>${varios?'<th rowspan="2">Régimen</th>':""}<th class="n grp" colspan="2">Elaborado</th><th class="n grp" colspan="4">Cobrado</th><th rowspan="2">Capturó</th></tr>
       <tr><th class="n">Importe</th><th class="n">IVA</th><th class="n">Importe</th><th class="n">IVA</th><th class="n">Ret. IVA</th><th class="n">Ret. ISR</th></tr></thead>
@@ -1063,16 +1256,16 @@ function hoja(c,m){
     <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th>Concepto</th>${varios?"<th>Régimen</th>":""}<th class="n">Importe</th><th class="n">IVA</th><th class="n">Ret. ISR</th><th class="n">Ret. IVA</th><th>Deducible</th><th>Capturó</th></tr></thead>
       <tbody>${filasG||vacio(cg,"Sin gastos en "+MESES[m-1].toLowerCase()+".")}
       ${G.length?`<tr class="trt"><td class="rn"></td><td colspan="${varios?2:1}">Totales</td><td class="n">${money(gI)}</td><td class="n">${money(gV)}</td><td class="n">${money(gRi)}</td><td class="n">${money(gRv)}</td><td></td><td></td></tr>`:""}</tbody></table></div>
-    <p class="note info">Para bajar el IVA es necesario meter gastos facturados con IVA.</p>
+    <p class="note info">Para bajar el IVA es necesario meter facturas de gasto con IVA pagadas.</p>
     <p class="small muted" style="margin:0">Desliza las tablas hacia los lados para ver todas las columnas. Toca una fila para ${edit?"editarla":"ver el detalle"}.</p>`;
 }
 function rowsTable(rows,ctx){ // ctx: {c,m,reg} vuelve editables las celdas amarillas
   const editable=ctx&&esAdmin()&&periodo(ctx.c.id,ctx.m).estado!=="declarado";
   return`<table class="calc"><tbody>${rows.map(([l,v,k,key])=>{
-    const val=typeof v==="number"?sm(v):esc(v);
+    const val=typeof v==="number"?sm(v):esc(v);if(v===""&&k==="sub")return`<tr class="sub hd"><td colspan="2">${esc(l)}</td></tr>`;
     let extra="";
     if(key){const cur=ctx?(ctx.reg?aj(ctx.c.id,ctx.m,ctx.reg,key):num(ajustes(ctx.c.id,ctx.m)[key])):0;
-      extra=editable?`<label class="ycap">${"Captura"} <input class="ycell" type="number" step="0.01" min="0" inputmode="decimal" value="${cur||""}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
+      extra=editable?`<label class="ycap">${"Captura"} <input class="ycell money" type="text" inputmode="decimal" value="${fmtN(cur)}" placeholder="0.00" data-aj="${ctx.reg||""}|${key}" aria-label="${esc(l)}"></label>`
         :(cur?`<span class="ycap"><span class="ytag">Capturado ${money(cur)}</span></span>`:"");}
     return`<tr class="${k||""}"><td>${esc(l)}${extra}</td><td class="v">${val}</td></tr>`}).join("")}</tbody></table>`;
 }
@@ -1083,7 +1276,7 @@ function tabCalculo(c,r){
       [r.iva.neto>=0?"IVA a pagar":"IVA a favor",Math.abs(r.iva.neto),"total"]],ctxI)}</div>
     ${r.regs.map(x=>`<div class="card"><h3>Cálculo de ISR · ${esc(REGS[x.reg].n)}</h3>${rowsTable(x.rows,{c,m:S.m,reg:x.reg})}</div>`).join("")}
     ${r.ret>0.5?`<div class="card"><h3>Retenciones a enterar</h3>${rowsTable([["ISR retenido a proveedores",Math.max(0,r.G.isrRet)],["IVA retenido a proveedores",Math.max(0,r.G.ivaRet)],["Total",r.ret,"total"]])}</div>`:""}
-    <p class="small muted" style="margin:0">${esAdmin()?"Las celdas amarillas se capturan a mano (PTU, pérdidas, compensaciones o saldos de meses que no están en la app). Lo demás se calcula solo.":"El cálculo final lo confirma tu contador."} Tarifa 2026 del Anexo 8 de la RMF.</p>`;
+    <p class="small muted" style="margin:0">${esAdmin()?"Las celdas amarillas se capturan a mano (meses anteriores, PTU, pérdidas, compensaciones y saldos). Lo demás se calcula solo. Las tarifas se cambian en Tablas y tarifas.":"El cálculo final lo confirma tu contador."}</p>`;
 }
 function tabHistorial(c){
   let ti=0,tg=0,tv=0,tr=0,tt=0;
@@ -1098,19 +1291,28 @@ function tabHistorial(c){
 }
 function viewClienteAdmin(){
   const c=S.clientes[S.cid];if(!c){S.vista="tablero";return viewTablero()}
-  const p=periodo(c.id,S.m),r=calc(c,S.m);
+  const p=periodo(c.id,S.m),r=calc(c,S.m),f=fiscal(c);
   const tabs=[["hoja","Hoja"],["calculo","Cálculo"],["historial","Meses"]];
+  const otras=c.email_cliente?clientesOrden().filter(x=>x.id!==c.id&&(x.email_cliente||"")===c.email_cliente):[];
   return`${quien()}
-  <div class="row between" style="flex-wrap:wrap;gap:8px"><button class="btn ghost" data-act="tablero">← Panel</button><div class="row" style="gap:8px"><button class="btn ghost" data-act="verCliente">Ver como cliente</button><button class="btn ghost" data-act="editCliente">Editar cliente</button></div></div>
+  <div class="bigbtns">
+    <button class="tile-btn" data-act="tablero"><b>← Panel</b><span>Todos los clientes</span></button>
+    <button class="tile-btn" data-act="verCliente"><b>Ver como cliente</b><span>Lo que ve tu cliente</span></button>
+    <button class="tile-btn" data-act="editCliente"><b>Editar empresa</b><span>Régimen, correo y retenciones</span></button>
+    <button class="tile-btn" data-act="descargas"><b>Excel y PDF</b><span>Precierre de ${MESES[S.m-1].toLowerCase()}</span></button>
+  </div>
   <section class="card hero">
-    <div class="stack" style="gap:6px">
-      <div class="row between"><h2 style="font-size:1.3rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
-      <span class="small muted">${c.rfc?esc(c.rfc)+" · ":""}${c.tipo==="PM"?"Persona moral":"Persona física"}${c.email_cliente?" · acceso: "+esc(c.email_cliente):" · sin acceso de cliente"}</span>
-      <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${abrev(c,x)}</span>`).join("")}${activo(c)?"":'<span class="chip mute">Inactivo</span>'}</span>
+    <div class="stack" style="gap:8px">
+      <div class="row between" style="gap:10px;flex-wrap:wrap"><h2 style="font-size:1.35rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
+      <span class="small muted">${c.rfc?esc(c.rfc)+" · ":""}${c.email_cliente?"Acceso: "+esc(c.email_cliente):"Sin correo de acceso"}</span>
+      <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${abrev(c,x)}</span>`).join("")}${f.aut?'<span class="chip warn">Retiene 4 % de IVA</span>':""}${activo(c)?"":'<span class="chip mute">Inactivo</span>'}</span>
+      ${otras.length?`<span class="small muted">Este cliente también tiene: ${otras.map(x=>esc(x.nombre)).join(", ")}</span>`:""}
+      <div>${precierreTag(c,S.m)}</div>${LEYENDA_ACT}
     </div>
     ${resumenHero(c,r,p)}
     ${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}
   </section>
+  ${limiteCard(c,S.m)}
   ${barraMes()}
   <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>
   <div class="tabs" role="tablist" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>
@@ -1120,28 +1322,62 @@ function viewPanelCliente(){
   const prev=S.preview&&esAdmin();
   const cs=prev?[S.clientes[S.cid]].filter(Boolean):clientesOrden();
   if(!cs.length)return`${quien()}<section class="card empty"><h2>Tu cuenta todavía no está ligada</h2>
-    <p class="muted">Pide al despacho que registre tu correo <b>${esc(S.auth.email)}</b> en tu ficha de cliente. En cuanto lo haga, aquí verás tus meses.</p>
-    <button class="btn" data-act="recargar">Ya me avisaron, actualizar</button></section>${firma()}`;
-  const c=S.clientes[S.cid]||cs[0],p=periodo(c.id,S.m),r=calc(c,S.m);
-  const msg={bloqueado:["lock","Captura cerrada","Tu contador todavía no abre la captura de "+MESES[S.m-1].toLowerCase()+". Cuando la autorice podrás agregar tus ingresos y gastos."],
-    abierto:["warn","Ya puedes capturar","Agrega aquí abajo tus ingresos y gastos de "+MESES[S.m-1].toLowerCase()+". Cuando tu contador haga el precierre ya no podrás agregar ni cambiar nada."],
+    <p class="muted">Pide al despacho que registre tu correo <b>${esc(S.auth.email)}</b> en tu empresa. En cuanto lo haga, aquí la verás.</p>
+    <button class="btn primary" data-act="recargar">Ya me avisaron, actualizar</button></section>${firma()}`;
+  const c=S.clientes[S.cid]||cs[0],p=periodo(c.id,S.m),r=calc(c,S.m),f=fiscal(c),mes=MESES[S.m-1].toLowerCase();
+  const fin=mesTerminado(S.m);
+  const msg=p.estado==="abierto"&&fin?["lock","El mes ya terminó","El mes de "+mes+" ya concluyó: ya no se puede agregar ni cambiar nada."]
+    :{bloqueado:["lock","Captura cerrada","Tu contador todavía no abre la captura de "+mes+". Cuando la autorice podrás agregar tus ingresos y gastos."],
+    abierto:["warn","Ya puedes capturar","Agrega tus ingresos y gastos de "+mes+" hasta el último día del mes."],
     precierre:["lock","Mes en precierre","Tu contador está revisando y preparando la declaración. Ya no se puede agregar información."],
-    declarado:["ok","Mes declarado","Tu declaración de "+MESES[S.m-1].toLowerCase()+" ya se presentó."]}[p.estado];
+    declarado:["ok","Mes declarado","Tu declaración de "+mes+" ya se presentó."]}[p.estado];
   const tabs=[["hoja","Este mes"],["historial","Todos mis meses"]];
   if(S.tabC==="calculo")S.tabC="hoja";
   return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
-  <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.4rem">${esc(c.nombre)}</h2><p class="small">${c.rfc?esc(c.rfc)+" · ":""}${(c.regimenes||[]).map(x=>REGS[x].c).join(", ")}</p></div>
-  ${cs.length>1?`<div class="seg">${cs.map(x=>`<button data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${esc(x.nombre)}</button>`).join("")}</div>`:""}
+  <div class="banner danger"><div class="stack" style="gap:2px"><strong>Importante</strong><span class="small">Una vez concluido el mes, ya no se podrá actualizar ni agregar nada.</span></div></div>
+  ${cs.length>1?`<section class="stack" style="gap:10px"><div class="sec-t"><span class="eyebrow">Mis empresas</span></div><div class="emps">${cs.map(x=>`<button class="emp-card" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></section>`:""}
+  <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.45rem">${esc(c.nombre)}</h2>
+    <p class="small">${(c.regimenes||[]).map(x=>REGS[x].n).join(", ")}${(c.regimenes||[]).includes("601")?" · Actividad: "+esc(c.actividad||"Empresarial"):""}</p>
+    <div class="tags">${f.aut?'<span class="chip warn">Autotransporte: se retiene 4 % de IVA</span>':""}</div></div>
+  <div class="stack" style="gap:6px">${precierreTag(c,S.m)}${LEYENDA_ACT}</div>
   ${barraMes()}
+  ${prev?"":`<button class="btn full" data-act="recargar">↻ Actualizar</button>`}
   <div class="banner ${msg[0]}"><div class="stack" style="gap:2px"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span></div></div>
-  <section class="card hero">${resumenHero(c,r,p)}${p.estado!=="declarado"?`<p class="small muted" style="margin:0">Cálculo estimado; el monto final lo confirma tu contador.</p>`:""}</section>
+  <section class="card hero">${resumenHero(c,r,p)}${p.estado!=="declarado"?`<p class="small muted" style="margin:0">Impuesto probable; el monto final lo confirma tu contador.</p>`:""}</section>
+  ${limiteCard(c,S.m)}
   <div class="tabs" role="tablist" style="grid-template-columns:1fr 1fr">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>
   <section class="stack">${S.tabC==="historial"?tabHistorial(c):listaCliente(c,S.m)}</section>`;
+}
+function viewTarifas(){
+  const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${fmtN(v,d)}">`;
+  return`${quien()}
+  <div class="bigbar"><button class="btn big" data-act="tablero">← Panel</button></div>
+  <div class="sec-t"><span class="eyebrow">Tablas y tarifas</span><h2 style="font-size:1.5rem">Actualiza las tablas de ISR</h2>
+    <p>Se actualizan una vez al año (normalmente en enero) o cuando cambie la ley. Al guardar, todos los cálculos usan los valores nuevos.</p></div>
+  <form id="fTarifas" class="stack" style="gap:18px">
+    <section class="card stack"><h3 style="margin:0">Personas morales</h3>
+      <div class="two"><div class="field"><label>Tasa de ISR personas morales (%)</label>${inp("tasaPM",CFG.tasaPM)}</div>
+        <div class="field"><label>Tasa general de IVA (%)</label>${inp("iva",CFG.iva)}</div></div>
+      <div class="two"><div class="field"><label>Límite anual RESICO personas morales</label>${inp("limPM",CFG.limPM)}</div>
+        <div class="field"><label>Retención de IVA a autotransporte (%)</label>${inp("retAut",CFG.retAut,4)}</div></div></section>
+    <section class="card stack"><h3 style="margin:0">Personas físicas · tarifa mensual (art. 96 LISR)</h3>
+      <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th class="n">Límite inferior</th><th class="n">Cuota fija</th><th class="n">% sobre excedente</th></tr></thead>
+      <tbody>${CFG.tarifaPF.map((t,i)=>`<tr><td class="rn">${i+1}</td><td>${inp("t_li_"+i,t[0])}</td><td>${inp("t_cf_"+i,t[1])}</td><td>${inp("t_pc_"+i,t[2])}</td></tr>`).join("")}</tbody></table></div>
+      <div class="two"><div class="field"><label>Retención de IVA personas físicas (%)</label>${inp("retIvaPF",CFG.retIvaPF,4)}</div>
+        <div class="field"><label>Retención de ISR personas físicas (%)</label>${inp("retIsrPF",CFG.retIsrPF,4)}</div></div></section>
+    <section class="card stack"><h3 style="margin:0">RESICO personas físicas · tasa mensual</h3>
+      <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th class="n">Ingresos del mes hasta</th><th class="n">Tasa (%)</th></tr></thead>
+      <tbody>${CFG.resicoPF.map((t,i)=>`<tr><td class="rn">${i+1}</td><td>${inp("r_h_"+i,t[0])}</td><td>${inp("r_p_"+i,t[1])}</td></tr>`).join("")}</tbody></table></div>
+      <div class="two"><div class="field"><label>Límite anual RESICO personas físicas</label>${inp("limPF",CFG.limPF)}</div>
+        <div class="field"><label>Retención de ISR RESICO (%)</label>${inp("retIsrResico",CFG.retIsrResico,4)}</div></div></section>
+    <button class="btn primary full big" type="submit">Guardar tablas y tarifas</button>
+    <button class="btn ghost full" type="button" data-act="tarifasBase">Regresar a los valores originales</button>
+  </form>`;
 }
 function viewTrabajo(){
   if(!S.listo)return`${topMini()}<div class="card empty"><p class="muted">Cargando…</p></div>`;
   if(!S.auth)return viewLogin();
-  if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():viewTablero();
+  if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
 function render(){
@@ -1153,127 +1389,309 @@ function render(){
 /* ================= Formularios ================= */
 function openSheet(title,html){$("#sheetTitle").textContent=title;$("#sheetBody").innerHTML=html;$("#sheet").hidden=false}
 function closeSheet(){$("#sheet").hidden=true;S.confirm=null;S.mov=null;render()}
-function formCliente(c){
-  c=c||{nombre:"",rfc:"",tipo:S.apartado,regimenes:S.apartado==="PF"?["612"]:[],coef:"",coef_aut:"",email_cliente:"",actividad:"Empresarial",activo:true};
-  const regsHTML=t=>REGS_DE(t).map(k=>`<label class="checkcard"><input type="checkbox" name="reg" value="${k}"${(c.regimenes||[]).includes(k)?" checked":""}><span class="stack" style="gap:2px"><b>${REGS[k].c}</b><span class="small muted">${REGS[k].n}</span></span></label>`).join("");
-  openSheet(c.id?"Editar cliente":"Nuevo cliente",`<form id="fCliente">
+function formCliente(c,regIni){
+  const nuevo=!c;
+  c=c||{nombre:"",rfc:"",tipo:REGS[regIni||"601"].t,regimenes:[regIni||"601"],coef:"",email_cliente:"",actividad:"Empresarial",activo:true};
+  const reg=regDe(c),f=fiscal(c);
+  openSheet(c.id?"Editar empresa":"Registrar nuevo cliente",`<form id="fCliente">
     <input type="hidden" name="id" value="${esc(c.id||"")}">
-    <div class="seg" role="group" aria-label="Tipo de contribuyente"><button type="button" data-act="cTipo" data-t="PM" aria-pressed="${c.tipo==="PM"}">Persona moral</button><button type="button" data-act="cTipo" data-t="PF" aria-pressed="${c.tipo==="PF"}">Persona física</button></div>
-    <input type="hidden" name="tipo" id="cTipo" value="${c.tipo}">
+    <fieldset><legend>Régimen</legend><div class="regs">${Object.keys(REGS).map(k=>`<label class="regcard"><input type="radio" name="reg" value="${k}"${k===reg?" checked":""}><span><b>${REGS[k].ab}</b><span class="small muted">${REGS[k].n}</span></span></label>`).join("")}</div></fieldset>
+    <fieldset id="wAct"${reg==="601"?"":" hidden"}><legend>Actividad</legend><div class="seg3">${ACTS_601.map(a=>`<label class="pillopt"><input type="radio" name="actividad" value="${a}"${(c.actividad||"Empresarial")===a?" checked":""}><span>${a}</span></label>`).join("")}</div>
+      <span class="small muted" id="hAut">Si es autotransporte, a sus ingresos se les retiene el 4 % de IVA (lo ve el cliente y no lo puede cambiar).</span></fieldset>
     <div class="field"><label for="cNom">Nombre o razón social</label><input id="cNom" name="nombre" required value="${esc(c.nombre)}" autocomplete="off"></div>
-    <div class="field"><label for="cRfc">RFC (opcional)</label><input id="cRfc" name="rfc" maxlength="13" placeholder="Puedes dejarlo vacío" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
-    <fieldset><legend>Regímenes</legend>
-      <div class="checks" id="regPM"${c.tipo==="PM"?"":" hidden"}><p class="small muted" style="margin:0">Selecciona uno, dos o los tres.</p>${regsHTML("PM")}</div>
-      <div class="checks" id="regPF"${c.tipo==="PF"?"":" hidden"}>${regsHTML("PF")}</div>
-    </fieldset>
-    <div class="two"><div class="field" id="wCoef"><label for="cCoef">Coeficiente general de ley</label><input id="cCoef" name="coef" type="number" step="0.0001" min="0" max="1" inputmode="decimal" value="${esc(c.coef||"")}" placeholder="0.0685"></div>
-      <div class="field" id="wCoefA"><label for="cCoefA">Coeficiente autotransporte</label><input id="cCoefA" name="coef_aut" type="number" step="0.0001" min="0" max="1" inputmode="decimal" value="${esc(c.coef_aut||"")}" placeholder="0.0473"></div></div>
-    <div class="two"><div class="field" id="wAct"${c.tipo==="PM"?"":" hidden"}><label for="cAct">Actividad</label><select id="cAct" name="actividad">${["Empresarial","Servicios"].map(a=>`<option${(c.actividad||"Empresarial")===a?" selected":""}>${a}</option>`).join("")}</select></div>
-      <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div></div>
-    <div class="field"><label for="cMail">Correo del cliente para su acceso (opcional)</label><input id="cMail" name="email_cliente" type="email" value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@correo.com"></div>
-    ${c.id?"":`<fieldset><legend>Antes de crear, confirma</legend><div class="checks">
-      <label class="check"><input type="checkbox" required> Revisé el nombre y el RFC</label>
-      <label class="check"><input type="checkbox" required> El tipo de persona, régimen y actividad son correctos</label>
-      <label class="check"><input type="checkbox" required> Capturé el coeficiente de utilidad (si aplica)</label></div></fieldset>`}
-    <button class="btn primary full" type="submit">${c.id?"Guardar cambios":"Crear cliente"}</button>
-    ${c.id?`<button class="btn danger full" type="button" data-act="borrarCliente">${S.confirm==="cliente"?"Toca otra vez para borrar el cliente y todos sus meses":"Borrar cliente"}</button>`:""}
+    <div class="two"><div class="field"><label for="cRfc">RFC (opcional)</label><input id="cRfc" name="rfc" maxlength="13" placeholder="Opcional" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
+      <div class="field" id="wCoef"${reg==="601"?"":" hidden"}><label for="cCoef">Coeficiente de utilidad</label><input id="cCoef" name="coef" class="money coef" type="text" inputmode="decimal" value="${num(c.coef)?num(c.coef).toFixed(4):""}" placeholder="0.0000"></div></div>
+    <div class="field"><label for="cMail">Correo del cliente (obligatorio)</label><input id="cMail" name="email_cliente" type="email" required value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@gmail.com, hotmail, icloud…"><span class="small muted" id="mailHint"></span></div>
+    <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div>
+    <fieldset><legend>Características fiscales</legend>
+      <div class="fisc"><label class="check"><input type="checkbox" name="rivaOn" id="rivaOn"${f.retIva.aplica?" checked":""}> Le retienen IVA por sus ingresos</label><div class="pct"><input class="money" data-d="4" name="rivaPct" id="rivaPct" type="text" inputmode="decimal" value="${f.retIva.pct||""}" placeholder="0"><span>%</span></div></div>
+      <div class="fisc"><label class="check"><input type="checkbox" name="risrOn" id="risrOn"${f.retIsr.aplica?" checked":""}> Le retienen ISR por sus ingresos</label><div class="pct"><input class="money" data-d="4" name="risrPct" id="risrPct" type="text" inputmode="decimal" value="${f.retIsr.pct||""}" placeholder="0"><span>%</span></div></div>
+      <ul class="small muted fisc-info" id="fiscInfo"></ul></fieldset>
+    ${nuevo?`<fieldset><legend>Antes de crear, confirma</legend><div class="checks">
+      <label class="check"><input type="checkbox" required> Revisé el nombre y el correo</label>
+      <label class="check"><input type="checkbox" required> El régimen y la actividad son correctos</label>
+      <label class="check"><input type="checkbox" required> Capturé el coeficiente de utilidad (si aplica)</label></div></fieldset>`:""}
+    <button class="btn primary full big" type="submit">${c.id?"Guardar cambios":"Crear cliente"}</button>
+    ${c.id?`<button class="btn danger full" type="button" data-act="borrarCliente">${S.confirm==="cliente"?"Toca otra vez para borrar la empresa y todos sus meses":"Borrar empresa"}</button>`:""}
   </form>`);
-  syncClienteForm();
+  syncClienteForm(false);mailHint();
 }
-function syncClienteForm(){
-  const t=$("#cTipo").value,box=t==="PM"?"#regPM":"#regPF";
-  const sel=[...document.querySelectorAll(box+' input[name="reg"]:checked')].map(i=>i.value);
-  $("#wCoef").hidden=!(t==="PM"&&sel.includes("601"));$("#wCoefA").hidden=!(t==="PM"&&sel.includes("624"));
-  const w=$("#wAct");if(w)w.hidden=!(t==="PM"&&(sel.includes("601")||sel.includes("626")));
+function mailHint(){
+  const i=$("#cMail"),h=$("#mailHint");if(!i||!h)return;
+  const v=i.value.trim().toLowerCase(),id=($("#fCliente [name=id]")||{}).value;
+  const otras=v?clientesOrden().filter(x=>x.id!==id&&(x.email_cliente||"").toLowerCase()===v):[];
+  h.innerHTML=otras.length?`Este correo ya tiene acceso a: <b>${otras.map(x=>esc(x.nombre)).join(", ")}</b>. Esta empresa se agregará a su cuenta.`
+    :/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?"Con este correo el cliente crea su cuenta y ve sus empresas. Sirve cualquier correo (Gmail, Hotmail, Outlook, iCloud, Yahoo…).":"";
+}
+function syncClienteForm(defaults){
+  const reg=(document.querySelector('#fCliente input[name="reg"]:checked')||{}).value||"601";
+  const act=(document.querySelector('#fCliente input[name="actividad"]:checked')||{}).value||"Empresarial";
+  $("#wAct").hidden=reg!=="601";$("#wCoef").hidden=reg!=="601";
+  if(defaults){const f=fiscal({regimenes:[reg],actividad:act,tipo:REGS[reg].t});
+    $("#rivaOn").checked=f.retIva.aplica;$("#rivaPct").value=f.retIva.pct||"";$("#risrOn").checked=f.retIsr.aplica;$("#risrPct").value=f.retIsr.pct||""}
+  const info=[reg==="601"?"ISR: se acumula el ingreso facturado (contado y crédito), con coeficiente de utilidad y tasa "+CFG.tasaPM+" %.":reg==="626"?"ISR: se acumula el ingreso cobrado menos gastos pagados, sin coeficiente, tasa "+CFG.tasaPM+" %.":reg==="626F"?"ISR: tasa RESICO sobre el ingreso cobrado del mes.":"ISR: se acumula el ingreso cobrado y se aplica la tarifa del art. 96.",
+    "IVA: se considera solo cuando se cobra.","IVA de cada factura: 16 %, 0 %, exento o manual.",...(reg==="626"||reg==="626F"?["Límite anual RESICO: "+money(reg==="626"?CFG.limPM:CFG.limPF)+"."]:[])];
+  $("#fiscInfo").innerHTML=info.map(t=>`<li>${esc(t)}</li>`).join("");
 }
 function formMov(x){
-  const c=S.clientes[S.cid],m=x?x.mes:S.m,edit=!S.preview&&(x?puedeEditarMov(x):puedeCapturar(c.id,m));
+  const c=S.clientes[S.cid],m=x?x.mes:S.m,edit=!S.preview&&(x?puedeEditarMov(x):puedeCapturar(c.id,m)),f=fiscal(c);
   const tipo0=x?x.tipo:(S.mov&&S.mov.tipo)||"ingreso";
-  x=x||{tipo:tipo0,estatus:"C",fecha:YEAR+"-"+pad(m)+"-"+pad(Math.min(15,new Date(YEAR,m,0).getDate())),concepto:"",rfc:"",regimen:(c.regimenes||[])[0],subtotal:"",iva:"",iva_ret:"",isr_ret:"",deducible:true};
-  const last=new Date(YEAR,m,0).getDate(),dis=edit?"":" disabled",ing=x.tipo==="ingreso";
-  const sug="";
-  const retOn=x.id?tieneRet(x):(x.tipo==="ingreso"&&x.regimen==="624");S.retOn=retOn;
+  const hoy=new Date(),dDef=hoy.getFullYear()===YEAR&&hoy.getMonth()+1===m?hoy.getDate():Math.min(15,new Date(YEAR,m,0).getDate());
+  x=x||{tipo:tipo0,estatus:"C",fecha:YEAR+"-"+pad(m)+"-"+pad(dDef),concepto:"",rfc:"",regimen:regDe(c),subtotal:"",iva:"",iva_ret:"",isr_ret:"",deducible:true,tasa_iva:"16"};
+  const last=new Date(YEAR,m,0).getDate(),dis=edit?"":" disabled",ing=x.tipo==="ingreso",adm=esAdmin();
+  const tasa=x.id?tasaDe(x):"16";S.retOn=x.id?tieneRet(x):f.aut;S.retManual=false;S.mvTasa=tasa;
+  const puedeRet=f.aut||f.retIva.aplica||f.retIsr.aplica;
   openSheet(x.id?(edit?"Editar":"Detalle"):(ing?"Agregar un ingreso":"Agregar un gasto"),`<form id="fMov">
-    <input type="hidden" name="id" value="${esc(x.id||"")}"><input type="hidden" name="tipo" id="mvTipo" value="${x.tipo}">
-    <div class="seg" role="group" aria-label="Tipo"><button type="button" data-act="mvTipo" data-t="ingreso" aria-pressed="${ing}"${dis}>Ingreso</button><button type="button" data-act="mvTipo" data-t="gasto" aria-pressed="${!ing}"${dis}>Gasto</button></div>
-    <div class="field" id="wEst"${ing?"":" hidden"}><label>¿Ya te pagaron?</label>
-      <div class="opts" role="group" aria-label="Estatus">${[["C","Sí, ya me pagaron","C · De contado"],["I","Todavía no me pagan","I · No pagado"],["MA","Me pagaron algo de otro mes","MA · Cobro de meses anteriores"]].map(([k,l,s2])=>`<button type="button" class="opt" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}><b>${l}</b><span>${s2}</span></button>`).join("")}</div>
+    <input type="hidden" name="id" value="${esc(x.id||"")}"><input type="hidden" name="tipo" id="mvTipo" value="${x.tipo}"><input type="hidden" name="ref_id" value="${esc(x.ref_id||"")}">
+    <div class="seg big" role="group" aria-label="Tipo"><button type="button" data-act="mvTipo" data-t="ingreso" aria-pressed="${ing}"${dis}>Ingreso</button><button type="button" data-act="mvTipo" data-t="gasto" aria-pressed="${!ing}"${dis}>Gasto</button></div>
+    <div class="field" id="wEst"${ing?"":" hidden"}><label>¿Cómo se cobró?</label>
+      <div class="opts" role="group" aria-label="Estatus">${[["C","Contado","Ya me pagaron"],["I","Crédito","Todavía no me pagan · luego lo pasas a cobrado"],["MA","Complemento de pago","Me pagaron una factura de otro mes"]].map(([k,l,s2])=>`<button type="button" class="opt" data-act="mvEst" data-e="${k}" aria-pressed="${est(x)===k}"${dis}><b>${l}</b><span>${s2}</span></button>`).join("")}</div>
       <input type="hidden" name="estatus" id="mvEst" value="${est(x)}"></div>
-    <div class="field" id="wRet"${ing?"":" hidden"}><label>¿Te retuvieron impuestos? (RET)</label>
-      <span class="small muted">Pasa cuando le cobras a una empresa: te paga un poco menos y ella entera ese impuesto.</span>
-      <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!retOn}"${dis}>No</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${retOn}"${dis}>Sí</button></div>
-      <span class="small muted" id="hRetT"></span></div>
     <div class="field"><label for="mvCon">¿Qué fue? (concepto)</label><input id="mvCon" name="concepto" value="${esc(x.concepto)}" required autocomplete="off"${dis}></div>
     <div class="two"><div class="field"><label for="mvFec">Fecha</label><input id="mvFec" name="fecha" type="date" min="${YEAR}-${pad(m)}-01" max="${YEAR}-${pad(m)}-${pad(last)}" value="${esc(x.fecha)}" required${dis}></div>
-      ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvReg">Régimen</label><select id="mvReg" name="regimen"${dis}>${c.regimenes.map(r=>`<option value="${r}"${r===x.regimen?" selected":""}>${REGS[r].c}</option>`).join("")}</select></div>`
-        :`<div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div><input type="hidden" name="regimen" value="${(c.regimenes||[])[0]||""}">`}</div>
-    ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div>`:""}
-    <div class="two"><div class="field"><label for="mvSub">Importe sin IVA ($)</label><input id="mvSub" name="subtotal" type="number" step="0.01" inputmode="decimal" value="${esc(x.subtotal)}" required${dis}></div>
-      <div class="field"><label for="mvIva">IVA</label><input id="mvIva" name="iva" type="number" step="0.01" inputmode="decimal" value="${esc(x.iva)}" placeholder="Se calcula solo (16 %)"${dis}></div></div>
-    <div class="two"><div class="field"><label for="mvIvr" id="lIvr">${ing?"IVA que te retuvieron":"IVA que retuviste"}</label><input id="mvIvr" name="iva_ret" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(x.iva_ret||"")}" placeholder="0"${dis}></div>
-      <div class="field"><label for="mvIsr" id="lIsr">${ing?"ISR que te retuvieron":"ISR que retuviste"}</label><input id="mvIsr" name="isr_ret" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(x.isr_ret||"")}" placeholder="0"${dis}></div></div>
-    <p class="small muted" style="margin:0" id="hRet">${ing?"":"Las retenciones que hiciste a proveedores se suman al total a pagar."}</p>
-    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo factura de este gasto (es deducible)</label>
-    <div class="field"><label for="mvNota">${esAdmin()?"Nota del cliente":"¿Alguna duda o nota para tu contador? (opcional)"}</label><textarea id="mvNota" name="nota" rows="2" placeholder="${esAdmin()?"Sin nota":"Ej. Esta factura es de un pago parcial"}"${dis}>${esc(x.nota||"")}</textarea></div>
-    ${x.id?`<p class="small muted" style="margin:0">Capturó: ${x.capturado_por==="cliente"?"el cliente":"el despacho"}${x.uuid_cfdi?" · CFDI "+esc(x.uuid_cfdi):""}</p>`:""}
-    ${edit?`<button class="btn primary full" type="submit">${x.id?"Guardar cambios":"Agregar a la hoja"}</button>`:`<p class="note">${S.preview?"Vista del cliente: solo para ver.":esAdmin()?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
-    ${x.id&&edit?`<button class="btn danger full" type="button" data-act="borrarMov" data-id="${esc(x.id)}">${S.confirm===x.id?"Toca otra vez para borrar":"Borrar movimiento"}</button>`:""}
+      <div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div></div>
+    ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvReg">Régimen</label><select id="mvReg" name="regimen"${dis}>${c.regimenes.map(r=>`<option value="${r}"${r===x.regimen?" selected":""}>${abrev(c,r)}</option>`).join("")}</select></div>`:`<input type="hidden" name="regimen" value="${regDe(c)}">`}
+    <div class="field"><label for="mvSub">Importe sin IVA</label><div class="moneyin"><span>$</span><input id="mvSub" name="subtotal" class="money" type="text" inputmode="decimal" value="${x.subtotal===""?"":fmtN(x.subtotal)}" placeholder="0.00" required${dis}></div></div>
+    <div class="field"><label>Tasa de IVA</label><div class="seg4" role="group" aria-label="Tasa de IVA">${IVA_TASAS.map(([k,l])=>`<button type="button" data-act="mvTasa" data-t="${k}" aria-pressed="${tasa===k}"${dis}>${l}</button>`).join("")}</div>
+      <input type="hidden" name="tasa_iva" id="mvTasa" value="${tasa}"></div>
+    <div class="field"><label for="mvIva">IVA</label><div class="moneyin"><span>$</span><input id="mvIva" name="iva" class="money" type="text" inputmode="decimal" value="${x.iva===""?"":fmtN(x.iva)}" placeholder="0.00"${tasa==="manual"&&edit?"":" readonly"}${dis}></div><span class="small muted" id="hIva">${tasa==="manual"?"Escribe el IVA a mano.":"Se calcula solo."}</span></div>
+    <div class="field" id="wRet"${ing&&puedeRet?"":" hidden"}>
+      ${f.aut?`<label>Retención</label><span class="small">Autotransporte: se retiene el ${f.retIva.pct} % de IVA de lo cobrado.</span>`
+      :`<label>¿La factura lleva retención?</label><span class="small muted">Pasa cuando le facturas a una empresa: te paga un poco menos y ella entera el impuesto.</span>
+      <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!S.retOn}"${dis}>No</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${S.retOn}"${dis}>Sí</button></div>`}
+      <span class="small muted" id="hRetT"></span></div>
+    <div class="field" id="wRetG"${ing?" hidden":""}><label>¿Le retuviste impuestos a tu proveedor?</label>
+      <div class="seg" role="group" aria-label="Retención a proveedor"><button type="button" data-act="mvRetG" data-v="no" aria-pressed="${!(x.id&&tieneRet(x))}"${dis}>No</button><button type="button" data-act="mvRetG" data-v="si" aria-pressed="${!!(x.id&&tieneRet(x))}"${dis}>Sí</button></div></div>
+    <div class="two" id="wRetIn"${(ing&&adm&&puedeRet)||(!ing&&x.id&&tieneRet(x))?"":" hidden"}>
+      <div class="field"><label for="mvIvr" id="lIvr">${ing?"IVA retenido":"IVA que retuviste"}</label><input id="mvIvr" name="iva_ret" class="money" type="text" inputmode="decimal" value="${fmtN(x.iva_ret)}" placeholder="0.00"${dis}></div>
+      <div class="field"><label for="mvIsr" id="lIsr">${ing?"ISR retenido":"ISR que retuviste"}</label><input id="mvIsr" name="isr_ret" class="money" type="text" inputmode="decimal" value="${fmtN(x.isr_ret)}" placeholder="0.00"${dis}></div></div>
+    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo la factura y ya la pagué (baja el IVA)</label>
+    <div class="field"><label for="mvNota">${adm?"Nota del cliente":"¿Alguna duda o nota para tu contador? (opcional)"}</label><textarea id="mvNota" name="nota" rows="2" placeholder="${adm?"Sin nota":"Ej. Esta factura es de un pago parcial"}"${dis}>${esc(x.nota||"")}</textarea></div>
+    ${x.id?`<p class="small muted" style="margin:0">Capturó: ${x.capturado_por==="cliente"?"el cliente":"el despacho"}</p>`:""}
+    ${edit?(x.id?`<button class="btn primary full big" type="submit" name="next" value="cerrar">Guardar cambios</button>`
+      :`<button class="btn primary full big" type="submit" name="next" value="otro">Guardar y agregar otro</button><button class="btn full" type="submit" name="next" value="cerrar">Guardar y cerrar</button>`)
+      :`<p class="note">${S.preview?"Vista del cliente: solo para ver.":adm?"Este mes ya está declarado: regrésalo a precierre para modificarlo.":"Este movimiento ya no se puede modificar."}</p>`}
+    ${x.id&&edit?`<button class="btn danger full" type="button" data-act="borrarMov" data-id="${esc(x.id)}">${S.confirm===x.id?"Toca otra vez para borrar":"Borrar"}</button>`:""}
   </form>`);
-  S.ivaAuto=x.iva===""||x.iva==null||Math.abs(num(x.iva)-num(x.subtotal)*0.16)<0.02;
-  syncRet(!x.id&&retOn);
+  syncMov(!x.id);
 }
-// Con RET = SÍ calcula las retenciones a partir del importe; con NO las deja en cero.
-function syncRet(recalc){
-  const c=S.clientes[S.cid];if(!c||!$("#wRet"))return;
-  const ing=$("#mvTipo").value==="ingreso",reg=($("#mvReg")||{}).value||(c.regimenes||[])[0],t=tasasRet(c,reg);
-  $("#hRetT").textContent=S.retOn?"Se calcula: "+t.txt+".":"Sin retención.";
-  if(!ing||!recalc)return;
-  const sub=num($("#mvSub").value);
-  $("#mvIvr").value=S.retOn&&t.iva?(Math.round(sub*t.iva)/100).toFixed(2):(S.retOn?$("#mvIvr").value:"");
-  $("#mvIsr").value=S.retOn&&t.isr?(Math.round(sub*t.isr)/100).toFixed(2):(S.retOn?$("#mvIsr").value:"");
+// Recalcula IVA y retenciones del formulario
+function syncMov(recalcRet){
+  const c=S.clientes[S.cid];if(!c||!$("#fMov"))return;
+  const ing=$("#mvTipo").value==="ingreso",sub=num($("#mvSub").value),t=$("#mvTasa").value,iv=$("#mvIva");
+  if(t!=="manual"&&!iv.disabled){const v=t==="16"?Math.round(sub*CFG.iva)/100:0;iv.value=sub?fmtN(v):""}
+  if(!ing)return;
+  const r=retDe(c,sub,$("#mvEst").value,S.retOn),f=fiscal(c),h=$("#hRetT");
+  if(recalcRet&&!S.retManual&&!$("#mvIvr").disabled){$("#mvIvr").value=r.iva?fmtN(r.iva):"";$("#mvIsr").value=r.isr?fmtN(r.isr):""}
+  if(h)h.textContent=$("#mvEst").value==="I"?"La retención se aplica cuando te paguen (al pasarla a cobrado).":(f.aut||S.retOn)?"Retención: IVA "+money(num($("#mvIvr").value))+(f.aut?"":" · ISR "+money(num($("#mvIsr").value))):"Sin retención.";
 }
-/* ================= Excel ================= */
+
+/* ================= Excel (.xlsx con formato, generado aquí mismo) y PDF ================= */
 async function descargar(filename,data,mime){
   if(DL&&typeof data==="string"){try{await DL.save({filename,data})}catch(e){toast("No se descargó el archivo")}return}
   try{const url=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type:(mime||"text/plain")+";charset=utf-8"}));
     const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}catch(e){toast("No se pudo descargar el archivo")}
 }
-function libro(nombre,hojas){ // hojas: [{n, filas:[[...]]}]
-  if(window.XLSX&&!DL){
-    const wb=XLSX.utils.book_new();
-    for(const h of hojas){const ws=XLSX.utils.aoa_to_sheet(h.filas);ws["!cols"]=h.filas[0].map((_,i)=>({wch:i===0?14:18}));XLSX.utils.book_append_sheet(wb,ws,h.n.slice(0,31))}
-    const out=XLSX.write(wb,{bookType:"xlsx",type:"array"});
-    return descargar(nombre+".xlsx",new Blob([out],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
-  }
-  const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
-  return descargar(nombre+".csv","﻿"+hojas.map(h=>[[h.n],...h.filas,[]].map(r=>r.map(q).join(",")).join("\r\n")).join("\r\n"),"text/csv");
-}
 const r2=n=>Math.round((n||0)*100)/100;
-function xlsCliente(){
-  const c=S.clientes[S.cid],m=S.m,r=calc(c,m),p=periodo(c.id,m),v=vals(c,m);
-  const out=[];
-  for(const reg of (c.regimenes||[])){
-    const ms=movsDe(c.id,m).filter(x=>x.regimen===reg||(c.regimenes||[]).length===1);
-    const isr=r.regs.find(x=>x.reg===reg);
-    const f=[[c.nombre],["PRECIERRE CORRESPONDIENTE AL MES DE:",MESES[m-1].toUpperCase()+" "+YEAR],["FECHA DEL REPORTE:",new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"})],
-      ["RÉGIMEN:",REGS[reg].n],["COEFICIENTE:",reg==="601"?num(c.coef):reg==="624"?num(c.coef_aut||c.coef):""],["ESTADO:",ESTADOS[p.estado].l],[],
-      ["ISR PROBABLE",r2(isr.pago)],["IVA PROBABLE",r2(Math.max(0,v.iva))],["RETENCIONES",r2(v.ret)],["TOTAL",r2(v.total)],["IVA A FAVOR",r2(v.ivaFavor)],[],
-      ["C = DE CONTADO · I = NO PAGADO · MA = COBRO DE MESES ANTERIORES"],
-      ["CONCEPTO","","RET","ELABORADAS IMPORTE","ELABORADAS IVA","COBRADAS IMPORTE","COBRADAS IVA","RET. IVA","RET. ISR"]];
-    ms.filter(x=>x.tipo==="ingreso").forEach(x=>{const e=est(x),el=e!=="MA",co=e!=="I";f.push([x.concepto,e,tieneRet(x)?"SÍ":"NO",el?r2(x.subtotal):0,el?r2(x.iva):0,co?r2(x.subtotal):0,co?r2(x.iva):0,co?r2(x.iva_ret):0,co?r2(x.isr_ret):0])});
-    f.push([],["GASTOS PAGADOS FACTURADOS"],["CONCEPTO","IMPORTE","IVA","RETENCIÓN ISR","RETENCIÓN IVA","DEDUCIBLE"]);
-    ms.filter(x=>x.tipo==="gasto").forEach(x=>f.push([x.concepto,r2(x.subtotal),r2(x.iva),r2(x.isr_ret),r2(x.iva_ret),x.deducible===false?"NO":"SÍ"]));
-    f.push([],["CÁLCULO DE ISR"],...isr.rows.map(([l,val])=>[l.toUpperCase(),typeof val==="number"?r2(val):val]));
-    f.push([],["IVA"],["TRASLADADO",r2(r.iva.tras)],["RETENIDO",r2(r.iva.ret)],["ACREDITABLE",r2(r.iva.acred)],["SALDO A FAVOR DE PERIODOS ANTERIORES",r2(r.iva.ant)],[r.iva.neto>=0?"IVA A PAGAR":"IVA A FAVOR",r2(Math.abs(r.iva.neto))]);
-    out.push({n:(c.tipo==="PM"?"PM ":"PF ")+REGS[reg].c,filas:f});
+const XL=(()=>{
+  let T=null;
+  const crc=u=>{if(!T){T=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;T[n]=c>>>0}}
+    let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=T[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+  const enc=new TextEncoder();
+  function zip(files){ // sin compresión (store)
+    const parts=[],cen=[];let off=0;
+    const d=new Date(),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+    for(const f of files){
+      const name=enc.encode(f.name),data=typeof f.data==="string"?enc.encode(f.data):f.data,c=crc(data);
+      const h=new DataView(new ArrayBuffer(30));
+      h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,tm,true);h.setUint16(12,dt,true);
+      h.setUint32(14,c,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+      parts.push(new Uint8Array(h.buffer),name,data);
+      const z=new DataView(new ArrayBuffer(46));
+      z.setUint32(0,0x02014b50,true);z.setUint16(4,20,true);z.setUint16(6,20,true);z.setUint16(8,0x0800,true);z.setUint16(10,0,true);z.setUint16(12,tm,true);z.setUint16(14,dt,true);
+      z.setUint32(16,c,true);z.setUint32(20,data.length,true);z.setUint32(24,data.length,true);z.setUint16(28,name.length,true);z.setUint32(42,off,true);
+      cen.push(new Uint8Array(z.buffer),name);off+=30+name.length+data.length;
+    }
+    const cl=cen.reduce((t,a)=>t+a.length,0),e=new DataView(new ArrayBuffer(22));
+    e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cl,true);e.setUint32(16,off,true);
+    return new Blob([...parts,...cen,new Uint8Array(e.buffer)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
   }
-  out.push({n:"Meses "+YEAR,filas:[["MES","ESTADO","FACTURADO","GASTOS","IVA","ISR","TOTAL"],...MESES.map((n,i)=>{const mm=i+1,rr=calc(c,mm),vv=vals(c,mm);return[n,ESTADOS[periodo(c.id,mm).estado].l,r2(rr.E.base),r2(rr.G.base),r2(vv.iva),r2(vv.isr),r2(vv.total)]})]});
-  libro(("PRECIERRE-"+(c.rfc||c.nombre)+"-"+MESES[m-1]+"-"+YEAR).replace(/[^A-Za-z0-9-]/g,""),out);
+  const x=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const col=n=>{let s="";n++;while(n){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
+  // Estilos: nombre → índice de cellXfs
+  const ST=["base","titulo","sub","texto","enc","celda","dinero","dineroTot","etiq","coef","grande","nota","amarillo","rojo","negrita","dineroLibre","encIzq","totalRojo","verde","naranja"];
+  const S_=k=>Math.max(0,ST.indexOf(k));
+  const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<numFmts count="2"><numFmt numFmtId="164" formatCode="&quot;$&quot;#,##0.00;[Red]-&quot;$&quot;#,##0.00"/><numFmt numFmtId="165" formatCode="0.0000"/></numFmts>
+<fonts count="10"><font><sz val="10"/><name val="Calibri"/></font><font><b/><sz val="16"/><color rgb="FF1F2A4D"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FF1F2A4D"/><name val="Calibri"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="10"/><name val="Calibri"/></font><font><i/><sz val="9"/><color rgb="FF6B7280"/><name val="Calibri"/></font><font><b/><sz val="12"/><color rgb="FF3F5A9E"/><name val="Calibri"/></font><font><b/><sz val="12"/><color rgb="FFC0392B"/><name val="Calibri"/></font><font><b/><sz val="10"/><color rgb="FF1E7B4F"/><name val="Calibri"/></font><font><b/><sz val="10"/><color rgb="FFB45309"/><name val="Calibri"/></font></fonts>
+<fills count="8"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF3F5A9E"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF3F5F9"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFF2CC"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE8ECF6"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE3F4EA"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFDEBD3"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD5DAE5"/></left><right style="thin"><color rgb="FFD5DAE5"/></right><top style="thin"><color rgb="FFD5DAE5"/></top><bottom style="thin"><color rgb="FFD5DAE5"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="${ST.length}">
+<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
+<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>
+<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>
+<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="4" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="4" fillId="3" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf>
+<xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="6" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="5" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="164" fontId="0" fillId="4" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="164" fontId="7" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="4" fillId="0" borderId="0" xfId="0" applyFont="1"/>
+<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>
+<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center"/></xf>
+<xf numFmtId="164" fontId="7" fillId="5" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1"/>
+<xf numFmtId="0" fontId="8" fillId="6" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>
+<xf numFmtId="0" fontId="9" fillId="7" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center"/></xf>
+</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  class Hoja{
+    constructor(nombre){this.nombre=nombre.replace(/[\\\/?*\[\]:]/g," ").slice(0,31);this.c={};this.m=[];this.w=[];this.h={};this.land=true}
+    set(r,c,v,s){if(v==null||v==="")v=v===""?"":null;this.c[r+","+c]={v,s:S_(s||(typeof v==="number"?"dineroLibre":"texto"))};return this}
+    merge(r1,c1,r2,c2){this.m.push(col(c1)+(r1+1)+":"+col(c2)+(r2+1));return this}
+    xml(){
+      const rows={};for(const k in this.c){const[r,c]=k.split(",").map(Number);(rows[r]=rows[r]||[]).push([c,this.c[k]])}
+      const sd=Object.keys(rows).map(Number).sort((a,b)=>a-b).map(r=>`<row r="${r+1}"${this.h[r]?` ht="${this.h[r]}" customHeight="1"`:""}>${rows[r].sort((a,b)=>a[0]-b[0]).map(([c,o])=>{const ref=col(c)+(r+1);
+        if(o.v==null||o.v==="")return`<c r="${ref}" s="${o.s}"/>`;
+        return typeof o.v==="number"?`<c r="${ref}" s="${o.s}"><v>${isFinite(o.v)?o.v:0}</v></c>`:`<c r="${ref}" s="${o.s}" t="inlineStr"><is><t xml:space="preserve">${x(o.v)}</t></is></c>`}).join("")}</row>`).join("");
+      return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0" showGridLines="0"/></sheetViews><sheetFormatPr defaultRowHeight="15"/>${this.w.length?`<cols>${this.w.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("")}</cols>`:""}<sheetData>${sd}</sheetData>${this.m.length?`<mergeCells count="${this.m.length}">${this.m.map(m=>`<mergeCell ref="${m}"/>`).join("")}</mergeCells>`:""}<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup orientation="${this.land?"landscape":"portrait"}" fitToWidth="1" fitToHeight="0"/></worksheet>`;
+    }
+  }
+  function libro(hojas){
+    const n=hojas.length;
+    return zip([
+      {name:"[Content_Types].xml",data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${hojas.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`},
+      {name:"_rels/.rels",data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`},
+      {name:"xl/workbook.xml",data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${hojas.map((h,i)=>`<sheet name="${x(h.nombre)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`},
+      {name:"xl/_rels/workbook.xml.rels",data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${hojas.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}<Relationship Id="rId${n+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+      {name:"xl/styles.xml",data:styles},
+      ...hojas.map((h,i)=>({name:`xl/worksheets/sheet${i+1}.xml`,data:h.xml()}))]);
+  }
+  return{Hoja,libro};
+})();
+const fechaLarga=()=>new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+// Datos del precierre de una empresa/régimen, iguales para Excel y PDF
+function datosPrecierre(c,reg,m){
+  const r=calc(c,m),v=vals(c,m),isr=r.regs.find(x=>x.reg===reg)||r.regs[0];
+  const ms=movsDe(c.id,m).filter(x=>!x.regimen||x.regimen===reg||(c.regimenes||[]).length===1);
+  return{r,v,isr,I:ms.filter(x=>x.tipo==="ingreso"),G:ms.filter(x=>x.tipo==="gasto")};
+}
+function hojaPrecierre(c,reg,m){
+  const H=new XL.Hoja(abrev(c,reg)+" "+MESES[m-1]);const{r,v,isr,I,G}=datosPrecierre(c,reg,m);
+  H.w=[38,6,7,15,13,15,13,13,13,3,34,15,13,13,13];
+  H.set(0,0,c.nombre.toUpperCase(),"titulo").merge(0,0,0,8);H.h[0]=26;
+  H.set(1,0,"PRECIERRE CORRESPONDIENTE AL MES DE:","negrita");H.set(1,3,MESES[m-1].toUpperCase()+" "+YEAR,"sub");
+  H.set(2,0,"FECHA DEL REPORTE:","negrita");H.set(2,3,fechaLarga(),"texto");
+  H.set(3,0,"RÉGIMEN:","negrita");H.set(3,3,REGS[reg].n.toUpperCase()+(reg==="601"?" · "+(c.actividad||"Empresarial").toUpperCase():""),"texto");
+  if(reg==="601"){H.set(4,0,"COEFICIENTE DE UTILIDAD:","negrita");H.set(4,3,num(c.coef),"coef")}
+  H.set(5,0,"ESTATUS:","negrita");H.set(5,3,actualizado(c,m)?"PRECIERRE ACTUALIZADO":"PRECIERRE PENDIENTE POR ACTUALIZAR",actualizado(c,m)?"verde":"naranja");H.merge(5,3,5,5);
+  [["ISR PROBABLE",isr.pago],["IVA PROBABLE",Math.max(0,v.iva)],["RETENCIONES",v.ret],["TOTAL",v.total],["IVA A FAVOR",v.ivaFavor]].forEach(([l,val],i)=>{H.set(1+i,10,l,"etiq");H.set(1+i,11,r2(val),l==="TOTAL"?"totalRojo":"grande")});
+  H.set(7,0,"C = DE CONTADO · I = CRÉDITO (NO PAGADO) · MA = COMPLEMENTO DE PAGO (COBRO DE MESES ANTERIORES)","nota");
+  let R=9;
+  H.set(R,0,"CONCEPTO","enc").set(R+1,0,"","enc").merge(R,0,R+1,0);H.set(R,1,"F","enc").set(R+1,1,"","enc").merge(R,1,R+1,1);H.set(R,2,"RET","enc").set(R+1,2,"","enc").merge(R,2,R+1,2);
+  H.set(R,3,"FACTURAS ELABORADAS","enc").set(R,4,"","enc").merge(R,3,R,4);H.set(R,5,"FACTURAS COBRADAS","enc");[6,7,8].forEach(k=>H.set(R,k,"","enc"));H.merge(R,5,R,8);
+  H.set(R,10,"GASTOS PAGADOS FACTURADOS","enc");[11,12,13,14].forEach(k=>H.set(R,k,"","enc"));H.merge(R,10,R,14);
+  ["IMPORTE","IVA","IMPORTE","IVA","RET. IVA","RET. ISR"].forEach((t,i)=>H.set(R+1,3+i,t,"enc"));
+  ["CONCEPTO","IMPORTE","IVA","RET. IVA","RET. ISR"].forEach((t,i)=>H.set(R+1,10+i,t,"enc"));
+  H.h[R]=20;H.h[R+1]=18;R+=2;
+  const n=Math.max(I.length,G.length,1),t={eI:0,eV:0,cI:0,cV:0,rv:0,ri:0,gI:0,gV:0,gRv:0,gRi:0};
+  for(let i=0;i<n;i++){
+    const a=I[i],g=G[i];
+    if(a){const e=est(a),el=e!=="MA",co=e!=="I";
+      H.set(R+i,0,a.concepto||"","celda");H.set(R+i,1,e==="I"?"1":e,"celda");H.set(R+i,2,tieneRet(a)?"SÍ":"NO","celda");
+      H.set(R+i,3,el?r2(a.subtotal):"","dinero");H.set(R+i,4,el?r2(a.iva):"","dinero");H.set(R+i,5,co?r2(a.subtotal):"","dinero");H.set(R+i,6,co?r2(a.iva):"","dinero");H.set(R+i,7,co&&a.iva_ret?r2(a.iva_ret):"","dinero");H.set(R+i,8,co&&a.isr_ret?r2(a.isr_ret):"","dinero");
+      if(el){t.eI+=a.subtotal;t.eV+=a.iva}if(co){t.cI+=a.subtotal;t.cV+=a.iva;t.rv+=a.iva_ret||0;t.ri+=a.isr_ret||0}}
+    else for(let k=0;k<9;k++)H.set(R+i,k,"",k>=3?"dinero":"celda");
+    if(g){H.set(R+i,10,(g.concepto||"")+(g.deducible===false?" (sin factura)":""),"celda");H.set(R+i,11,r2(g.subtotal),"dinero");H.set(R+i,12,r2(g.iva),"dinero");H.set(R+i,13,g.iva_ret?r2(g.iva_ret):"","dinero");H.set(R+i,14,g.isr_ret?r2(g.isr_ret):"","dinero");
+      t.gI+=g.subtotal;t.gV+=g.iva;t.gRv+=g.iva_ret||0;t.gRi+=g.isr_ret||0}
+    else for(let k=10;k<15;k++)H.set(R+i,k,"",k>10?"dinero":"celda");
+  }
+  R+=n;
+  H.set(R,0,"TOTALES","etiq");H.set(R,1,"","etiq");H.set(R,2,"","etiq");[t.eI,t.eV,t.cI,t.cV,t.rv,t.ri].forEach((val,i)=>H.set(R,3+i,r2(val),"dineroTot"));
+  H.set(R,10,"TOTALES","etiq");[t.gI,t.gV,t.gRv,t.gRi].forEach((val,i)=>H.set(R,11+i,r2(val),"dineroTot"));
+  R+=3;
+  // Cálculo de ISR (izquierda) e IVA (derecha)
+  H.set(R,0,"CÁLCULO DE ISR","encIzq");[1,2,3].forEach(k=>H.set(R,k,"","encIzq"));H.merge(R,0,R,3);
+  H.set(R,10,"IVA","encIzq");H.set(R,11,"","encIzq");H.merge(R,10,R,11);
+  let a=R+1;
+  for(const[l,val,k,key]of isr.rows){
+    if(val===""&&k==="sub"){H.set(a,0,l.toUpperCase(),"negrita");a++;continue}
+    const m2=/^(Más|Menos|Igual|Por):\s*/i.exec(l),pre=m2?m2[1].toUpperCase()+":":"",txt=(m2?l.slice(m2[0].length):l).toUpperCase();
+    H.set(a,0,(pre?pre+" ":"")+txt,k==="total"?"etiq":"celda");H.merge(a,0,a,2);H.set(a,1,"",k==="total"?"etiq":"celda");H.set(a,2,"",k==="total"?"etiq":"celda");
+    H.set(a,3,typeof val==="number"?r2(val):val,k==="total"?"totalRojo":key?"amarillo":typeof val==="number"?"dinero":"celda");a++;
+  }
+  const iv=r.iva;let b=R+1;
+  [["IVA TRASLADADO (COBRADO)",iv.tras],["MENOS: IVA RETENIDO",-iv.ret],["MENOS: IVA ACREDITABLE (GASTOS PAGADOS)",-iv.acred],["MENOS: SALDO A FAVOR DE PERIODOS ANTERIORES",-iv.ant],[iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR",Math.abs(iv.neto)]]
+    .forEach(([l,val],i,arr)=>{H.set(b,10,l,i===arr.length-1?"etiq":"celda");H.set(b,11,r2(val),i===arr.length-1?"totalRojo":i===3?"amarillo":"dinero");b++});
+  if(r.ret>0.005){b++;H.set(b,10,"RETENCIONES A ENTERAR","encIzq");H.set(b,11,"","encIzq");b++;
+    [["ISR RETENIDO A PROVEEDORES",Math.max(0,r.G.isrRet)],["IVA RETENIDO A PROVEEDORES",Math.max(0,r.G.ivaRet)],["TOTAL",r.ret]].forEach(([l,val],i)=>{H.set(b,10,l,i===2?"etiq":"celda");H.set(b,11,r2(val),i===2?"dineroTot":"dinero");b++})}
+  b=Math.max(a,b)+1;H.set(b,0,"Generado con la app de Sol-EMP · Las celdas amarillas son datos capturados por el despacho.","nota");
+  return H;
+}
+function hojaMeses(c){
+  const H=new XL.Hoja("Meses "+YEAR);H.land=false;H.w=[16,26,16,16,16,16,16,18];
+  H.set(0,0,c.nombre.toUpperCase(),"titulo").merge(0,0,0,7);H.h[0]=26;H.set(1,0,"RESUMEN DE MESES "+YEAR,"sub");
+  ["MES","ESTADO","INGRESOS","GASTOS","IVA","ISR","RETENCIONES","TOTAL"].forEach((t,i)=>H.set(3,i,t,"enc"));
+  const T=[0,0,0,0,0,0];
+  MESES.forEach((n,i)=>{const mm=i+1,rr=calc(c,mm),vv=vals(c,mm),row=[r2(rr.ing),r2(rr.G.base),r2(vv.iva),r2(vv.isr),r2(vv.ret),r2(vv.total)];
+    H.set(4+i,0,n.toUpperCase(),"celda");H.set(4+i,1,ESTADOS[periodo(c.id,mm).estado].l,"celda");row.forEach((val,k)=>{H.set(4+i,2+k,val,k===5?"dineroTot":"dinero");T[k]+=val})});
+  H.set(16,0,"AÑO","etiq");H.set(16,1,"","etiq");T.forEach((val,k)=>H.set(16,2+k,r2(val),"dineroTot"));
+  return H;
+}
+function xlsCliente(){
+  const c=S.clientes[S.cid],m=S.m;
+  const hojas=[...(c.regimenes||[]).map(reg=>hojaPrecierre(c,reg,m)),hojaMeses(c)];
+  descargar(("PRECIERRE-"+(c.nombre)+"-"+MESES[m-1]+"-"+YEAR).replace(/[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ-]+/g,"-")+".xlsx",XL.libro(hojas));
 }
 function xlsTablero(){
-  const filas=[["CLIENTE","RFC","TIPO","REGÍMENES","ESTADO","FACTURADO","GASTOS","ISR PROBABLE","IVA PROBABLE","RETENCIONES","TOTAL","IVA A FAVOR"],
-    ...clientesOrden().map(c=>{const r=calc(c,S.m),v=vals(c,S.m),p=periodo(c.id,S.m);return[c.nombre,c.rfc,c.tipo==="PM"?"Persona moral":"Persona física",(c.regimenes||[]).map(x=>REGS[x].c).join(", "),ESTADOS[p.estado].l,r2(r.E.base),r2(r.G.base),r2(v.isr),r2(Math.max(0,v.iva)),r2(v.ret),r2(v.total),r2(v.ivaFavor)]})];
-  libro("PRECIERRES-"+MESES[S.m-1].toUpperCase()+"-"+YEAR,[{n:MESES[S.m-1]+" "+YEAR,filas}]);
+  const H=new XL.Hoja("Panel "+MESES[S.m-1]);H.w=[6,36,30,12,14,14,24,15,15,15,17];
+  H.set(0,0,"PANEL DEL ADMINISTRADOR","titulo").merge(0,0,0,10);H.h[0]=26;
+  H.set(1,0,"NOMBRE DEL ADMINISTRADOR:","negrita");H.set(1,3,(S.auth&&S.auth.nombre||S.auth&&S.auth.email||"").toUpperCase(),"sub");
+  H.set(2,0,"MES:","negrita");H.set(2,3,MESES[S.m-1].toUpperCase()+" "+YEAR,"sub");H.set(3,0,"FECHA DEL REPORTE:","negrita");H.set(3,3,fechaLarga(),"texto");
+  ["NO.","NOMBRE","CORREO","SITUAC.","TIPO","ÚLTIMA MODIF.","ESTATUS","ISR","IVA","RETENCIONES","TOTAL IMPUESTOS"].forEach((t,i)=>H.set(5,i,t,"enc"));H.h[5]=22;
+  const T=[0,0,0,0];
+  clientesOrden().forEach((c,i)=>{const v=vals(c,S.m),ok=actualizado(c,S.m),R=6+i;
+    [i+1,c.nombre,c.email_cliente||"",activo(c)?"ACTIVO":"INACTIVO",(c.regimenes||[]).map(r=>abrev(c,r)).join(" / "),ultimaMod(c)].forEach((val,k)=>H.set(R,k,k===0?String(val):val,"celda"));
+    H.set(R,6,ok?"ACTUALIZADO":"PENDIENTE DE ACTUALIZAR",ok?"verde":"naranja");
+    [v.isr,Math.max(0,v.iva),v.ret,v.total].forEach((val,k)=>{H.set(R,7+k,r2(val),k===3?"dineroTot":"dinero");if(activo(c))T[k]+=val})});
+  const R=6+clientesOrden().length;H.set(R,0,"","etiq");H.set(R,1,"TOTAL (ACTIVOS)","etiq");for(let k=2;k<7;k++)H.set(R,k,"","etiq");T.forEach((val,k)=>H.set(R,7+k,r2(val),"dineroTot"));
+  descargar(("PANEL-"+MESES[S.m-1]+"-"+YEAR).toUpperCase()+".xlsx",XL.libro([H]));
+}
+// PDF: vista de impresión con el mismo formato; el usuario elige "Guardar como PDF"
+function pdfCliente(){
+  const c=S.clientes[S.cid],m=S.m;
+  const hojas=(c.regimenes||[]).map(reg=>{
+    const{r,v,isr,I,G}=datosPrecierre(c,reg,m),ok=actualizado(c,m);
+    const n=Math.max(I.length,G.length,1);let filas="";
+    const t={eI:0,eV:0,cI:0,cV:0,rv:0,ri:0,gI:0,gV:0};
+    for(let i=0;i<n;i++){const a=I[i],g=G[i];let ia="<td></td>".repeat(9),gg="<td></td>".repeat(4);
+      if(a){const e=est(a),el=e!=="MA",co=e!=="I";if(el){t.eI+=a.subtotal;t.eV+=a.iva}if(co){t.cI+=a.subtotal;t.cV+=a.iva;t.rv+=a.iva_ret||0;t.ri+=a.isr_ret||0}
+        ia=`<td>${esc(a.concepto)}</td><td class="c">${e==="I"?"1":e}</td><td class="c">${tieneRet(a)?"SÍ":"NO"}</td><td>${el?money(a.subtotal):""}</td><td>${el?money(a.iva):""}</td><td>${co?money(a.subtotal):""}</td><td>${co?money(a.iva):""}</td><td>${co&&a.iva_ret?money(a.iva_ret):""}</td><td>${co&&a.isr_ret?money(a.isr_ret):""}</td>`}
+      if(g){t.gI+=g.subtotal;t.gV+=g.iva;gg=`<td>${esc(g.concepto)}</td><td>${money(g.subtotal)}</td><td>${money(g.iva)}</td><td>${tieneRet(g)?money((g.iva_ret||0)+(g.isr_ret||0)):""}</td>`}
+      filas+=`<tr>${ia}<td class="gap"></td>${gg}</tr>`}
+    const calcRows=isr.rows.map(([l,val,k,key])=>val===""&&k==="sub"?`<tr class="hd"><td colspan="2">${esc(l.toUpperCase())}</td></tr>`:`<tr class="${k==="total"?"ptot":""}${key?" y":""}"><td>${esc(l.toUpperCase())}</td><td>${typeof val==="number"?sm(val):esc(val)}</td></tr>`).join("");
+    const iv=r.iva;
+    return`<section class="pp">
+      <header><div><h1>${esc(c.nombre.toUpperCase())}</h1><p><b>PRECIERRE CORRESPONDIENTE AL MES DE:</b> ${MESES[m-1].toUpperCase()} ${YEAR}</p><p><b>FECHA DEL REPORTE:</b> ${fechaLarga()}</p>
+        <p><b>RÉGIMEN:</b> ${esc(REGS[reg].n.toUpperCase())}${reg==="601"?" · "+esc((c.actividad||"Empresarial").toUpperCase())+" · <b>COEFICIENTE:</b> "+num(c.coef).toFixed(4):""}</p>
+        <p><span class="tag ${ok?"ok":"pend"}">${ok?"PRECIERRE ACTUALIZADO":"PRECIERRE PENDIENTE POR ACTUALIZAR"}</span></p></div>
+        <table class="box"><tr><td>ISR PROBABLE</td><td>${money(isr.pago)}</td></tr><tr><td>IVA PROBABLE</td><td>${money(Math.max(0,v.iva))}</td></tr><tr><td>RETENCIONES</td><td>${money(v.ret)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(v.total)}</td></tr><tr><td>IVA A FAVOR</td><td>${money(v.ivaFavor)}</td></tr></table></header>
+      <p class="ley">C = DE CONTADO · 1 = CRÉDITO (NO PAGADO) · MA = COMPLEMENTO DE PAGO (COBRO DE MESES ANTERIORES)</p>
+      <table class="mov"><thead><tr><th rowspan="2">CONCEPTO</th><th rowspan="2">F</th><th rowspan="2">RET</th><th colspan="2">FACTURAS ELABORADAS</th><th colspan="4">FACTURAS COBRADAS</th><th class="gap" rowspan="2"></th><th colspan="4">GASTOS PAGADOS FACTURADOS</th></tr>
+        <tr><th>IMPORTE</th><th>IVA</th><th>IMPORTE</th><th>IVA</th><th>RET. IVA</th><th>RET. ISR</th><th>CONCEPTO</th><th>IMPORTE</th><th>IVA</th><th>RETENC.</th></tr></thead>
+        <tbody>${filas}<tr class="ptot"><td>TOTALES</td><td></td><td></td><td>${money(t.eI)}</td><td>${money(t.eV)}</td><td>${money(t.cI)}</td><td>${money(t.cV)}</td><td>${money(t.rv)}</td><td>${money(t.ri)}</td><td class="gap"></td><td>TOTALES</td><td>${money(t.gI)}</td><td>${money(t.gV)}</td><td></td></tr></tbody></table>
+      <div class="cols"><table class="calc"><thead><tr><th colspan="2">CÁLCULO DE ISR</th></tr></thead><tbody>${calcRows}</tbody></table>
+        <table class="calc"><thead><tr><th colspan="2">IVA</th></tr></thead><tbody><tr><td>IVA TRASLADADO (COBRADO)</td><td>${money(iv.tras)}</td></tr><tr><td>MENOS: IVA RETENIDO</td><td>${sm(-iv.ret)}</td></tr><tr><td>MENOS: IVA ACREDITABLE</td><td>${sm(-iv.acred)}</td></tr><tr class="y"><td>MENOS: SALDO A FAVOR ANTERIOR</td><td>${sm(-iv.ant)}</td></tr><tr class="ptot"><td>${iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR"}</td><td>${money(Math.abs(iv.neto))}</td></tr>
+        ${r.ret>0.005?`<tr class="hd"><td colspan="2">RETENCIONES A ENTERAR</td></tr><tr><td>ISR RETENIDO A PROVEEDORES</td><td>${money(r.G.isrRet)}</td></tr><tr><td>IVA RETENIDO A PROVEEDORES</td><td>${money(r.G.ivaRet)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(r.ret)}</td></tr>`:""}</tbody></table></div>
+      <p class="pie">Generado con la app de Sol-EMP Soluciones Empresariales · Impuesto probable: el monto final lo confirma el despacho.</p></section>`}).join("");
+  let pa=$("#printArea");if(!pa){pa=document.createElement("div");pa.id="printArea";document.body.appendChild(pa)}
+  pa.innerHTML=`<div class="pbar"><button class="btn primary" data-act="imprimir">Guardar como PDF / imprimir</button><button class="btn" data-act="cerrarPdf">Cerrar</button></div><div class="pdoc">${hojas}</div>`;
+  pa.hidden=false;document.body.classList.add("printing");scrollTo(0,0);
 }
 /* ================= XML del SAT ================= */
 async function importar(files){
@@ -1382,10 +1800,35 @@ const act={
   async toggleActivo(d){const c=S.clientes[d.id];if(!c)return;const nc=clone(c);nc.activo=!activo(c);
     try{const s2=await API.saveCliente(nc);S.clientes[d.id]=Object.assign({},nc,s2||{});toast(activo(S.clientes[d.id])?"Cliente activo":"Cliente inactivo")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y)},
-  crearTipo(d){const k=CATALOGO[+d.i];S.confirm=null;formCliente({nombre:"",rfc:"",tipo:k.per,regimenes:[k.reg],coef:"",coef_aut:"",email_cliente:"",actividad:k.per==="PM"?k.act:"Empresarial / servicios",activo:true})},
+  crearTipo(d){const k=CATALOGO[+d.i];S.confirm=null;formCliente(null,k.reg)},
+  tarifas(){S.vista="tarifas";render();scrollTo(0,0)},
+  async tarifasBase(){CFG=clone(CFG_BASE);try{await API.saveConfig(CFG);toast("Tablas regresadas a los valores originales")}catch(e){toast("No se guardó: falta correr el SQL nuevo en Supabase.",6000)}render()},
+  abre(d){S.abre[d.k]=!S.abre[d.k];const y=scrollY;render();scrollTo(0,y)},
+  descargas(){openSheet("Descargar precierre",`<div class="stack" style="gap:12px"><button class="tile-btn" data-act="xlsCliente"><b>Excel</b><span>Con el formato del despacho</span></button><button class="tile-btn" data-act="pdfCliente"><b>PDF</b><span>Para imprimir o enviar</span></button></div>`)},
+  imprimir(){window.print()},
+  cerrarPdf(){const pa=$("#printArea");if(pa)pa.hidden=true;document.body.classList.remove("printing")},
+  mvTasa(d){$("#mvTasa").value=d.t;S.mvTasa=d.t;document.querySelectorAll('[data-act="mvTasa"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===d.t));
+    const iv=$("#mvIva");iv.readOnly=d.t!=="manual";$("#hIva").textContent=d.t==="manual"?"Escribe el IVA a mano.":"Se calcula solo.";if(d.t==="manual"){iv.focus()}syncMov(false)},
+  mvRetG(d){document.querySelectorAll('[data-act="mvRetG"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===d.v));$("#wRetIn").hidden=d.v!=="si";if(d.v!=="si"){$("#mvIvr").value="";$("#mvIsr").value=""}},
+  async pasarCobrado(d){
+    const x=S.movs[d.id],c=S.clientes[x.cliente_id];if(!x)return;
+    if(puedeEditarMov(x)&&(x.mes===defM||esAdmin()&&x.mes===S.m)){ // mismo mes: solo cambia a contado
+      const n=clone(x);n.estatus="C";const r=retDe(c,n.subtotal,"C",esAut(c)||!!(x.iva_ret||x.isr_ret));if(fiscal(c).aut){n.iva_ret=r.iva}
+      try{const s2=await API.saveMov(n,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>s2[k]=+s2[k]);S.movs[s2.id]=s2;toast("Pasada a cobrado")}catch(e){toast(errTxt(e),5000)}
+      render();return}
+    const mes=esAdmin()?S.m:defM;
+    if(!puedeCapturar(c.id,mes)){toast("La captura de "+MESES[mes-1].toLowerCase()+" está cerrada.");return}
+    S.cid=c.id;S.mov={tipo:"ingreso"};S.confirm=null;
+    const hoy=new Date(),dia=hoy.getMonth()+1===mes&&hoy.getFullYear()===YEAR?hoy.getDate():Math.min(15,new Date(YEAR,mes,0).getDate());
+    formMov(null);
+    // Prellena el complemento de pago con los datos de la factura original
+    $("#mvCon").value="Cobro: "+(x.concepto||"");$("#mvSub").value=fmtN(x.subtotal);$("#mvRfc").value=x.rfc||"";$("#mvFec").value=YEAR+"-"+pad(mes)+"-"+pad(dia);
+    $("#fMov [name=ref_id]").value=x.id;act.mvEst({e:"MA"});
+    const t=tasaDe(x);act.mvTasa({t});if(t==="manual")$("#mvIva").value=fmtN(x.iva);
+    S.retOn=fiscal(c).aut||!!(x.iva_ret||x.isr_ret);document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="si")===S.retOn));
+    syncMov(true);$("#sheetTitle").textContent="Pasar a cobrado";
+  },
   editCliente(){S.confirm=null;formCliente(S.clientes[S.cid])},
-  cTipo(d){$("#cTipo").value=d.t;document.querySelectorAll('[data-act="cTipo"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===d.t));
-    $("#regPM").hidden=d.t!=="PM";$("#regPF").hidden=d.t!=="PF";syncClienteForm()},
   async borrarCliente(){
     if(S.confirm!=="cliente"){S.confirm="cliente";formCliente(S.clientes[S.cid]);return}
     const id=S.cid;$("#sheet").hidden=true;S.confirm=null;
@@ -1401,31 +1844,27 @@ const act={
   },
   nuevoMov(d){S.mov={tipo:d.t};S.confirm=null;formMov(null)},
   mov(d){S.confirm=null;formMov(S.movs[d.id])},
-  mvTipo(d){$("#mvTipo").value=d.t;document.querySelectorAll('[data-act="mvTipo"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.t===d.t));
-    const ing=d.t==="ingreso";$("#wEst").hidden=!ing;$("#wRet").hidden=!ing;$("#wDed").hidden=ing;
-    $("#lIvr").textContent=ing?"IVA que te retuvieron":"IVA que retuviste";$("#lIsr").textContent=ing?"ISR que te retuvieron":"ISR que retuviste";
-    $("#hRet").textContent=ing?"":"Las retenciones que hiciste a proveedores se suman al total a pagar.";
-    if($("#sheetTitle").textContent.startsWith("Agregar"))$("#sheetTitle").textContent=ing?"Agregar un ingreso":"Agregar un gasto"},
+  mvTipo(d){S.mov={tipo:d.t};S.confirm=null;formMov(null)},
   actualizar(){S.vista="actualizar";render();scrollTo(0,0)},
   ayuda(){
-    const pasosA=[["Agrega a tus clientes","En Persona moral o Persona física toca “+ Agregar”. Marca sus regímenes y, si quieres que él capture, escribe su correo."],
-      ["Elige el mes","Arriba cambias de mes con las flechas. Cada mes se guarda solo y el ISR se va sumando."],
-      ["Abre la captura","Dentro del cliente toca “Abrir captura para el cliente”. Antes de eso el cliente no puede meter nada."],
-      ["Captura o revisa","En “Hoja” agregas ingresos y gastos, o subes los XML del SAT. En “Cálculo” ves el ISR y el IVA paso por paso; las celdas amarillas son para datos a mano."],
-      ["Haz el precierre","Toca “Cerrar captura y hacer precierre”: el cliente ya no puede cambiar nada."],
-      ["Declara","Cuando la presentes en el SAT, toca “Ya lo declaré”. Los montos quedan guardados."]];
+    const pasosA=[["Registra a tus clientes","Toca “Registrar nuevo cliente”, elige el régimen (y la actividad si es régimen general) y escribe su correo. Un mismo correo puede tener varias empresas."],
+      ["Elige el mes","Arriba cambias de mes. Cada mes se guarda solo."],
+      ["Abre la captura","Dentro de la empresa toca “Abrir captura para el cliente”. El cliente captura hasta el último día del mes."],
+      ["Actualiza el precierre","En “Actualización de precierres” captura las celdas amarillas (meses anteriores, PTU, pérdidas, coeficiente…). La empresa queda en verde: Precierre actualizado."],
+      ["Revisa el cálculo","En “Cálculo” ves el ISR y el IVA paso por paso, igual que en el Excel."],
+      ["Precierre y declaración","Haz el precierre y, cuando la presentes en el SAT, toca “Ya lo declaré”. Descarga el Excel o el PDF cuando quieras."]];
     const pasosC=[["Revisa que la captura esté abierta","Si dice “Ya puedes capturar”, adelante. Si no, espera a que tu contador la abra."],
-      ["Agrega tus ingresos","Toca “+ Agregar un ingreso”, escribe qué fue y el importe sin IVA. Indica si ya te pagaron."],
-      ["Agrega tus gastos","Toca “+ Agregar un gasto”. Los gastos con factura e IVA hacen que pagues menos IVA."],
-      ["O sube tus facturas","Si tienes los XML del SAT, súbelos y se agregan solos."],
-      ["Listo","Tu contador revisa y hace el precierre. En “Todos mis meses” ves tu historial."]];
+      ["Agrega tus ingresos","Toca “+ Agregar ingreso”, escribe qué fue, el importe sin IVA y si fue de contado, a crédito o complemento de pago. Con “Guardar y agregar otro” sigues capturando sin salir."],
+      ["Agrega tus gastos","Toca “+ Agregar gasto”. Los gastos con factura e IVA, ya pagados, hacen que pagues menos IVA."],
+      ["Cobros a crédito","Cuando te paguen una factura a crédito, toca “Pasar a cobrado”."],
+      ["Antes de que termine el mes","Una vez concluido el mes ya no se puede agregar nada. Tu contador revisa y hace el precierre."]];
     const P=esAdmin()?pasosA:pasosC;
     openSheet("Cómo se usa",`<ol class="howto">${P.map(([t,d])=>`<li><b>${t}</b><span>${d}</span></li>`).join("")}</ol>
-      ${esAdmin()?`<div class="card stack" style="padding:16px;gap:8px"><b>Significado de las letras</b><span class="small"><b>C</b> ya me pagaron · <b>I</b> todavía no me pagan · <b>MA</b> me pagaron una factura de otro mes · <b>RET</b> me retuvieron impuestos</span></div>`:""}
+      ${esAdmin()?`<div class="card stack" style="padding:16px;gap:8px"><b>Significado de las letras</b><span class="small"><b>C</b> contado · <b>I</b> (1) crédito · <b>MA</b> complemento de pago · <b>RET</b> la factura lleva retención</span></div>`:""}
       <button class="btn primary full" data-act="close">Entendido</button>`);
   },
-  mvRet(d){S.retOn=d.v==="si";document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===d.v));syncRet(true)},
-  mvEst(d){$("#mvEst").value=d.e;document.querySelectorAll('[data-act="mvEst"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===d.e))},
+  mvRet(d){S.retOn=d.v==="si";S.retManual=false;document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===d.v));syncMov(true)},
+  mvEst(d){$("#mvEst").value=d.e;document.querySelectorAll('[data-act="mvEst"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===d.e));syncMov(true)},
   async borrarMov(d){
     if(S.confirm!==d.id){S.confirm=d.id;formMov(S.movs[d.id]);return}
     const x=S.movs[d.id];$("#sheet").hidden=true;S.confirm=null;
@@ -1456,28 +1895,24 @@ document.addEventListener("click",e=>{
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden)closeSheet()});
 document.addEventListener("input",e=>{
   const t=e.target;
-  if(t.id==="mvIva")S.ivaAuto=t.value==="";
-  if(t.id==="mvSub"){
-    if(S.ivaAuto&&$("#mvIva")&&$("#mvIva").value!=="")$("#mvIva").value=(Math.round(num(t.value)*16)/100).toFixed(2);
-    if(S.retOn)syncRet(true);
-  }
+  if(t.id==="mvSub")syncMov(true);
+  if(t.id==="mvIvr"||t.id==="mvIsr"){S.retManual=true;syncMov(false)}
+  if(t.id==="cMail")mailHint();
 });
+// Casillas de dinero: al escribir se ve el número limpio; al salir, con comas y decimales
+document.addEventListener("focusin",e=>{const t=e.target;if(t.classList&&t.classList.contains("money")&&!t.readOnly&&t.value){t.value=String(num(t.value));try{t.select()}catch(_){}}});
+document.addEventListener("focusout",e=>{const t=e.target;if(t.classList&&t.classList.contains("money")&&t.value!==""){const d=t.classList.contains("coef")?4:t.dataset.d?+t.dataset.d:2;t.value=d===4&&!t.classList.contains("coef")?String(+num(t.value).toFixed(4)):fmtN(num(t.value),d)}});
 document.addEventListener("change",async e=>{
   const t=e.target;
   if(t.dataset.change==="mes"){S.m=+t.value;render();return}
-  if(t.name==="reg")syncClienteForm();
-  if(t.id==="mvReg"){
-    if(!$("#fMov [name=id]").value&&$("#mvTipo").value==="ingreso"){
-      S.retOn=t.value==="624";document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="si")===S.retOn));
-    }
-    syncRet(true);return;
-  }
+  if(t.form&&t.form.getAttribute("id")==="fCliente"&&(t.name==="reg"||t.name==="actividad")){syncClienteForm(true);return}
+  if(t.id==="mvReg"){syncMov(true);return}
   if(t.dataset.act2||t.dataset.change==="mesesPF"){
     const lista=t.dataset.change==="mesesPF"?clientesOrden().filter(c=>(c.regimenes||[]).includes("612")).map(c=>[c.id,"612","meses",+t.value]):[[...t.dataset.act2.split("|"),t.type==="checkbox"?t.checked:num(t.value)]];
     try{
       for(const [cid,reg,key,val] of lista){
         const c=S.clientes[cid];
-        if(key==="coef"){const nc=clone(c);if(reg==="624")nc.coef_aut=val;else nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=s2||nc;continue}
+        if(key==="coef"){const nc=clone(c);nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=normCliente(Object.assign({},nc,s2||{}));continue}
         const p=clone(periodo(cid,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);
         if(key==="_act"){p.ajustes._act=!!val;const s2=await API.setPeriodo(p);S.periodos[pkey(cid,S.m)]=s2||p;continue}
         p.ajustes._act=true;
@@ -1511,7 +1946,11 @@ document.addEventListener("submit",async e=>{
   if(fid==="fLogin"){
     const email=(d.email||"").trim().toLowerCase();
     try{
-      if(S.login==="registro"){await Remote.signUp(email,d.pw);toast("Listo. Te enviamos un correo para confirmar tu cuenta.",6000);S.login="entrar";render();return}
+      if(S.login==="registro"){
+        if(d.pw2!=null&&d.pw!==d.pw2){toast("Las dos contraseñas no coinciden.");return}
+        const dentro=await Remote.signUp(email,d.pw);S.login="entrar";
+        if(dentro){await entrar(await Remote.session());toast("¡Cuenta creada! Bienvenido.",4000);return}
+        toast("Listo. Abre el correo que te enviamos y toca el enlace para activar tu cuenta (revisa también Spam).",8000);render();return}
       if(S.login==="recuperar"){await Remote.reset(email);toast("Te enviamos un enlace para cambiar tu contraseña.",6000);S.login="entrar";render();return}
       const s=await Remote.signIn(email,d.pw);await entrar(s);
     }catch(er){toast(errTxt(er),5000)}
@@ -1522,32 +1961,48 @@ document.addEventListener("submit",async e=>{
     return;
   }
   if(fid==="fCliente"){
-    const rfc=(d.rfc||"").trim().toUpperCase().replace(/\s/g,"");
-    const regs=fd.getAll("reg").filter(r=>REGS[r]&&REGS[r].t===d.tipo);
+    const rfc=(d.rfc||"").trim().toUpperCase().replace(/\s/g,""),reg=d.reg||"601",tipo=REGS[reg].t;
+    const mail=(d.email_cliente||"").trim().toLowerCase();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)){toast("Escribe un correo válido para el acceso del cliente.");return}
     if(rfc){
       if(!/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/.test(rfc)){toast("Revisa el RFC: 12 caracteres para persona moral, 13 para persona física. También puedes dejarlo vacío.");return}
-      if(d.tipo==="PM"&&rfc.length!==12){toast("Una persona moral tiene RFC de 12 caracteres.");return}
-      if(d.tipo==="PF"&&rfc.length!==13){toast("Una persona física tiene RFC de 13 caracteres.");return}
+      if(tipo==="PM"&&rfc.length!==12){toast("Una persona moral tiene RFC de 12 caracteres.");return}
+      if(tipo==="PF"&&rfc.length!==13){toast("Una persona física tiene RFC de 13 caracteres.");return}
     }
-    if(!regs.length){toast("Selecciona al menos un régimen.");return}
+    if(reg==="601"&&!num(d.coef)&&!confirm("No capturaste el coeficiente de utilidad. ¿Guardar así y capturarlo después?"))return;
     const prev=d.id?S.clientes[d.id]:null;
-    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo:d.tipo,regimenes:regs,coef:num(d.coef),coef_aut:num(d.coef_aut),email_cliente:(d.email_cliente||"").trim().toLowerCase()||null,actividad:d.tipo==="PM"?(d.actividad||"Empresarial"):"Empresarial / servicios",activo:d.activo!=="0"});
+    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo,regimenes:[reg],coef:reg==="601"?num(d.coef):0,coef_aut:0,email_cliente:mail,
+      actividad:reg==="601"?(d.actividad||"Empresarial"):reg==="606"?"Arrendamiento":"Empresarial",activo:d.activo!=="0",
+      fiscal:{iva:[!!d.rivaOn,num(d.rivaPct)],isr:[!!d.risrOn,num(d.risrPct)]}});
     if(d.id)c.id=d.id;
     $("#sheet").hidden=true;S.confirm=null;
-    try{const s=await API.saveCliente(c);S.clientes[s.id]=s;S.apartado=s.tipo;if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Cliente actualizado":"Cliente creado: ya aparece en la tabla")}catch(er){toast(errTxt(er),5000)}
+    try{const s=await API.saveCliente(c);S.clientes[s.id]=normCliente(Object.assign({},c,s));if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Empresa actualizada":"Cliente creado: ya aparece en la tabla")}catch(er){toast(errTxt(er),5000)}
     render();return;
   }
+  if(fid==="fTarifas"){
+    const g=k=>num(d[k]),n=CFG.tarifaPF.length,nr=CFG.resicoPF.length;
+    const nuevo={tasaPM:g("tasaPM"),iva:g("iva"),limPM:g("limPM"),limPF:g("limPF"),retAut:g("retAut"),retIvaPF:g("retIvaPF"),retIsrPF:g("retIsrPF"),retIsrResico:g("retIsrResico"),
+      tarifaPF:Array.from({length:n},(_,i)=>[g("t_li_"+i),g("t_cf_"+i),g("t_pc_"+i)]),resicoPF:Array.from({length:nr},(_,i)=>[g("r_h_"+i),g("r_p_"+i)])};
+    if(!(nuevo.tasaPM>0&&nuevo.tasaPM<100)){toast("Revisa la tasa de ISR de personas morales.");return}
+    try{await API.saveConfig(nuevo);CFG=Object.assign(clone(CFG_BASE),nuevo);toast("Tablas y tarifas guardadas")}catch(er){toast("No se guardó: falta correr el SQL nuevo en Supabase.",6000);return}
+    S.vista="tablero";render();scrollTo(0,0);return;
+  }
   if(fid==="fMov"){
-    const c=S.clientes[S.cid],sub=num(d.subtotal),prev=d.id?S.movs[d.id]:null;
-    const mes=+d.fecha.slice(5,7);
-    const m=Object.assign({},prev||{},{cliente_id:c.id,anio:YEAR,mes,fecha:d.fecha,tipo:d.tipo,regimen:d.regimen||(c.regimenes||[])[0],concepto:d.concepto.trim(),rfc:(d.rfc||"").trim().toUpperCase(),
-      estatus:d.tipo==="ingreso"?(d.estatus||"C"):null,
-      subtotal:sub,iva:d.iva===""?Math.round(sub*16)/100:num(d.iva),iva_ret:num(d.iva_ret),isr_ret:num(d.isr_ret),
-      deducible:d.tipo==="gasto"?!!d.deducible:true,capturado_por:prev?prev.capturado_por:(esAdmin()?"admin":"cliente"),nota:(d.nota||"").trim()||null});
+    const c=S.clientes[S.cid],sub=num(d.subtotal),prev=d.id?S.movs[d.id]:null,otro=e.submitter&&e.submitter.value==="otro";
+    if(!(sub>0)){toast("Escribe el importe sin IVA.");return}
+    const mes=+d.fecha.slice(5,7),ing=d.tipo==="ingreso",estatus=ing?(d.estatus||"C"):null,tasa=d.tasa_iva||"16";
+    const iva=tasa==="manual"?num(d.iva):tasa==="16"?Math.round(sub*CFG.iva)/100:0;
+    let ivr=num(d.iva_ret),isr=num(d.isr_ret);
+    if(ing&&!S.retManual){const r=retDe(c,sub,estatus,S.retOn);ivr=r.iva;isr=r.isr}
+    if(ing&&estatus==="I"){ivr=0;isr=0}
+    const m=Object.assign({},prev||{},{cliente_id:c.id,anio:YEAR,mes,fecha:d.fecha,tipo:d.tipo,regimen:d.regimen||regDe(c),concepto:d.concepto.trim(),rfc:(d.rfc||"").trim().toUpperCase(),
+      estatus,subtotal:sub,iva,iva_ret:ivr,isr_ret:isr,tasa_iva:tasa,ref_id:d.ref_id||null,
+      deducible:ing?true:!!d.deducible,capturado_por:prev?prev.capturado_por:(esAdmin()?"admin":"cliente"),nota:(d.nota||"").trim()||null});
     if(d.id)m.id=d.id;else delete m.id;
-    $("#sheet").hidden=true;S.confirm=null;S.mov=null;
-    try{const s=await API.saveMov(m,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>s[k]=+s[k]);S.movs[s.id]=s;toast(prev?"Movimiento actualizado":"Agregado a la hoja")}catch(er){toast(errTxt(er),5000)}
-    render();
+    try{const s=await API.saveMov(m,S.auth);["subtotal","iva","iva_ret","isr_ret"].forEach(k=>s[k]=+s[k]);S.movs[s.id]=Object.assign({},m,s);
+      if(otro){S.mov={tipo:d.tipo};S.confirm=null;render();formMov(null);toast("Guardado. Agrega el siguiente "+(ing?"ingreso":"gasto"));return}
+      toast(prev?"Actualizado":"Guardado")}catch(er){toast(errTxt(er),5000);return}
+    $("#sheet").hidden=true;S.confirm=null;S.mov=null;render();
   }
 });
 
