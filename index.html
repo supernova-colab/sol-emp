@@ -447,7 +447,7 @@ input.ycell.money{text-align:right}
 #printArea[hidden]{display:none!important}
 .pbar{position:sticky;top:0;display:flex;gap:10px;justify-content:center;padding:12px;background:rgba(233,236,242,.95);backdrop-filter:blur(6px);z-index:2}
 .pdoc{display:flex;flex-direction:column;gap:18px;padding:0 12px 40px;align-items:center}
-.pp{background:#fff;color:#15192A;width:100%;max-width:1060px;padding:28px 30px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.08);font:11px/1.45 "IBM Plex Sans",system-ui,sans-serif}
+.pp{background:#fff;color:#15192A;width:100%;max-width:1060px;box-sizing:border-box;padding:28px 30px;border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.08);font:11px/1.45 "IBM Plex Sans",system-ui,sans-serif}
 .pp header{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start;border-bottom:3px solid #3F5A9E;padding-bottom:14px;margin-bottom:10px}
 .pp h1{font:800 20px/1.2 Manrope,system-ui,sans-serif;color:#1F2A4D;margin:0 0 8px}
 .pp header p{margin:2px 0}
@@ -486,6 +486,69 @@ body.printing{overflow:hidden}
   .pp{box-shadow:none;max-width:none;padding:0;border-radius:0}
   .pp:not(:last-child){page-break-after:always}
   .pp *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+/* ===== Tablas de movimientos y resumen (ref. nov 2026) ===== */
+.rt-head{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.rt-head b{font-family:var(--font-d);font-size:1.15rem}.rt-head span{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.rt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rt-col{display:flex;flex-direction:column;gap:10px}
+.rt-t{display:flex;flex-direction:column;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);min-width:0}
+.rt-t span{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rt-t b{font-family:var(--font-d);font-size:1.15rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.rt-t.imp b{color:var(--accent)}
+.rt-total{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px;padding:18px;border-radius:16px;background:#14324B;color:#fff}
+.rt-total>div{display:flex;flex-direction:column;gap:4px}
+.rt-total span{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#B9CBDD}
+.rt-total b{font-family:var(--font-d);font-size:1.9rem;font-variant-numeric:tabular-nums}
+.rt-total small{font-size:.78rem;color:#CFDCEA}
+.btn-go{border:0;border-radius:14px;background:#F59E0B;color:#1A1A1A;font:700 1.05rem var(--font-d);padding:16px 22px;min-height:56px;cursor:pointer;box-shadow:0 6px 16px rgba(245,158,11,.35);flex:1 1 200px}
+.btn-go:active{transform:translateY(1px)}
+.actbar{display:flex;gap:8px;flex-wrap:wrap}
+.actbar .btn{flex:1 1 auto;min-height:44px;font-size:.9rem}
+.mv-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.btn.add{min-height:46px;border-radius:12px;padding:10px 18px}
+.mvcard{padding:16px}
+table.mv{width:100%;min-width:720px;border-collapse:separate;border-spacing:0;font-size:.9rem}
+table.mv th{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 10px;border-bottom:1px solid var(--line);background:var(--bg);white-space:nowrap}
+table.mv th:first-child{border-top-left-radius:10px}table.mv th:last-child{border-top-right-radius:10px}
+table.mv td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.mv td.n,table.mv th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+table.mv td.nw{white-space:nowrap;color:var(--muted)}
+table.mv td.cc{min-width:170px}
+table.mv td.cc b{display:block;font-weight:600}
+table.mv td.cc span{display:block;font-size:.76rem;color:var(--muted);margin-top:2px}
+table.mv td.acc{white-space:nowrap;text-align:right}
+table.mv tfoot td{border-bottom:0;padding:10px;color:var(--muted);font-weight:600}
+table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font-d);font-size:1rem;border-top:2px solid var(--line)}
+.tchip{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.76rem;font-weight:600;white-space:nowrap}
+.tchip.ok{background:var(--favor-soft);color:var(--favor)}
+.tchip.pend{background:#FDEBD3;color:#B45309}
+.tchip.ant{background:var(--accent-soft);color:var(--accent)}
+.mini{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 12px;font:600 .8rem var(--font-b);cursor:pointer;margin-left:6px;color:var(--ink)}
+.mini.del{color:var(--pay);border-color:#F2C9BF}
+.mini.go{background:var(--favor-soft);color:var(--favor);border-color:transparent}
+@media (max-width:420px){.rt-t b{font-size:1rem}.rt-total b{font-size:1.6rem}}
+.xlview{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;background:#E9ECF2;padding:10px}
+.xlview .pdoc{padding:0;align-items:stretch}.xlview .pp{min-width:980px;max-width:none}
+.tabs button{font-size:.84rem}
+@media (max-width:640px){
+  .mvcard .grid-wrap,.card .grid-wrap:has(table.mv){overflow:visible;border:0}
+  table.mv{min-width:0;font-size:.88rem}
+  table.mv thead{display:none}
+  table.mv tbody tr{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:14px 2px;border-bottom:1px solid var(--line)}
+  table.mv tbody td{padding:0;border:0;min-width:0}
+  table.mv td.cc{grid-column:1;grid-row:1}
+  table.mv td.ne{grid-column:2;grid-row:1;font-size:1rem}
+  table.mv td.nw{grid-column:1;grid-row:2;font-size:.8rem}
+  table.mv td.ch{grid-column:2;grid-row:2;text-align:right;max-width:170px}
+  table.mv td.ch .tchip{white-space:normal}
+  table.mv td.im,table.mv td.iv,table.mv td.rt2{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted)}
+  table.mv td.im::before,table.mv td.iv::before,table.mv td.rt2::before{content:attr(data-l)}
+  table.mv td.acc{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:4px}
+  table.mv td.acc .mini{margin:0}
+  table.mv tfoot tr{display:flex;justify-content:space-between;gap:10px}
+  table.mv tfoot td.e{display:none}
+  table.mv tfoot td{padding:8px 2px}
 }
 </style>
 </head>
@@ -1182,48 +1245,62 @@ function accionesAdmin(c,p){
   return`<div class="stack" style="gap:6px"><strong>${P[0]}</strong><span class="small muted">${P[1]}</span></div><div class="stack" style="gap:6px">${P[2]}</div>`;
 }
 function resumenHero(c,r,p){
-  const v=vals(c,S.m),k=calc(c,S.m);
-  return`<div class="pc-box">
-      <div class="pc-head"><b class="pc-emp">${esc(c.nombre)}</b><span>Periodo: ${MESES[S.m-1]} ${YEAR}</span></div>
-      <div class="pc-io">
-        <div><span>Total de ingresos</span><b>${money(k.E.base)}</b></div>
-        <div><span>Total de gastos</span><b>${money(k.G.base)}</b></div>
-      </div>
-      <div class="pc-imp">
-        <span class="pc-lbl">Impuestos</span>
-        <div class="pc-l"><span>ISR</span><b>${money(v.isr)}</b></div>
-        <div class="pc-l"><span>IVA</span><b>${money(Math.max(0,v.iva))}</b></div>
-        <div class="pc-l"><span>Retenciones</span><b>${money(v.ret)}</b></div>
-        <div class="pc-l pc-tot"><span>Total</span><b>${money(v.total)}</b></div>
-      </div>
-    </div>`;
+  const v=vals(c,S.m),k=calc(c,S.m),cli=!esAdmin()||S.preview,edit=!S.preview&&puedeCapturar(c.id,S.m);
+  const t=(l,val,cls)=>`<div class="rt-t${cls?" "+cls:""}"><span>${l}</span><b>${money(val)}</b></div>`;
+  return`<div class="rt-head"><b>${esc(c.nombre)}</b><span>Periodo: ${MESES[S.m-1]} ${YEAR}</span></div>
+    <div class="rt">
+      <div class="rt-col">${t("Ingresos",k.ing)}${t("Gastos",k.G.base)}</div>
+      <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}${t("Retenciones",v.ret,"imp")}</div>
+    </div>
+    <div class="rt-total"><div><span>Total ${cli&&!v.decl?"estimado":"de impuestos"}</span><b>${money(v.total)}</b>${v.ivaFavor>0.005?`<small>IVA a favor: ${money(v.ivaFavor)}</small>`:""}${cli&&!v.decl?`<small>Estimación sujeta a revisión de tu contador.</small>`:""}</div>
+      ${cli&&edit?`<button class="btn-go" data-act="nuevoMov" data-t="ingreso">${movsDe(c.id,S.m).length?"Seguir capturando":"Comenzar a capturar"} →</button>`:""}</div>`;
 }
-// Facturas a crédito de meses anteriores que todavía no se cobran
 function pendientesCobro(c){
   const cobradas=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.ref_id).map(x=>x.ref_id));
   return Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.tipo==="ingreso"&&est(x)==="I"&&!cobradas.has(x.id)).sort((a,b)=>a.fecha.localeCompare(b.fecha));
 }
-function listaCliente(c,m){
-  const ms=movsDe(c.id,m),edit=!S.preview&&puedeCapturar(c.id,m),I=ms.filter(x=>x.tipo==="ingreso"),G=ms.filter(x=>x.tipo==="gasto");
-  const lbl={C:["favor","Contado"],I:["pay","Crédito · pendiente de cobro"],MA:["","Complemento de pago"]};
+// Tabla limpia de ingresos o gastos (se abre al tocar el apartado)
+const TIPO_ING={C:["ok","Cobrado durante el mes"],I:["pend","Pendiente de cobro"],MA:["ant","Cobro de periodo anterior"]};
+const fechaCorta=f=>{const[,mo,d]=f.split("-");return +d+" de "+MESES[+mo-1].toLowerCase()};
+function tablaMovs(c,m,tipo){
+  const ing=tipo==="ingreso",ms=movsDe(c.id,m).filter(x=>x.tipo===tipo),adm=esAdmin()&&!S.preview;
   const cobradaEn=x=>{const r=Object.values(S.movs).find(y=>y.ref_id===x.id);return r?MESES[r.mes-1].toLowerCase():""};
-  const item=x=>{const[,mo,d]=x.fecha.split("-"),e=est(x),ce=x.tipo==="ingreso"&&e==="I"?cobradaEn(x):"";return`<div class="inv-w"><button class="inv" data-act="mov" data-id="${esc(x.id)}">
-    <span class="info"><strong>${esc(x.concepto||"Sin concepto")}</strong><span class="small muted">${d}/${mo}${x.rfc?" · "+esc(x.rfc):""}</span>
-      <span class="tags">${x.tipo==="ingreso"?`<span class="chip ${ce?"favor":lbl[e][0]}">${ce?"Cobrada en "+ce:lbl[e][1]}</span>`:(x.deducible===false?'<span class="chip pay">Sin factura</span>':'<span class="chip favor">Con factura</span>')}${tasaDe(x)!=="16"?`<span class="chip mute">IVA ${tasaDe(x)==="exento"?"exento":tasaDe(x)==="0"?"0 %":"manual"}</span>`:""}${tieneRet(x)?'<span class="chip mute">Con retención</span>':""}${x.capturado_por==="admin"?'<span class="chip mute">Lo agregó tu contador</span>':""}${x.nota?'<span class="chip warn">Con nota</span>':""}</span></span>
-    <span class="amt"><b>${money(x.subtotal)}</b><span class="small muted">IVA ${money(x.iva)}</span></span></button>
-    ${x.tipo==="ingreso"&&e==="I"&&!ce&&!S.preview?`<button class="btn sm cobrar" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button>`:""}</div>`};
-  const tot=a=>a.reduce((t,x)=>t+(+x.subtotal||0),0);
-  const grupo=(k,t,a,vacio)=>{const open=S.abre[k];return`<section class="grp${open?" open":""}">
-    <button class="grp-h" data-act="abre" data-k="${k}" aria-expanded="${!!open}"><span><b>${t}</b><span class="small muted">${a.length} ${a.length===1?"registro":"registros"} · toca para ${open?"ocultar":"ver"} el desglose</span></span><span class="grp-t">${money(tot(a))}<i>${open?"▴":"▾"}</i></span></button>
-    ${open?`<div class="grp-b">${a.length?`<div class="list">${a.map(item).join("")}</div>`:`<p class="muted" style="margin:0;padding:6px 2px">${vacio}</p>`}</div>`:""}
-    ${edit?`<button class="btn primary full" data-act="nuevoMov" data-t="${k==="ing"?"ingreso":"gasto"}">+ Agregar ${k==="ing"?"ingreso":"gasto"}</button>`:""}</section>`};
+  const neto=x=>(+x.subtotal||0)+(+x.iva||0)-(+x.iva_ret||0)-(+x.isr_ret||0);
+  if(!ms.length)return`<p class="muted" style="margin:0;padding:6px 2px">No hay ${ing?"ingresos":"gastos"} en ${MESES[m-1].toLowerCase()}.</p>`;
+  let tI=0,tV=0,tR=0,tN=0,fac=0,cob=0;
+  const filas=ms.map(x=>{const e=est(x),ed=!S.preview&&puedeEditarMov(x),ce=ing&&e==="I"?cobradaEn(x):"",ret=(+x.iva_ret||0)+(+x.isr_ret||0);
+    tI+=+x.subtotal||0;tV+=+x.iva||0;tR+=ret;tN+=neto(x);if(ing){if(e!=="MA")fac+=+x.subtotal||0;if(e!=="I")cob+=neto(x)}
+    const chip=ing?(ce?`<span class="tchip ok">Cobrada en ${ce}</span>`:`<span class="tchip ${TIPO_ING[e][0]}">${TIPO_ING[e][1]}</span>`):(x.deducible===false?`<span class="tchip pend">Sin factura</span>`:`<span class="tchip ok">Con factura pagada</span>`);
+    const extra=[tasaDe(x)!=="16"?"IVA "+(tasaDe(x)==="exento"?"exento":tasaDe(x)==="0"?"0 %":"manual"):"",adm?(x.capturado_por==="cliente"?"Capturó el cliente":"Capturó el despacho"):(x.capturado_por==="admin"?"Lo agregó tu contador":"")].filter(Boolean).join(" · ");
+    return`<tr><td class="nw">${fechaCorta(x.fecha)}</td><td class="cc"><b>${esc(x.concepto||"Sin concepto")}</b>${extra?`<span>${extra}</span>`:""}${x.nota?`<span class="nota">Nota: ${esc(x.nota)}</span>`:""}</td>
+      <td class="ch">${chip}</td><td class="n im" data-l="Importe">${money(x.subtotal)}</td><td class="n iv" data-l="IVA">${money(x.iva)}</td><td class="n rt2" data-l="Retención">${ret?money(ret):"—"}</td><td class="n ne" data-l="Neto"><b>${money(neto(x))}</b></td>
+      <td class="acc">${ing&&e==="I"&&!ce&&!S.preview?`<button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button>`:""}<button class="mini" data-act="mov" data-id="${esc(x.id)}">${ed?"Editar":"Ver"}</button>${ed?`<button class="mini del" data-act="borrarRapido" data-id="${esc(x.id)}">Eliminar</button>`:""}</td></tr>`}).join("");
+  return`<div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th class="n">Importe</th><th class="n">IVA</th><th class="n">Retención</th><th class="n">Neto</th><th></th></tr></thead>
+    <tbody>${filas}</tbody><tfoot>
+    ${ing?`<tr><td colspan="6">Total facturado (contado y crédito)</td><td class="n">${money(fac)}</td><td class="e"></td></tr><tr class="big"><td colspan="6">Total cobrado y cobros anteriores</td><td class="n">${money(cob)}</td><td class="e"></td></tr>`
+      :`<tr class="big"><td colspan="3">Total de gastos (neto)</td><td class="n e">${money(tI)}</td><td class="n e">${money(tV)}</td><td class="n e">${tR?money(tR):"—"}</td><td class="n">${money(tN)}</td><td class="e"></td></tr>`}</tfoot></table></div>`;
+}
+function grupoMovs(c,m,k,edit){
+  const ing=k==="ing",ms=movsDe(c.id,m).filter(x=>x.tipo===(ing?"ingreso":"gasto")),open=S.abre[k];
+  const tot=ms.reduce((t,x)=>t+(+x.subtotal||0),0);
+  return`<section class="grp${open?" open":""}">
+    <div class="grp-top"><button class="grp-h" data-act="abre" data-k="${k}" aria-expanded="${!!open}"><span><b>${ing?"Ingresos":"Gastos"}</b><span class="small muted">${ms.length} ${ms.length===1?"registro":"registros"} · toca para ${open?"ocultar":"ver"} el desglose</span></span><span class="grp-t">${money(tot)}<i>${open?"▴":"▾"}</i></span></button>
+      ${edit?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
+    ${open?`<div class="grp-b">${tablaMovs(c,m,ing?"ingreso":"gasto")}</div>`:""}</section>`;
+}
+function listaCliente(c,m){
+  const edit=!S.preview&&puedeCapturar(c.id,m);
   const pend=edit&&m===defM?pendientesCobro(c).filter(x=>x.mes<m):[];
-  return`${grupo("ing","Ingresos",I,"No hay ingresos en este mes.")}
-    ${grupo("gas","Gastos",G,"No hay gastos en este mes.")}
-    ${pend.length?`<section class="card stack"><b>Facturas a crédito pendientes de cobro</b><span class="small muted">Cuando te paguen una, toca “Pasar a cobrado” y se registra el complemento de pago en ${MESES[m-1].toLowerCase()}.</span>
-      <div class="list">${pend.map(item).join("")}</div></section>`:""}
+  return`${grupoMovs(c,m,"ing",edit)}${grupoMovs(c,m,"gas",edit)}
+    ${pend.length?`<section class="card stack"><b>Facturas a crédito pendientes de cobro</b><span class="small muted">Cuando te paguen una, toca “Pasar a cobrado” y se registra el cobro en ${MESES[m-1].toLowerCase()}.</span>
+      <div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Importe</th><th class="n">IVA</th><th></th></tr></thead><tbody>${pend.map(x=>`<tr><td class="nw">${fechaCorta(x.fecha)}</td><td class="cc"><b>${esc(x.concepto||"")}</b></td><td class="n">${money(x.subtotal)}</td><td class="n">${money(x.iva)}</td><td class="acc"><button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button></td></tr>`).join("")}</tbody></table></div></section>`:""}
     <p class="note info">Para bajar el IVA es necesario meter facturas de gasto con IVA <b>pagadas</b>.</p>
     <div class="bigbtns two"><button class="tile-btn" data-act="xlsCliente"><b>Descargar Excel</b><span>Precierre del mes</span></button><button class="tile-btn" data-act="pdfCliente"><b>Descargar PDF</b><span>Para imprimir o enviar</span></button></div>`;
+}
+
+function ultimaCaptura(c){
+  let t="";Object.values(S.movs).forEach(x=>{if(x.cliente_id===c.id){const f=(x.creado||"").slice(0,10)||x.fecha;if(f>t)t=f}});
+  if(!t)return"";const[y,mo,d]=t.split("-");return +d+" de "+MESES[+mo-1].toLowerCase()+" de "+y;
 }
 function hoja(c,m){
   const ms=movsDe(c.id,m),varios=(c.regimenes||[]).length>1,edit=puedeCapturar(c.id,m);
@@ -1289,34 +1366,40 @@ function tabHistorial(c){
     <tbody>${rows}<tr class="trt"><td>Año</td><td></td><td class="n">${money(ti)}</td><td class="n">${money(tg)}</td><td class="n">${money(tv)}</td><td class="n">${money(tr)}</td><td class="n">${money(tt)}</td></tr></tbody></table></div>
     <p class="small muted" style="margin:0">Toca un mes para abrirlo. Los meses declarados conservan lo que se declaró.</p>`;
 }
+// Pestaña de ingresos o gastos: botón de agregar y la tabla
+function panelMovs(c,m,k){
+  const ing=k==="ing",edit=!S.preview&&puedeCapturar(c.id,m);
+  const ms=movsDe(c.id,m).filter(x=>x.tipo===(ing?"ingreso":"gasto"));
+  const pend=ing&&edit&&m===defM?pendientesCobro(c).filter(x=>x.mes<m):[];
+  return`<section class="card stack mvcard">
+    <div class="mv-top"><div><h3 style="margin:0">${ing?"Ingresos":"Gastos"}</h3><span class="small muted">${ms.length} ${ms.length===1?"registro":"registros"} · ${MESES[m-1]} ${YEAR}</span></div>
+      ${edit?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
+    ${tablaMovs(c,m,ing?"ingreso":"gasto")}</section>
+    ${pend.length?`<section class="card stack"><b>Facturas a crédito pendientes de cobro</b><span class="small muted">Cuando te paguen una, toca “Pasar a cobrado” y se registra el cobro en ${MESES[m-1].toLowerCase()}.</span>
+      <div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Importe</th><th class="n">IVA</th><th></th></tr></thead><tbody>${pend.map(x=>`<tr><td class="nw">${fechaCorta(x.fecha)}</td><td class="cc"><b>${esc(x.concepto||"")}</b></td><td class="n">${money(x.subtotal)}</td><td class="n">${money(x.iva)}</td><td class="acc"><button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button></td></tr>`).join("")}</tbody></table></div></section>`:""}
+    ${ing?"":`<p class="note info">Para bajar el IVA es necesario meter facturas de gasto con IVA <b>pagadas</b>.</p>`}`;
+}
+const tabsHTML=tabs=>`<div class="tabs" role="tablist" style="grid-template-columns:repeat(${tabs.length},1fr)">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>`;
 function viewClienteAdmin(){
   const c=S.clientes[S.cid];if(!c){S.vista="tablero";return viewTablero()}
   const p=periodo(c.id,S.m),r=calc(c,S.m),f=fiscal(c);
-  const tabs=[["hoja","Hoja"],["calculo","Cálculo"],["historial","Meses"]];
+  if(!["ing","gas","calculo","excel","historial"].includes(S.tabC))S.tabC="ing";
   const otras=c.email_cliente?clientesOrden().filter(x=>x.id!==c.id&&(x.email_cliente||"")===c.email_cliente):[];
+  const uc=ultimaCaptura(c);
   return`${quien()}
-  <div class="bigbtns">
-    <button class="tile-btn" data-act="tablero"><b>← Panel</b><span>Todos los clientes</span></button>
-    <button class="tile-btn" data-act="verCliente"><b>Ver como cliente</b><span>Lo que ve tu cliente</span></button>
-    <button class="tile-btn" data-act="editCliente"><b>Editar empresa</b><span>Régimen, correo y retenciones</span></button>
-    <button class="tile-btn" data-act="descargas"><b>Excel y PDF</b><span>Precierre de ${MESES[S.m-1].toLowerCase()}</span></button>
+  <div class="actbar"><button class="btn" data-act="tablero">← Panel</button><button class="btn" data-act="verCliente">Ver como cliente</button><button class="btn" data-act="editCliente">Editar empresa</button><button class="btn" data-act="descargas">Excel / PDF</button></div>
+  <div class="sec-t" style="gap:8px">
+    <div class="row between" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><h2 style="font-size:1.5rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
+    <span class="small muted">${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
+    ${otras.length?`<span class="small muted">Este cliente también tiene: ${otras.map(x=>esc(x.nombre)).join(", ")}</span>`:""}
+    <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">${precierreTag(c,S.m)}<span class="small muted">${uc?"Última captura: "+uc:"Sin capturas todavía"}</span></div>${LEYENDA_ACT}
   </div>
-  <section class="card hero">
-    <div class="stack" style="gap:8px">
-      <div class="row between" style="gap:10px;flex-wrap:wrap"><h2 style="font-size:1.35rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
-      <span class="small muted">${c.rfc?esc(c.rfc)+" · ":""}${c.email_cliente?"Acceso: "+esc(c.email_cliente):"Sin correo de acceso"}</span>
-      <span class="tags">${(c.regimenes||[]).map(x=>`<span class="chip">${abrev(c,x)}</span>`).join("")}${f.aut?'<span class="chip warn">Retiene 4 % de IVA</span>':""}${activo(c)?"":'<span class="chip mute">Inactivo</span>'}</span>
-      ${otras.length?`<span class="small muted">Este cliente también tiene: ${otras.map(x=>esc(x.nombre)).join(", ")}</span>`:""}
-      <div>${precierreTag(c,S.m)}</div>${LEYENDA_ACT}
-    </div>
-    ${resumenHero(c,r,p)}
-    ${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}
-  </section>
+  ${barraMes(true)}
+  <section class="card hero">${resumenHero(c,r,p)}${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}</section>
   ${limiteCard(c,S.m)}
-  ${barraMes()}
-  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>
-  <div class="tabs" role="tablist" style="grid-template-columns:repeat(3,1fr)">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>
-  <section class="stack">${S.tabC==="hoja"?hoja(c,S.m):S.tabC==="calculo"?tabCalculo(c,r):tabHistorial(c)}</section>`;
+  ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["calculo","Cálculo"],["excel","Excel"],["historial","Meses"]])}
+  <section class="stack">${S.tabC==="ing"||S.tabC==="gas"?panelMovs(c,S.m,S.tabC):S.tabC==="calculo"?tabCalculo(c,r):S.tabC==="excel"?`<p class="small muted" style="margin:0">Así queda el precierre, igual que su Excel. Desliza hacia los lados para verlo completo.</p><div class="xlview"><div class="pdoc">${precierreHTML(c,S.m)}</div></div>`:tabHistorial(c)}</section>
+  <section class="card stack">${pasos(p.estado)}${accionesAdmin(c,p)}</section>`;
 }
 function viewPanelCliente(){
   const prev=S.preview&&esAdmin();
@@ -1328,11 +1411,10 @@ function viewPanelCliente(){
   const fin=mesTerminado(S.m);
   const msg=p.estado==="abierto"&&fin?["lock","El mes ya terminó","El mes de "+mes+" ya concluyó: ya no se puede agregar ni cambiar nada."]
     :{bloqueado:["lock","Captura cerrada","Tu contador todavía no abre la captura de "+mes+". Cuando la autorice podrás agregar tus ingresos y gastos."],
-    abierto:["warn","Ya puedes capturar","Agrega tus ingresos y gastos de "+mes+" hasta el último día del mes."],
+    abierto:["warn","Captura abierta",ultimaCaptura(c)?"Fecha de la última captura: "+ultimaCaptura(c)+".":"Todavía no capturas nada en "+mes+"."],
     precierre:["lock","Mes en precierre","Tu contador está revisando y preparando la declaración. Ya no se puede agregar información."],
     declarado:["ok","Mes declarado","Tu declaración de "+mes+" ya se presentó."]}[p.estado];
-  const tabs=[["hoja","Este mes"],["historial","Todos mis meses"]];
-  if(S.tabC==="calculo")S.tabC="hoja";
+  if(!["ing","gas","historial"].includes(S.tabC))S.tabC="ing";
   return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
   <div class="banner danger"><div class="stack" style="gap:2px"><strong>Importante</strong><span class="small">Una vez concluido el mes, ya no se podrá actualizar ni agregar nada.</span></div></div>
   ${cs.length>1?`<section class="stack" style="gap:10px"><div class="sec-t"><span class="eyebrow">Mis empresas</span></div><div class="emps">${cs.map(x=>`<button class="emp-card" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></section>`:""}
@@ -1343,10 +1425,11 @@ function viewPanelCliente(){
   ${barraMes()}
   ${prev?"":`<button class="btn full" data-act="recargar">↻ Actualizar</button>`}
   <div class="banner ${msg[0]}"><div class="stack" style="gap:2px"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span></div></div>
-  <section class="card hero">${resumenHero(c,r,p)}${p.estado!=="declarado"?`<p class="small muted" style="margin:0">Impuesto probable; el monto final lo confirma tu contador.</p>`:""}</section>
+  <section class="card hero">${resumenHero(c,r,p)}</section>
   ${limiteCard(c,S.m)}
-  <div class="tabs" role="tablist" style="grid-template-columns:1fr 1fr">${tabs.map(([k,l])=>`<button role="tab" data-act="tabC" data-t="${k}" aria-selected="${S.tabC===k}">${l}</button>`).join("")}</div>
-  <section class="stack">${S.tabC==="historial"?tabHistorial(c):listaCliente(c,S.m)}</section>`;
+  ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["historial","Mis meses"]])}
+  <section class="stack">${S.tabC==="historial"?tabHistorial(c):panelMovs(c,S.m,S.tabC)}</section>
+  <div class="bigbtns two"><button class="tile-btn" data-act="xlsCliente"><b>Descargar Excel</b><span>Precierre del mes</span></button><button class="tile-btn" data-act="pdfCliente"><b>Descargar PDF</b><span>Para imprimir o enviar</span></button></div>`;
 }
 function viewTarifas(){
   const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${fmtN(v,d)}">`;
@@ -1663,9 +1746,8 @@ function xlsTablero(){
   descargar(("PANEL-"+MESES[S.m-1]+"-"+YEAR).toUpperCase()+".xlsx",XL.libro([H]));
 }
 // PDF: vista de impresión con el mismo formato; el usuario elige "Guardar como PDF"
-function pdfCliente(){
-  const c=S.clientes[S.cid],m=S.m;
-  const hojas=(c.regimenes||[]).map(reg=>{
+function precierreHTML(c,m){
+  return(c.regimenes||[]).map(reg=>{
     const{r,v,isr,I,G}=datosPrecierre(c,reg,m),ok=actualizado(c,m);
     const n=Math.max(I.length,G.length,1);let filas="";
     const t={eI:0,eV:0,cI:0,cV:0,rv:0,ri:0,gI:0,gV:0};
@@ -1689,6 +1771,9 @@ function pdfCliente(){
         <table class="calc"><thead><tr><th colspan="2">IVA</th></tr></thead><tbody><tr><td>IVA TRASLADADO (COBRADO)</td><td>${money(iv.tras)}</td></tr><tr><td>MENOS: IVA RETENIDO</td><td>${sm(-iv.ret)}</td></tr><tr><td>MENOS: IVA ACREDITABLE</td><td>${sm(-iv.acred)}</td></tr><tr class="y"><td>MENOS: SALDO A FAVOR ANTERIOR</td><td>${sm(-iv.ant)}</td></tr><tr class="ptot"><td>${iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR"}</td><td>${money(Math.abs(iv.neto))}</td></tr>
         ${r.ret>0.005?`<tr class="hd"><td colspan="2">RETENCIONES A ENTERAR</td></tr><tr><td>ISR RETENIDO A PROVEEDORES</td><td>${money(r.G.isrRet)}</td></tr><tr><td>IVA RETENIDO A PROVEEDORES</td><td>${money(r.G.ivaRet)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(r.ret)}</td></tr>`:""}</tbody></table></div>
       <p class="pie">Generado con la app de Sol-EMP Soluciones Empresariales · Impuesto probable: el monto final lo confirma el despacho.</p></section>`}).join("");
+}
+function pdfCliente(){
+  const c=S.clientes[S.cid],m=S.m,hojas=precierreHTML(c,m);
   let pa=$("#printArea");if(!pa){pa=document.createElement("div");pa.id="printArea";document.body.appendChild(pa)}
   pa.innerHTML=`<div class="pbar"><button class="btn primary" data-act="imprimir">Guardar como PDF / imprimir</button><button class="btn" data-act="cerrarPdf">Cerrar</button></div><div class="pdoc">${hojas}</div>`;
   pa.hidden=false;document.body.classList.add("printing");scrollTo(0,0);
@@ -1768,7 +1853,7 @@ async function crearEjemplo(){
   $("#toast").classList.remove("on");render();toast("Listo: 4 clientes de ejemplo");
 }
 /* ================= Eventos ================= */
-async function entrar(s){S.auth=s;try{await recargar()}catch(e){toast(errTxt(e),5000)}S.vista="tablero";S.tabC="hoja";render();scrollTo(0,0)}
+async function entrar(s){S.auth=s;try{await recargar()}catch(e){toast(errTxt(e),5000)}S.vista="tablero";S.tabC="ing";render();scrollTo(0,0)}
 const act={
   close:closeSheet,
   ir(d){irA(d.s)},
@@ -1787,13 +1872,13 @@ const act={
   async recargar(){try{await recargar()}catch(e){toast(errTxt(e))}render()},
   mesPrev(){if(S.m>1){S.m--;render()}},
   mesNext(){if(S.m<12){S.m++;render()}},
-  irMes(d){S.m=+d.m;S.tabC="hoja";render();scrollTo(0,0)},
+  irMes(d){S.m=+d.m;S.tabC="ing";render();scrollTo(0,0)},
   apartado(d){S.apartado=d.a;S.filtroReg="todos";render()},
   filtroReg(d){S.filtroReg=d.r;render()},
-  abrir(d){S.cid=d.id;S.vista="cliente";S.tabC="hoja";render();scrollTo(0,0)},
+  abrir(d){S.cid=d.id;S.vista="cliente";S.tabC="ing";render();scrollTo(0,0)},
   tablero(){S.vista="tablero";S.preview=false;render();scrollTo(0,0)},
-  verCliente(){S.preview=true;S.tabC="hoja";render();scrollTo(0,0)},
-  salirVista(){S.preview=false;S.tabC="hoja";render();scrollTo(0,0)},
+  verCliente(){S.preview=true;S.tabC="ing";render();scrollTo(0,0)},
+  salirVista(){S.preview=false;S.tabC="ing";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
   nuevoCliente(){S.confirm=null;openSheet("¿Qué tipo de cliente vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
@@ -1865,6 +1950,8 @@ const act={
   },
   mvRet(d){S.retOn=d.v==="si";S.retManual=false;document.querySelectorAll('[data-act="mvRet"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===d.v));syncMov(true)},
   mvEst(d){$("#mvEst").value=d.e;document.querySelectorAll('[data-act="mvEst"]').forEach(b=>b.setAttribute("aria-pressed",b.dataset.e===d.e));syncMov(true)},
+  async borrarRapido(d){const x=S.movs[d.id];if(!x||!confirm("¿Eliminar “"+(x.concepto||"este registro")+"”?"))return;
+    try{await API.deleteMov(x,S.auth);delete S.movs[d.id];toast("Eliminado")}catch(e){toast(errTxt(e),5000)}const y=scrollY;render();scrollTo(0,y)},
   async borrarMov(d){
     if(S.confirm!==d.id){S.confirm=d.id;formMov(S.movs[d.id]);return}
     const x=S.movs[d.id];$("#sheet").hidden=true;S.confirm=null;
