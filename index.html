@@ -807,7 +807,7 @@ const Remote={
   async signOut(){await (await getSb()).auth.signOut()},
   async load(){
     const sb=await getSb();
-    const todo=async(t,f)=>{const out=[];for(let i=0;;i+=1000){let q=sb.from(t).select("*");if(f)q=f(q);q=t==="periodos"?q.order("cliente_id").order("mes"):q.order("id");const r=await q.range(i,i+999);if(r.error)throw r.error;out.push(...r.data);if(r.data.length<1000)return out}};
+    const todo=async(t,f)=>{const out=[];for(let i=0;;i+=1000){let q=sb.from(t).select("*");if(f)q=f(q);q=t==="periodos"?q.order("cliente_id").order("mes"):q.order("id");let r=await q.range(i,i+999);if(r.error&&i===0){let q2=sb.from(t).select("*");if(f)q2=f(q2);r=await q2;if(r.error)throw r.error;return r.data}if(r.error)throw r.error;out.push(...r.data);if(r.data.length<1000)return out}};
     const[c,p,m]=await Promise.all([todo("clientes"),todo("periodos",q=>q.eq("anio",YEAR)),todo("movimientos",q=>q.eq("anio",YEAR))]);
     return{clientes:c,periodos:p,movs:m};
   },
