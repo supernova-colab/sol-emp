@@ -806,9 +806,10 @@ const Remote={
   async reset(email){const{error}=await (await getSb()).auth.resetPasswordForEmail(email,{redirectTo:location.href.split("#")[0]});if(error)throw error},
   async signOut(){await (await getSb()).auth.signOut()},
   async load(){
-    const[c,p,m]=await Promise.all([(await getSb()).from("clientes").select("*"),(await getSb()).from("periodos").select("*").eq("anio",YEAR),(await getSb()).from("movimientos").select("*").eq("anio",YEAR)]);
-    for(const r of[c,p,m])if(r.error)throw r.error;
-    return{clientes:c.data,periodos:p.data,movs:m.data};
+    const sb=await getSb();
+    const todo=async(t,f)=>{const out=[];for(let i=0;;i+=1000){let q=sb.from(t).select("*");if(f)q=f(q);const r=await q.order("id").range(i,i+999);if(r.error)throw r.error;out.push(...r.data);if(r.data.length<1000)return out}};
+    const[c,p,m]=await Promise.all([todo("clientes"),todo("periodos",q=>q.eq("anio",YEAR)),todo("movimientos",q=>q.eq("anio",YEAR))]);
+    return{clientes:c,periodos:p,movs:m};
   },
   async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal","titular"])},
   async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
