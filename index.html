@@ -1363,7 +1363,7 @@ function resumenHero(c,r,p){
   return`<div class="rt-head"><b>${esc(c.nombre)}</b><span>Periodo: ${MESES[S.m-1]} ${YEAR}</span></div>
     <div class="rt">
       <div class="rt-col">${t("Ingresos",k.ing)}${t("Gastos",k.G.base)}</div>
-      <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}${t("Retenciones",v.ret,"imp")}</div>
+      <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}${esPF(regDe(c))&&!(v.ret>0.005)?"":t("Retenciones",v.ret,"imp")}</div>
     </div>
     <div class="rt-total"><div><span>Total ${cli&&!v.decl?"estimado":"de impuestos"}</span><b>${money(v.total)}</b>${v.ivaFavor>0.005?`<small>IVA a favor: ${money(v.ivaFavor)}</small>`:""}${cli&&!v.decl?`<small>Estimación sujeta a revisión de tu contador.</small>`:""}</div>
       ${cli&&edit?`<button class="btn-go" data-act="nuevoMov" data-t="ingreso">${movsDe(c.id,S.m).length?"Seguir capturando":"Comenzar a capturar"} →</button>`:""}</div>`;
@@ -1685,7 +1685,7 @@ function formMov(x){
       :`<label>¿La factura lleva retención?</label><span class="small muted">Pasa cuando le facturas a una empresa: te paga un poco menos y ella entera el impuesto.</span>
       <div class="seg" role="group" aria-label="Retención"><button type="button" data-act="mvRet" data-v="no" aria-pressed="${!S.retOn}"${dis}>No</button><button type="button" data-act="mvRet" data-v="si" aria-pressed="${S.retOn}"${dis}>Sí</button></div>`}
       <span class="small muted" id="hRetT"></span></div>
-    <div class="field" id="wRetG"${ing?" hidden":""}><label>¿Le retuviste impuestos a tu proveedor?</label>
+    <div class="field" id="wRetG"${ing||esPF(regDe(c))?" hidden":""}><label>¿Le retuviste impuestos a tu proveedor?</label>
       <div class="seg" role="group" aria-label="Retención a proveedor"><button type="button" data-act="mvRetG" data-v="no" aria-pressed="${!(x.id&&tieneRet(x))}"${dis}>No</button><button type="button" data-act="mvRetG" data-v="si" aria-pressed="${!!(x.id&&tieneRet(x))}"${dis}>Sí</button></div></div>
     <div class="two" id="wRetIn"${(ing&&adm&&puedeRet)||(!ing&&x.id&&tieneRet(x))?"":" hidden"}>
       <div class="field"><label for="mvIvr" id="lIvr">${ing?"IVA retenido":"IVA que retuviste"}</label><input id="mvIvr" name="iva_ret" class="money" type="text" inputmode="decimal" value="${fmtN(x.iva_ret)}" placeholder="0.00"${dis}></div>
@@ -1801,6 +1801,21 @@ const XL=(()=>{
 })();
 const fechaLarga=()=>new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 // Datos del precierre de una empresa/régimen, iguales para Excel y PDF
+const esPF=reg=>reg==="612"||reg==="606"||reg==="626F";
+// Columnas del precierre según el régimen, igual que cada Excel del despacho
+function colsPrecierre(reg){
+  const pf=esPF(reg),E=(a,e)=>e!=="MA",C=(a,e)=>e!=="I",TL={"16":"16 %","0":"0 %","exento":"EXENTO","manual":"MANUAL"};
+  const ing=[["CONCEPTO","",(a)=>a.concepto||"","t"],["F","",(a,e)=>e==="I"?"1":e,"c"]];
+  if(pf)ing.push(["RET","",(a)=>tieneRet(a)?"SÍ":"NO","c"]);
+  ing.push(["IMPORTE","FACTURAS ELABORADAS",(a,e)=>E(a,e)?a.subtotal:"","$"]);
+  if(reg==="612")ing.push(["TASA IVA","FACTURAS ELABORADAS",(a,e)=>E(a,e)?(TL[tasaDe(a)]||tasaDe(a)):"","c"]);
+  ing.push(["IVA","FACTURAS ELABORADAS",(a,e)=>E(a,e)?a.iva:"","$"],["IMPORTE","FACTURAS COBRADAS",(a,e)=>C(a,e)?a.subtotal:"","$"],["IVA","FACTURAS COBRADAS",(a,e)=>C(a,e)?a.iva:"","$"],
+    [pf?"RETENCIÓN IVA":"RET. IVA","FACTURAS COBRADAS",(a,e)=>C(a,e)&&a.iva_ret?a.iva_ret:"","$"]);
+  if(pf)ing.push(["RETENCIÓN ISR","FACTURAS COBRADAS",(a,e)=>C(a,e)&&a.isr_ret?a.isr_ret:"","$"]);
+  const gas=[["CONCEPTO","GASTOS PAGADOS FACTURADOS",(g)=>(g.concepto||"")+(g.deducible===false?" (sin factura)":""),"t"],["IMPORTE","GASTOS PAGADOS FACTURADOS",(g)=>g.subtotal,"$"],["IVA","GASTOS PAGADOS FACTURADOS",(g)=>g.iva,"$"]];
+  if(!pf)gas.push(["RETENCIÓN IVA","GASTOS PAGADOS FACTURADOS",(g)=>g.iva_ret||"","$"],["RETENCIÓN ISR","GASTOS PAGADOS FACTURADOS",(g)=>g.isr_ret||"","$"]);
+  return{ing,gas,pf};
+}
 function datosPrecierre(c,reg,m){
   const r=calc(c,m),v=vals(c,m),isr=r.regs.find(x=>x.reg===reg)||r.regs[0];
   const ms=movsDe(c.id,m).filter(x=>!x.regimen||x.regimen===reg||(c.regimenes||[]).length===1);
@@ -1808,37 +1823,29 @@ function datosPrecierre(c,reg,m){
 }
 function hojaPrecierre(c,reg,m){
   const H=new XL.Hoja(abrev(c,reg)+" "+MESES[m-1]);const{r,v,isr,I,G}=datosPrecierre(c,reg,m);
-  H.w=[38,6,7,15,13,15,13,13,13,3,34,15,13,13,13];
   H.set(0,0,c.nombre.toUpperCase(),"titulo").merge(0,0,0,8);H.h[0]=26;
   H.set(1,0,"PRECIERRE CORRESPONDIENTE AL MES DE:","negrita");H.set(1,3,MESES[m-1].toUpperCase()+" "+YEAR,"sub");
   H.set(2,0,"FECHA DEL REPORTE:","negrita");H.set(2,3,fechaLarga(),"texto");
   H.set(3,0,"RÉGIMEN:","negrita");H.set(3,3,REGS[reg].n.toUpperCase()+(reg==="601"?" · "+(c.actividad||"Empresarial").toUpperCase():""),"texto");
   if(reg==="601"){H.set(4,0,"COEFICIENTE DE UTILIDAD:","negrita");H.set(4,3,num(c.coef),"coef")}
   H.set(5,0,"ESTATUS:","negrita");H.set(5,3,actualizado(c,m)?"PRECIERRE ACTUALIZADO":"PRECIERRE PENDIENTE POR ACTUALIZAR",actualizado(c,m)?"verde":"naranja");H.merge(5,3,5,5);
-  [["ISR PROBABLE",isr.pago],["IVA PROBABLE",Math.max(0,v.iva)],["RETENCIONES",v.ret],["TOTAL",v.total],["IVA A FAVOR",v.ivaFavor]].forEach(([l,val],i)=>{H.set(1+i,10,l,"etiq");H.set(1+i,11,r2(val),l==="TOTAL"?"totalRojo":"grande")});
+  [["ISR PROBABLE",isr.pago],["IVA PROBABLE",Math.max(0,v.iva)],...(esPF(reg)?[]:[["RETENCIONES",v.ret]]),["TOTAL",v.total],["IVA A FAVOR",v.ivaFavor]].forEach(([l,val],i)=>{H.set(1+i,10,l,"etiq");H.set(1+i,11,r2(val),l==="TOTAL"?"totalRojo":"grande")});
   H.set(7,0,"C = DE CONTADO · I = CRÉDITO (NO PAGADO) · MA = COMPLEMENTO DE PAGO (COBRO DE MESES ANTERIORES)","nota");
   let R=9;
-  H.set(R,0,"CONCEPTO","enc").set(R+1,0,"","enc").merge(R,0,R+1,0);H.set(R,1,"F","enc").set(R+1,1,"","enc").merge(R,1,R+1,1);H.set(R,2,"RET","enc").set(R+1,2,"","enc").merge(R,2,R+1,2);
-  H.set(R,3,"FACTURAS ELABORADAS","enc").set(R,4,"","enc").merge(R,3,R,4);H.set(R,5,"FACTURAS COBRADAS","enc");[6,7,8].forEach(k=>H.set(R,k,"","enc"));H.merge(R,5,R,8);
-  H.set(R,10,"GASTOS PAGADOS FACTURADOS","enc");[11,12,13,14].forEach(k=>H.set(R,k,"","enc"));H.merge(R,10,R,14);
-  ["IMPORTE","IVA","IMPORTE","IVA","RET. IVA","RET. ISR"].forEach((t,i)=>H.set(R+1,3+i,t,"enc"));
-  ["CONCEPTO","IMPORTE","IVA","RET. IVA","RET. ISR"].forEach((t,i)=>H.set(R+1,10+i,t,"enc"));
+  const CP=colsPrecierre(reg),gx=CP.ing.length+1,cols=[...CP.ing.map((c2,i)=>[i,c2]),...CP.gas.map((c2,i)=>[gx+i,c2])];
+  H.w=[...CP.ing.map(c2=>c2[3]==="t"?38:c2[3]==="c"?8:15),3,...CP.gas.map(c2=>c2[3]==="t"?34:15)];
+  for(let i=0;i<cols.length;){const[ci,c2]=cols[i];let j=i;while(j+1<cols.length&&c2[1]&&cols[j+1][1][1]===c2[1]&&cols[j+1][0]===cols[j][0]+1)j++;
+    if(c2[1]){for(let k=i;k<=j;k++){H.set(R,cols[k][0],k===i?c2[1]:"","enc");H.set(R+1,cols[k][0],cols[k][1][0],"enc")}if(j>i)H.merge(R,ci,R,cols[j][0])}
+    else{H.set(R,ci,c2[0],"enc").set(R+1,ci,"","enc").merge(R,ci,R+1,ci)}i=j+1}
   H.h[R]=20;H.h[R+1]=18;R+=2;
-  const n=Math.max(I.length,G.length,1),t={eI:0,eV:0,cI:0,cV:0,rv:0,ri:0,gI:0,gV:0,gRv:0,gRi:0};
-  for(let i=0;i<n;i++){
-    const a=I[i],g=G[i];
-    if(a){const e=est(a),el=e!=="MA",co=e!=="I";
-      H.set(R+i,0,a.concepto||"","celda");H.set(R+i,1,e==="I"?"1":e,"celda");H.set(R+i,2,tieneRet(a)?"SÍ":"NO","celda");
-      H.set(R+i,3,el?r2(a.subtotal):"","dinero");H.set(R+i,4,el?r2(a.iva):"","dinero");H.set(R+i,5,co?r2(a.subtotal):"","dinero");H.set(R+i,6,co?r2(a.iva):"","dinero");H.set(R+i,7,co&&a.iva_ret?r2(a.iva_ret):"","dinero");H.set(R+i,8,co&&a.isr_ret?r2(a.isr_ret):"","dinero");
-      if(el){t.eI+=a.subtotal;t.eV+=a.iva}if(co){t.cI+=a.subtotal;t.cV+=a.iva;t.rv+=a.iva_ret||0;t.ri+=a.isr_ret||0}}
-    else for(let k=0;k<9;k++)H.set(R+i,k,"",k>=3?"dinero":"celda");
-    if(g){H.set(R+i,10,(g.concepto||"")+(g.deducible===false?" (sin factura)":""),"celda");H.set(R+i,11,r2(g.subtotal),"dinero");H.set(R+i,12,r2(g.iva),"dinero");H.set(R+i,13,g.iva_ret?r2(g.iva_ret):"","dinero");H.set(R+i,14,g.isr_ret?r2(g.isr_ret):"","dinero");
-      t.gI+=g.subtotal;t.gV+=g.iva;t.gRv+=g.iva_ret||0;t.gRi+=g.isr_ret||0}
-    else for(let k=10;k<15;k++)H.set(R+i,k,"",k>10?"dinero":"celda");
-  }
+  const n=Math.max(I.length,G.length,1),tot={};
+  const put=(row,ci,c2,val)=>{const isM=c2[3]==="$";H.set(row,ci,isM&&val!==""?r2(val):val,isM?"dinero":"celda");if(isM&&val!=="")tot[ci]=(tot[ci]||0)+num(val)};
+  for(let i=0;i<n;i++){const a=I[i],g=G[i];
+    CP.ing.forEach((c2,k)=>put(R+i,k,c2,a?c2[2](a,est(a)):""));
+    CP.gas.forEach((c2,k)=>put(R+i,gx+k,c2,g?c2[2](g):""));}
   R+=n;
-  H.set(R,0,"TOTALES","etiq");H.set(R,1,"","etiq");H.set(R,2,"","etiq");[t.eI,t.eV,t.cI,t.cV,t.rv,t.ri].forEach((val,i)=>H.set(R,3+i,r2(val),"dineroTot"));
-  H.set(R,10,"TOTALES","etiq");[t.gI,t.gV,t.gRv,t.gRi].forEach((val,i)=>H.set(R,11+i,r2(val),"dineroTot"));
+  CP.ing.forEach((c2,k)=>H.set(R,k,k===0?"TOTALES":c2[3]==="$"?r2(tot[k]||0):"",c2[3]==="$"?"dineroTot":"etiq"));
+  CP.gas.forEach((c2,k)=>H.set(R,gx+k,k===0?"TOTALES":c2[3]==="$"?r2(tot[gx+k]||0):"",c2[3]==="$"?"dineroTot":"etiq"));
   R+=3;
   // Cálculo de ISR (izquierda) e IVA (derecha)
   H.set(R,0,"CÁLCULO DE ISR","encIzq");[1,2,3].forEach(k=>H.set(R,k,"","encIzq"));H.merge(R,0,R,3);
@@ -1891,24 +1898,23 @@ function xlsTablero(){
 function precierreHTML(c,m){
   return(c.regimenes||[]).map(reg=>{
     const{r,v,isr,I,G}=datosPrecierre(c,reg,m),ok=actualizado(c,m);
-    const n=Math.max(I.length,G.length,1);let filas="";
-    const t={eI:0,eV:0,cI:0,cV:0,rv:0,ri:0,gI:0,gV:0};
-    for(let i=0;i<n;i++){const a=I[i],g=G[i];let ia="<td></td>".repeat(9),gg="<td></td>".repeat(4);
-      if(a){const e=est(a),el=e!=="MA",co=e!=="I";if(el){t.eI+=a.subtotal;t.eV+=a.iva}if(co){t.cI+=a.subtotal;t.cV+=a.iva;t.rv+=a.iva_ret||0;t.ri+=a.isr_ret||0}
-        ia=`<td>${esc(a.concepto)}</td><td class="c">${e==="I"?"1":e}</td><td class="c">${tieneRet(a)?"SÍ":"NO"}</td><td>${el?money(a.subtotal):""}</td><td>${el?money(a.iva):""}</td><td>${co?money(a.subtotal):""}</td><td>${co?money(a.iva):""}</td><td>${co&&a.iva_ret?money(a.iva_ret):""}</td><td>${co&&a.isr_ret?money(a.isr_ret):""}</td>`}
-      if(g){t.gI+=g.subtotal;t.gV+=g.iva;gg=`<td>${esc(g.concepto)}</td><td>${money(g.subtotal)}</td><td>${money(g.iva)}</td><td>${tieneRet(g)?money((g.iva_ret||0)+(g.isr_ret||0)):""}</td>`}
-      filas+=`<tr>${ia}<td class="gap"></td>${gg}</tr>`}
+    const CP=colsPrecierre(reg),n=Math.max(I.length,G.length,1),ti=CP.ing.map(()=>0),tg=CP.gas.map(()=>0);let filas="";
+    const cel=(c2,val,arr,k)=>{if(c2[3]==="$"){if(val!=="")arr[k]+=num(val);return`<td>${val!==""?money(val):""}</td>`}return`<td${c2[3]==="c"?' class="c"':""}>${esc(String(val))}</td>`};
+    for(let i=0;i<n;i++){const a=I[i],g=G[i];
+      filas+=`<tr>${CP.ing.map((c2,k)=>cel(c2,a?c2[2](a,est(a)):"",ti,k)).join("")}<td class="gap"></td>${CP.gas.map((c2,k)=>cel(c2,g?c2[2](g):"",tg,k)).join("")}</tr>`}
+    const grp=list=>{let h="",i=0;while(i<list.length){const c2=list[i];if(!c2[1]){h+=`<th rowspan="2">${c2[0]}</th>`;i++;continue}let j=i;while(j+1<list.length&&list[j+1][1]===c2[1])j++;h+=`<th colspan="${j-i+1}">${c2[1]}</th>`;i=j+1}return h};
+    const thead=`<tr>${grp(CP.ing)}<th class="gap" rowspan="2"></th>${grp(CP.gas)}</tr><tr>${CP.ing.filter(c2=>c2[1]).map(c2=>`<th>${c2[0]}</th>`).join("")}${CP.gas.filter(c2=>c2[1]).map(c2=>`<th>${c2[0]}</th>`).join("")}</tr>`;
+    const tfoot=`<tr class="ptot">${CP.ing.map((c2,k)=>`<td>${k===0?"TOTALES":c2[3]==="$"?money(ti[k]):""}</td>`).join("")}<td class="gap"></td>${CP.gas.map((c2,k)=>`<td>${k===0?"TOTALES":c2[3]==="$"?money(tg[k]):""}</td>`).join("")}</tr>`;
     const calcRows=isr.rows.map(([l,val,k,key])=>val===""&&k==="sub"?`<tr class="hd"><td colspan="2">${esc(l.toUpperCase())}</td></tr>`:`<tr class="${k==="total"?"ptot":""}${key?" y":""}"><td>${esc(l.toUpperCase())}</td><td>${typeof val==="number"?sm(val):esc(val)}</td></tr>`).join("");
     const iv=r.iva;
     return`<section class="pp">
       <header><div><h1>${esc(c.nombre.toUpperCase())}</h1><p><b>PRECIERRE CORRESPONDIENTE AL MES DE:</b> ${MESES[m-1].toUpperCase()} ${YEAR}</p><p><b>FECHA DEL REPORTE:</b> ${fechaLarga()}</p>
         <p><b>RÉGIMEN:</b> ${esc(REGS[reg].n.toUpperCase())}${reg==="601"?" · "+esc((c.actividad||"Empresarial").toUpperCase())+" · <b>COEFICIENTE:</b> "+num(c.coef).toFixed(4):""}</p>
         <p><span class="tag ${ok?"ok":"pend"}">${ok?"PRECIERRE ACTUALIZADO":"PRECIERRE PENDIENTE POR ACTUALIZAR"}</span></p></div>
-        <table class="box"><tr><td>ISR PROBABLE</td><td>${money(isr.pago)}</td></tr><tr><td>IVA PROBABLE</td><td>${money(Math.max(0,v.iva))}</td></tr><tr><td>RETENCIONES</td><td>${money(v.ret)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(v.total)}</td></tr><tr><td>IVA A FAVOR</td><td>${money(v.ivaFavor)}</td></tr></table></header>
+        <table class="box"><tr><td>ISR PROBABLE</td><td>${money(isr.pago)}</td></tr><tr><td>IVA PROBABLE</td><td>${money(Math.max(0,v.iva))}</td></tr>${CP.pf?"":`<tr><td>RETENCIONES</td><td>${money(v.ret)}</td></tr>`}<tr class="ptot"><td>TOTAL</td><td>${money(v.total)}</td></tr><tr><td>IVA A FAVOR</td><td>${money(v.ivaFavor)}</td></tr></table></header>
       <p class="ley">C = DE CONTADO · 1 = CRÉDITO (NO PAGADO) · MA = COMPLEMENTO DE PAGO (COBRO DE MESES ANTERIORES)</p>
-      <table class="mov"><thead><tr><th rowspan="2">CONCEPTO</th><th rowspan="2">F</th><th rowspan="2">RET</th><th colspan="2">FACTURAS ELABORADAS</th><th colspan="4">FACTURAS COBRADAS</th><th class="gap" rowspan="2"></th><th colspan="4">GASTOS PAGADOS FACTURADOS</th></tr>
-        <tr><th>IMPORTE</th><th>IVA</th><th>IMPORTE</th><th>IVA</th><th>RET. IVA</th><th>RET. ISR</th><th>CONCEPTO</th><th>IMPORTE</th><th>IVA</th><th>RETENC.</th></tr></thead>
-        <tbody>${filas}<tr class="ptot"><td>TOTALES</td><td></td><td></td><td>${money(t.eI)}</td><td>${money(t.eV)}</td><td>${money(t.cI)}</td><td>${money(t.cV)}</td><td>${money(t.rv)}</td><td>${money(t.ri)}</td><td class="gap"></td><td>TOTALES</td><td>${money(t.gI)}</td><td>${money(t.gV)}</td><td></td></tr></tbody></table>
+      <table class="mov"><thead>${thead}</thead>
+        <tbody>${filas}${tfoot}</tbody></table>
       <div class="cols"><table class="calc"><thead><tr><th colspan="2">CÁLCULO DE ISR</th></tr></thead><tbody>${calcRows}</tbody></table>
         <table class="calc"><thead><tr><th colspan="2">IVA</th></tr></thead><tbody><tr><td>IVA TRASLADADO (COBRADO)</td><td>${money(iv.tras)}</td></tr><tr><td>MENOS: IVA RETENIDO</td><td>${sm(-iv.ret)}</td></tr><tr><td>MENOS: IVA ACREDITABLE</td><td>${sm(-iv.acred)}</td></tr><tr class="y"><td>MENOS: SALDO A FAVOR ANTERIOR</td><td>${sm(-iv.ant)}</td></tr><tr class="ptot"><td>${iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR"}</td><td>${money(Math.abs(iv.neto))}</td></tr>
         ${r.ret>0.005?`<tr class="hd"><td colspan="2">RETENCIONES A ENTERAR</td></tr><tr><td>ISR RETENIDO A PROVEEDORES</td><td>${money(r.G.isrRet)}</td></tr><tr><td>IVA RETENIDO A PROVEEDORES</td><td>${money(r.G.ivaRet)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(r.ret)}</td></tr>`:""}</tbody></table></div>
