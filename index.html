@@ -694,7 +694,7 @@ const CFG_BASE={
   // Tarifa mensual ISR personas físicas (art. 96 LISR), igual que en los Excel del despacho: [límite inferior, cuota fija, % sobre excedente]
   tarifaPF:[[0,0,1.92],[844.59,16.22,6.40],[7168.51,420.95,10.88],[12598.02,1011.68,16.00],[14644.64,1339.14,17.92],[17533.64,1856.85,21.36],[35362.83,5665.16,23.52],[55736.68,10457.09,30.00],[106410.50,25659.23,32.00],[141880.67,37009.69,34.00],[425641.99,133488.54,35.00]],
   tasaPM:30,                                   // tasa de ISR personas morales
-  resicoPF:[[25000,1.00],[50000,1.10],[83333.33,1.50],[208333.33,2.00],[3500000,2.50]], // RESICO PF mensual: [hasta, %]
+  resicoPFli:[[0,1.00],[25001,1.10],[50001,1.50],[83334,2.00],[208334,2.50]], // RESICO PF mensual, como su Excel: [límite inferior, %]
   limPM:35000000,limPF:3500000,                // límites anuales de ingresos RESICO
   retAut:4,retIvaPF:10.666667,retIsrPF:10,retIsrResico:1.25,iva:16
 };
@@ -720,7 +720,7 @@ function tarifa(base,k){
   const li=r[0]*k,exc=base-li,marg=Math.round(exc*r[2]/100),cuota=Math.round(r[1]*k);
   return{li,exc,pct:r[2],marg,cuota,isr:marg+cuota};
 }
-function tasaResicoPF(ing){for(const[h,p]of CFG.resicoPF)if(ing<=h)return p;return CFG.resicoPF[CFG.resicoPF.length-1][1]}
+function tasaResicoPF(ing){let t=CFG.resicoPFli[0][1];for(const[li,p]of CFG.resicoPFli)if(ing>=li)t=p;return t}
 
 /* ================= Estado ================= */
 const now=new Date();
@@ -949,9 +949,9 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
       ["Tarifa art. 96 · mensual","","sub"],["Límite inferior",t.li,"sub"],["Excedente",t.exc,"sub"],["% sobre excedente",t.pct.toFixed(2)+" %","sub"],["Impuesto marginal",t.marg,"sub"],["Cuota fija",t.cuota,"sub"],
       ["ISR determinado",isr],["Menos: ISR retenido",-retMes],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
   }else{ // 626F RESICO persona física
-    const otros=A("otros_ing"),ing=Co.base+otros,tasa=ing>0?tasaResicoPF(ing):0;isr=Math.round(ing*tasa)/100;
+    const ing=Co.base,tasa=ing>0?tasaResicoPF(ing):0;isr=Math.round(ing*tasa)/100;
     pago=Math.max(0,isr-retMes-comp);
-    rows=[["Ingresos cobrados del mes",Co.base],["Más: otros ingresos adicionales",otros,"","otros_ing"],["Igual: ingresos del mes",ing,"sum"],["Por: tasa RESICO",tasa.toFixed(2)+" %","sub"],
+    rows=[["Ingresos cobrados del mes",ing,"sum"],["Por: tasa RESICO",tasa.toFixed(2)+" %","sub"],
       ["ISR determinado",isr],["Menos: ISR retenido",-retMes],["Menos: compensación de ISR a favor",-comp,"","comp"],["ISR neto a pagar",pago,"total"]];
   }
   return{reg,pago,isr,rows,...extra};
@@ -1207,7 +1207,7 @@ function viewContacto(){
 const TODOS=["601","626","612","606","626F"];
 const COLS_ACT=[
   ["ing_ant","Ing. meses ant.",["601","626","612"]],
-  ["otros_ing","Otros ing. adic.",["601","626","612","626F"]],
+  ["otros_ing","Otros ing. adic.",["601","626","612"]],
   ["gas_ant","Ded. meses ant.",["626","612"]],
   ["otras_ded","Otras ded. adic.",["626","612"]],
   ["depreciacion","Depreciación",["626","612","606"]],
@@ -1590,8 +1590,8 @@ function viewTarifas(){
       <div class="two"><div class="field"><label>Retención de IVA personas físicas (%)</label>${inp("retIvaPF",CFG.retIvaPF,4)}</div>
         <div class="field"><label>Retención de ISR personas físicas (%)</label>${inp("retIsrPF",CFG.retIsrPF,4)}</div></div></section>
     <section class="card stack"><h3 style="margin:0">RESICO personas físicas · tasa mensual</h3>
-      <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th class="n">Ingresos del mes hasta</th><th class="n">Tasa (%)</th></tr></thead>
-      <tbody>${CFG.resicoPF.map((t,i)=>`<tr><td class="rn">${i+1}</td><td>${inp("r_h_"+i,t[0])}</td><td>${inp("r_p_"+i,t[1])}</td></tr>`).join("")}</tbody></table></div>
+      <div class="grid-wrap"><table class="xl"><thead><tr><th class="rn">#</th><th class="n">Límite inferior (L.I.)</th><th class="n">Tasa (%)</th></tr></thead>
+      <tbody>${CFG.resicoPFli.map((t,i)=>`<tr><td class="rn">${i+1}</td><td>${inp("r_h_"+i,t[0])}</td><td>${inp("r_p_"+i,t[1])}</td></tr>`).join("")}</tbody></table></div>
       <div class="two"><div class="field"><label>Límite anual RESICO personas físicas</label>${inp("limPF",CFG.limPF)}</div>
         <div class="field"><label>Retención de ISR RESICO (%)</label>${inp("retIsrResico",CFG.retIsrResico,4)}</div></div></section>
     <button class="btn primary full big" type="submit">Guardar tablas y tarifas</button>
@@ -2220,9 +2220,9 @@ document.addEventListener("submit",async e=>{
     render();return;
   }
   if(fid==="fTarifas"){
-    const g=k=>num(d[k]),n=CFG.tarifaPF.length,nr=CFG.resicoPF.length;
+    const g=k=>num(d[k]),n=CFG.tarifaPF.length,nr=CFG.resicoPFli.length;
     const nuevo={tasaPM:g("tasaPM"),iva:g("iva"),limPM:g("limPM"),limPF:g("limPF"),retAut:g("retAut"),retIvaPF:g("retIvaPF"),retIsrPF:g("retIsrPF"),retIsrResico:g("retIsrResico"),
-      tarifaPF:Array.from({length:n},(_,i)=>[g("t_li_"+i),g("t_cf_"+i),g("t_pc_"+i)]),resicoPF:Array.from({length:nr},(_,i)=>[g("r_h_"+i),g("r_p_"+i)])};
+      tarifaPF:Array.from({length:n},(_,i)=>[g("t_li_"+i),g("t_cf_"+i),g("t_pc_"+i)]),resicoPFli:Array.from({length:nr},(_,i)=>[g("r_h_"+i),g("r_p_"+i)])};
     if(!(nuevo.tasaPM>0&&nuevo.tasaPM<100)){toast("Revisa la tasa de ISR de personas morales.");return}
     try{await API.saveConfig(nuevo);CFG=Object.assign(clone(CFG_BASE),nuevo);toast("Tablas y tarifas guardadas")}catch(er){toast("No se guardó: falta correr el SQL nuevo en Supabase.",6000);return}
     S.vista="tablero";render();scrollTo(0,0);return;
