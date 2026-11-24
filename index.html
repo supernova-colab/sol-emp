@@ -599,6 +599,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard-mod{font-size:.78rem;color:var(--muted)}
 .ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
 .pill.sm{padding:6px 12px;font-size:.82rem}
+.ver{margin:28px 0 0;text-align:center;font-size:.78rem;color:var(--muted);letter-spacing:.04em;opacity:.8}
 .btn-save{min-height:56px;font-size:1.05rem;gap:10px;margin-top:6px}
 .btn-save .ic{width:22px;height:22px}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:8px 2px;border:0;background:none;color:var(--accent);font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
@@ -1609,10 +1610,11 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
+const APP_VER="1.43"; // súbela junto con el caché de sw.js en cada cambio
 function render(){
   MEMO={};
   const v=S.sec==="contacto"?viewContacto():viewTrabajo();
-  $("#app").innerHTML=v;renderNav();
+  $("#app").innerHTML=v+`<p class="ver">Versión ${APP_VER}</p>`;renderNav();
 }
 
 /* ================= Formularios ================= */
