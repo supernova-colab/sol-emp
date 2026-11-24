@@ -1806,6 +1806,7 @@ const XL=(()=>{
 })();
 const fechaLarga=()=>new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 // Datos del precierre de una empresa/régimen, iguales para Excel y PDF
+const vistaCliente=()=>!esAdmin()||!!S.preview;
 const esPF=reg=>reg==="612"||reg==="606"||reg==="626F";
 // Columnas del precierre según el régimen, igual que cada Excel del despacho
 function colsPrecierre(reg){
@@ -1852,11 +1853,12 @@ function hojaPrecierre(c,reg,m){
   CP.ing.forEach((c2,k)=>H.set(R,k,k===0?"TOTALES":c2[3]==="$"?r2(tot[k]||0):"",c2[3]==="$"?"dineroTot":"etiq"));
   CP.gas.forEach((c2,k)=>H.set(R,gx+k,k===0?"TOTALES":c2[3]==="$"?r2(tot[gx+k]||0):"",c2[3]==="$"?"dineroTot":"etiq"));
   R+=3;
-  // Cálculo de ISR (izquierda) e IVA (derecha)
-  H.set(R,0,"CÁLCULO DE ISR","encIzq");[1,2,3].forEach(k=>H.set(R,k,"","encIzq"));H.merge(R,0,R,3);
-  H.set(R,10,"IVA","encIzq");H.set(R,11,"","encIzq");H.merge(R,10,R,11);
+  // Cálculo de ISR (izquierda, solo el despacho) e IVA (derecha; para el cliente va a la izquierda)
+  const cli=vistaCliente(),VX=cli?0:10,VV=cli?3:11;
+  if(!cli){H.set(R,0,"CÁLCULO DE ISR","encIzq");[1,2,3].forEach(k=>H.set(R,k,"","encIzq"));H.merge(R,0,R,3)}
+  H.set(R,VX,"IVA","encIzq");for(let k=VX+1;k<=VV;k++)H.set(R,k,"","encIzq");H.merge(R,VX,R,VV);
   let a=R+1;
-  for(const[l,val,k,key]of isr.rows){
+  if(!cli)for(const[l,val,k,key]of isr.rows){
     if(val===""&&k==="sub"){H.set(a,0,l.toUpperCase(),"negrita");a++;continue}
     const m2=/^(Más|Menos|Igual|Por):\s*/i.exec(l),pre=m2?m2[1].toUpperCase()+":":"",txt=(m2?l.slice(m2[0].length):l).toUpperCase();
     H.set(a,0,(pre?pre+" ":"")+txt,k==="total"?"etiq":"celda");H.merge(a,0,a,2);H.set(a,1,"",k==="total"?"etiq":"celda");H.set(a,2,"",k==="total"?"etiq":"celda");
@@ -1864,9 +1866,9 @@ function hojaPrecierre(c,reg,m){
   }
   const iv=r.iva;let b=R+1;
   [["IVA TRASLADADO (COBRADO)",iv.tras],["MENOS: IVA RETENIDO",-iv.ret],["MENOS: IVA ACREDITABLE (GASTOS PAGADOS)",-iv.acred],["MENOS: SALDO A FAVOR DE PERIODOS ANTERIORES",-iv.ant],[iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR",Math.abs(iv.neto)]]
-    .forEach(([l,val],i,arr)=>{H.set(b,10,l,i===arr.length-1?"etiq":"celda");H.set(b,11,r2(val),i===arr.length-1?"totalRojo":i===3?"amarillo":"dinero");b++});
-  if(r.ret>0.005){b++;H.set(b,10,"RETENCIONES A ENTERAR","encIzq");H.set(b,11,"","encIzq");b++;
-    [["ISR RETENIDO A PROVEEDORES",Math.max(0,r.G.isrRet)],["IVA RETENIDO A PROVEEDORES",Math.max(0,r.G.ivaRet)],["TOTAL",r.ret]].forEach(([l,val],i)=>{H.set(b,10,l,i===2?"etiq":"celda");H.set(b,11,r2(val),i===2?"dineroTot":"dinero");b++})}
+    .forEach(([l,val],i,arr)=>{const st=i===arr.length-1?"etiq":"celda";H.set(b,VX,l,st);if(cli){H.set(b,1,"",st);H.set(b,2,"",st);H.merge(b,0,b,2)}H.set(b,VV,r2(val),i===arr.length-1?"totalRojo":i===3?"amarillo":"dinero");b++});
+  if(r.ret>0.005){b++;H.set(b,VX,"RETENCIONES A ENTERAR","encIzq");for(let k=VX+1;k<=VV;k++)H.set(b,k,"","encIzq");if(cli)H.merge(b,VX,b,VV);b++;
+    [["ISR RETENIDO A PROVEEDORES",Math.max(0,r.G.isrRet)],["IVA RETENIDO A PROVEEDORES",Math.max(0,r.G.ivaRet)],["TOTAL",r.ret]].forEach(([l,val],i)=>{const st=i===2?"etiq":"celda";H.set(b,VX,l,st);if(cli){H.set(b,1,"",st);H.set(b,2,"",st);H.merge(b,0,b,2)}H.set(b,VV,r2(val),i===2?"dineroTot":"dinero");b++})}
   b=Math.max(a,b)+1;H.set(b,0,"Generado con la app de Sol-EMP · Las celdas amarillas son datos capturados por el despacho.","nota");
   return H;
 }
@@ -1920,7 +1922,7 @@ function precierreHTML(c,m){
       <p class="ley">C = DE CONTADO · 1 = CRÉDITO (NO PAGADO) · MA = COMPLEMENTO DE PAGO (COBRO DE MESES ANTERIORES)</p>
       <table class="mov"><thead>${thead}</thead>
         <tbody>${filas}${tfoot}</tbody></table>
-      <div class="cols"><table class="calc"><thead><tr><th colspan="2">CÁLCULO DE ISR</th></tr></thead><tbody>${calcRows}</tbody></table>
+      <div class="cols">${vistaCliente()?"":`<table class="calc"><thead><tr><th colspan="2">CÁLCULO DE ISR</th></tr></thead><tbody>${calcRows}</tbody></table>`}
         <table class="calc"><thead><tr><th colspan="2">IVA</th></tr></thead><tbody><tr><td>IVA TRASLADADO (COBRADO)</td><td>${money(iv.tras)}</td></tr><tr><td>MENOS: IVA RETENIDO</td><td>${sm(-iv.ret)}</td></tr><tr><td>MENOS: IVA ACREDITABLE</td><td>${sm(-iv.acred)}</td></tr><tr class="y"><td>MENOS: SALDO A FAVOR ANTERIOR</td><td>${sm(-iv.ant)}</td></tr><tr class="ptot"><td>${iv.neto>=0?"IVA A PAGAR":"IVA A FAVOR"}</td><td>${money(Math.abs(iv.neto))}</td></tr>
         ${r.ret>0.005?`<tr class="hd"><td colspan="2">RETENCIONES A ENTERAR</td></tr><tr><td>ISR RETENIDO A PROVEEDORES</td><td>${money(r.G.isrRet)}</td></tr><tr><td>IVA RETENIDO A PROVEEDORES</td><td>${money(r.G.ivaRet)}</td></tr><tr class="ptot"><td>TOTAL</td><td>${money(r.ret)}</td></tr>`:""}</tbody></table></div>
       <p class="pie">Generado con la app de Sol-EMP Soluciones Empresariales · Impuesto probable: el monto final lo confirma el despacho.</p></section>`}).join("");
@@ -2139,7 +2141,7 @@ const act={
     }catch(e){toast(errTxt(e),5000)}
     S.tabC="historial";render();
   },
-  xlsCliente,xlsTablero,
+  xlsCliente,xlsTablero,pdfCliente,
   ejemplo:crearEjemplo
 };
 document.addEventListener("click",e=>{
