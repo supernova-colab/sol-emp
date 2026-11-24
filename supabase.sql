@@ -144,3 +144,75 @@ $$;
 
 -- 20 nov (2): nombre del dueño para agrupar sus empresas
 alter table clientes add column if not exists titular text;
+
+-- ============================================================
+-- 24 nov: Perfil (foto y nombre) y accesos que activa el despacho
+-- Pega desde aquí hasta el final en el SQL Editor y dale Run.
+-- ============================================================
+create table if not exists perfiles (
+  email text primary key,
+  nombre text,
+  foto text,
+  actualizado timestamptz default now()
+);
+alter table perfiles enable row level security;
+drop policy if exists "perfil propio o admin" on perfiles;
+create policy "perfil propio o admin" on perfiles for all
+  using (lower(email) = lower(auth.jwt() ->> 'email') or es_admin())
+  with check (lower(email) = lower(auth.jwt() ->> 'email') or es_admin());
+
+create table if not exists accesos (
+  email text primary key,
+  rol text not null default 'cliente' check (rol in ('cliente','admin')),
+  activo boolean not null default true,
+  actualizado timestamptz default now()
+);
+alter table accesos enable row level security;
+drop policy if exists "acceso propio" on accesos;
+create policy "acceso propio" on accesos for select using (email = lower(auth.jwt() ->> 'email') or es_admin());
+
+-- Quien ya tiene empresas o es administrador sigue entrando igual
+insert into accesos (email, rol, activo)
+  select distinct lower(trim(email_cliente)), 'cliente', true from clientes
+  where email_cliente is not null and trim(email_cliente) <> ''
+on conflict (email) do nothing;
+insert into accesos (email, rol, activo) select lower(email), 'admin', true from admins on conflict (email) do nothing;
+
+drop policy if exists "admins ven admins" on admins;
+create policy "admins ven admins" on admins for select using (es_admin());
+
+-- El cliente solo ve sus empresas si el despacho activó su acceso
+create or replace function es_mi_cliente(cid uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from clientes where id = cid and lower(email_cliente) = lower(auth.jwt() ->> 'email'))
+     and exists (select 1 from accesos where email = lower(auth.jwt() ->> 'email') and activo and rol = 'cliente');
+$$;
+
+-- Lista de cuentas creadas (solo la ve el administrador)
+create or replace function lista_cuentas() returns table (email text, creada timestamptz, ultimo_acceso timestamptz, confirmada boolean)
+language plpgsql stable security definer set search_path = public, auth as $$
+begin
+  if not es_admin() then return; end if;
+  return query select lower(u.email)::text, u.created_at, u.last_sign_in_at, (u.email_confirmed_at is not null)
+    from auth.users u order by u.created_at desc;
+end; $$;
+revoke all on function lista_cuentas() from public, anon;
+grant execute on function lista_cuentas() to authenticated;
+
+-- Activar como cliente, como administrador, o quitar acceso
+create or replace function poner_acceso(e text, r text) returns void
+language plpgsql security definer set search_path = public as $$
+declare yo text := lower(auth.jwt() ->> 'email'); em text := lower(trim(e));
+begin
+  if not es_admin() then raise exception 'Solo el administrador puede dar accesos'; end if;
+  if r not in ('cliente','admin','ninguno') then raise exception 'Tipo de acceso no válido'; end if;
+  if em = yo and r <> 'admin' then raise exception 'No puedes quitarte tu propio acceso de administrador'; end if;
+  if r = 'admin' then insert into admins (email) values (em) on conflict (email) do nothing;
+  else delete from admins where lower(email) = em; end if;
+  if not exists (select 1 from admins) then raise exception 'Debe quedar al menos un administrador'; end if;
+  insert into accesos (email, rol, activo, actualizado)
+    values (em, case when r = 'admin' then 'admin' else 'cliente' end, r <> 'ninguno', now())
+  on conflict (email) do update set rol = excluded.rol, activo = excluded.activo, actualizado = now();
+end; $$;
+revoke all on function poner_acceso(text, text) from public, anon;
+grant execute on function poner_acceso(text, text) to authenticated;
