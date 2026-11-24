@@ -681,6 +681,33 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .uopt[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent);opacity:1}
 .uopt:disabled:not([aria-pressed="true"]){opacity:.45;cursor:not-allowed}
 .pill.neutral{background:var(--line);color:var(--muted)}.pill.lock{background:var(--pay-soft);color:var(--pay)}
+.emps-x{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px;margin:0 -2px}.emps-x::-webkit-scrollbar{display:none}
+.emp-chip{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:16px;border:1.5px solid var(--line);background:var(--glass);cursor:pointer;text-align:left;max-width:260px;transition:border-color .15s,box-shadow .15s}
+.emp-chip span:last-child{display:flex;flex-direction:column;min-width:0}
+.emp-chip b{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.emp-chip small{font-size:.76rem;color:var(--muted)}
+.emp-chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.emp-head{display:flex;flex-direction:column;gap:14px}
+.eh-top{display:flex;align-items:center;gap:14px}.eh-top .rgi{width:48px;height:48px;border-radius:14px}.eh-top .rgi .ic{width:24px;height:24px}
+.eh-t{min-width:0;display:flex;flex-direction:column;gap:2px}.eh-t h2{font-size:1.35rem;overflow-wrap:anywhere}.eh-t span{font-size:.86rem;color:var(--muted)}
+.mes-row{display:flex;gap:10px;align-items:stretch}.mes-row .period{flex:1;min-width:0}
+.icon-r{flex:none;width:56px;border-radius:16px;font-size:1.3rem;padding:0;background:var(--glass)}
+.estado-card{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:var(--glass);box-shadow:0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(30,50,110,.07)}
+.ec-ic{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--accent-soft);color:var(--accent)}.ec-ic .ic{width:20px;height:20px}
+.estado-card.warn .ec-ic{background:var(--warn-soft);color:var(--warn)}.estado-card.ok .ec-ic{background:var(--favor-soft);color:var(--favor)}.estado-card.lock .ec-ic{background:var(--pay-soft);color:var(--pay)}
+.estado-card strong{font-size:1.02rem}
+.ec-nota{margin-top:6px;font-size:.78rem;color:var(--pay);font-weight:600}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qk{display:flex;align-items:center;gap:12px;padding:16px;border-radius:18px;border:0;cursor:pointer;text-align:left;color:#fff;box-shadow:0 10px 24px rgba(30,50,110,.18);transition:transform .12s,box-shadow .15s}
+.qk:active{transform:scale(.98)}@media (hover:hover){.qk:hover{box-shadow:0 14px 30px rgba(30,50,110,.26)}}
+.qk.ing{background:linear-gradient(135deg,#2E7D5B,#3FA176)}.qk.gas{background:linear-gradient(135deg,#3F5A9E,#5B7BC7)}
+.qk-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.2);font-size:1.5rem;font-weight:700;line-height:1}
+.qk b{display:block;font-size:1rem}.qk small{display:block;font-size:.76rem;opacity:.85;margin-top:2px}
+@media (max-width:380px){.qk{flex-direction:column;align-items:flex-start;gap:8px}}
+.dl-t{display:flex!important;flex-direction:row!important;align-items:center;gap:14px;text-align:left}
+.dl-t>span:last-child{display:flex;flex-direction:column;gap:2px}.dl-t b{color:var(--ink)}
+.dl-ic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:12px}.dl-ic .ic{width:22px;height:22px}
+@media (max-width:420px){.dl-t{flex-direction:column!important;align-items:flex-start}}
+.dl-ic.xl{background:#E1F2E8;color:#1F7A4C}.dl-ic.pdf{background:#FBE4E0;color:#B23A2A}
 .btn-save{min-height:56px;font-size:1.05rem;gap:10px;margin-top:6px}
 .btn-save .ic{width:22px;height:22px}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:12px 22px 12px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer;box-shadow:0 6px 18px rgba(40,60,120,.28);animation:backPulse 1.6s ease-out 2;transition:transform .12s,filter .15s}
@@ -1379,7 +1406,7 @@ function barraMes(sinFecha){
 function iniciales(n,email){const t=(n||"").trim()||String(email||"?").split("@")[0];const p=t.split(/[\s._-]+/).filter(Boolean);return((p[0]||"?")[0]+(p[1]?p[1][0]:"")).toUpperCase()}
 function avatar(pf,email,size,nombre){const z=size||40,f=pf&&pf.foto,n=(pf&&pf.nombre)||nombre||"";
   return f?`<span class="av" style="width:${z}px;height:${z}px"><img src="${esc(f)}" alt=""></span>`:`<span class="av ini" style="width:${z}px;height:${z}px;font-size:${Math.round(z*.38)}px">${esc(iniciales(n,email))}</span>`}
-const nombreVisible=()=>(S.auth.perfil&&S.auth.perfil.nombre)||S.auth.nombre||S.auth.email.split("@")[0];
+const nombreVisible=()=>(S.auth.perfil&&S.auth.perfil.nombre)||S.auth.nombre||(!esAdmin()&&(Object.values(S.clientes).map(c=>c.titular).find(Boolean)))||S.auth.email.split("@")[0];
 const quien=()=>`<div class="top-mini"><img class="logo" src="${LOGO}" alt="Sol-EMP Soluciones Empresariales">
   <div class="row" style="gap:8px;flex-wrap:nowrap"><button class="btn sm icon-q" data-act="ayuda" aria-label="Ayuda">?</button>
   <button class="perfil-pill" data-act="perfil" aria-label="Mi perfil">${avatar(S.auth.perfil,S.auth.email,38,S.auth.nombre)}<span class="pp-t"><b>${esc(nombreVisible())}</b><small>${esAdmin()?"Administrador":"Cliente"}${MODO_DEMO?" · demo":""}</small></span></button></div></div>`;
@@ -1506,7 +1533,7 @@ function resumenHero(c,r,p){
       <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}${esPF(regDe(c))&&!(v.ret>0.005)?"":t("Retenciones",v.ret,"imp")}</div>
     </div>
     <div class="rt-total"><div><span>Total ${cli&&!v.decl?"estimado":"de impuestos"}</span><b>${money(v.total)}</b>${v.ivaFavor>0.005?`<small>IVA a favor: ${money(v.ivaFavor)}</small>`:""}${cli&&!v.decl?`<small>Estimación sujeta a revisión de tu contador.</small>`:""}</div>
-      ${cli&&edit?`<button class="btn-go" data-act="nuevoMov" data-t="ingreso">${movsDe(c.id,S.m).length?"Seguir capturando":"Comenzar a capturar"} →</button>`:""}</div>`;
+      </div>`;
 }
 function pendientesCobro(c){
   const cobradas=new Set(Object.values(S.movs).filter(x=>x.cliente_id===c.id&&x.ref_id).map(x=>x.ref_id));
@@ -1538,7 +1565,7 @@ function grupoMovs(c,m,k,edit){
   const tot=ms.reduce((t,x)=>t+(+x.subtotal||0),0);
   return`<section class="grp${open?" open":""}">
     <div class="grp-top"><button class="grp-h" data-act="abre" data-k="${k}" aria-expanded="${!!open}"><span><b>${ing?"Ingresos":"Gastos"}</b><span class="small muted">${ms.length} ${ms.length===1?"registro":"registros"} · toca para ${open?"ocultar":"ver"} el desglose</span></span><span class="grp-t">${money(tot)}<i>${open?"▴":"▾"}</i></span></button>
-      ${edit?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
+      ${edit&&esAdmin()&&!S.preview?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
     ${open?`<div class="grp-b">${tablaMovs(c,m,ing?"ingreso":"gasto")}</div>`:""}</section>`;
 }
 function listaCliente(c,m){
@@ -1647,7 +1674,7 @@ function panelMovs(c,m,k){
   const pend=ing&&edit&&m===defM?pendientesCobro(c).filter(x=>x.mes<m):[];
   return`<section class="card stack mvcard">
     <div class="mv-top"><div><h3 style="margin:0">${ing?"Ingresos":"Gastos"}</h3><span class="small muted">${ms.length} ${ms.length===1?"registro":"registros"} · ${MESES[m-1]} ${YEAR}</span></div>
-      ${edit?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
+      ${edit&&esAdmin()&&!S.preview?`<button class="btn primary add" data-act="nuevoMov" data-t="${ing?"ingreso":"gasto"}">+ Agregar ${ing?"ingreso":"gasto"}</button>`:""}</div>
     ${tablaMovs(c,m,ing?"ingreso":"gasto")}</section>
     ${pend.length?`<section class="card stack"><b>Facturas a crédito pendientes de cobro</b><span class="small muted">Cuando te paguen una, toca “Pasar a cobrado” y se registra el cobro en ${MESES[m-1].toLowerCase()}.</span>
       <div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Importe</th><th class="n">IVA</th><th></th></tr></thead><tbody>${pend.map(x=>`<tr><td class="nw">${fechaCorta(x.fecha)}</td><td class="cc"><b>${esc(x.concepto||"")}</b></td><td class="n">${money(x.subtotal)}</td><td class="n">${money(x.iva)}</td><td class="acc"><button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button></td></tr>`).join("")}</tbody></table></div></section>`:""}
@@ -1703,20 +1730,23 @@ function viewPanelCliente(){
     declarado:["ok","Mes declarado","Tu declaración de "+mes+" ya se presentó."]}[p.estado];
   if(!["ing","gas","historial"].includes(S.tabC))S.tabC="ing";
   return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
-  <div class="banner danger"><div class="stack" style="gap:2px"><strong>Importante</strong><span class="small">Una vez concluido el mes, ya no se podrá actualizar ni agregar nada.</span></div></div>
-  ${cs.length>1?`<section class="stack" style="gap:10px"><div class="sec-t"><span class="eyebrow">Mis empresas</span></div><div class="emps">${cs.map(x=>`<button class="emp-card" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></section>`:""}
-  <div class="sec-t"><span class="eyebrow">${saludo()}${c.titular?", "+esc(c.titular.split(" ")[0]):""}</span><h2 style="font-size:1.45rem">${esc(c.nombre)}</h2>
-    <p class="small">${(c.regimenes||[]).map(x=>REGS[x].n).join(", ")}${(c.regimenes||[]).includes("601")?" · Actividad: "+esc(c.actividad||"Empresarial"):""}</p>
-    <div class="tags">${f.aut?'<span class="chip warn">Autotransporte: se retiene 4 % de IVA</span>':""}</div></div>
-  <div class="stack" style="gap:6px">${precierreTag(c,S.m)}${LEYENDA_ACT}</div>
-  ${barraMes()}
-  ${prev?"":`<button class="btn full" data-act="recargar">↻ Actualizar</button>`}
-  <div class="banner ${msg[0]}"><div class="stack" style="gap:2px;flex:1"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span>${p.estado==="abierto"&&!fin?cuentaRegresiva(S.m):""}</div></div>
+  ${(()=>{const nm=(S.auth.perfil&&S.auth.perfil.nombre)||c.titular||"";return`<div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.6rem">${saludo()}${nm?", "+esc(nm.split(" ")[0]):""}</h2><span class="small muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,x=>x.toUpperCase())}</span></div>`})()}
+  ${cs.length>1?`<div class="stack" style="gap:8px"><span class="eyebrow">Mis empresas · ${cs.length}</span><div class="emps-x">${cs.map(x=>`<button class="emp-chip" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${regIcon(x)}<span><b>${esc(x.nombre)}</b><small>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</small></span></button>`).join("")}</div></div>`:""}
+  <div class="emp-lay"><aside class="emp-side">
+  <div class="card emp-head"><div class="eh-top">${regIcon(c)}<div class="eh-t"><h2>${esc(c.nombre)}</h2><span>${(c.regimenes||[]).map(x=>REGS[x].n).join(", ")}${(c.regimenes||[]).includes("601")?" · "+esc(c.actividad||"Empresarial"):""}</span></div></div>
+    ${f.aut?'<span class="chip warn" style="align-self:flex-start">Autotransporte: se retiene 4 % de IVA</span>':""}
+    <div class="stack" style="gap:6px">${precierreTag(c,S.m)}${LEYENDA_ACT}</div></div>
+  <div class="mes-row">${barraMes(true)}${prev?"":`<button class="btn icon-r" data-act="recargar" aria-label="Actualizar datos" title="Actualizar datos">↻</button>`}</div>
+  <div class="estado-card ${msg[0]}"><span class="ec-ic">${ic(msg[0]==="warn"?"pen":msg[0]==="ok"?"check":"lock")}</span><div class="stack" style="gap:3px;flex:1;min-width:0"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span>${p.estado==="abierto"&&!fin?cuentaRegresiva(S.m):""}
+    <span class="ec-nota">Una vez concluido el mes, ya no se podrá actualizar ni agregar nada.</span></div></div>
   <section class="card hero">${resumenHero(c,r,p)}</section>
   ${limiteCard(c,S.m)}
+  </aside><div class="emp-main">
+  ${!prev&&puedeCapturar(c.id,S.m)?`<div class="quick"><button class="qk ing" data-act="nuevoMov" data-t="ingreso"><span class="qk-ic">+</span><span><b>Agregar ingreso</b><small>Una factura que emitiste</small></span></button><button class="qk gas" data-act="nuevoMov" data-t="gasto"><span class="qk-ic">+</span><span><b>Agregar gasto</b><small>Una factura que pagaste</small></span></button></div>`:""}
   ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["historial","Mis meses"]])}
   <section class="stack">${S.tabC==="historial"?tabHistorial(c):panelMovs(c,S.m,S.tabC)}</section>
-  <div class="bigbtns two"><button class="tile-btn" data-act="xlsCliente"><b>Descargar Excel</b><span>Precierre del mes</span></button><button class="tile-btn" data-act="pdfCliente"><b>Descargar PDF</b><span>Para imprimir o enviar</span></button></div>`;
+  <div class="bigbtns two"><button class="tile-btn dl-t" data-act="xlsCliente"><span class="dl-ic xl">${ic("down")}</span><span><b>Descargar Excel</b><span>Precierre del mes</span></span></button><button class="tile-btn dl-t" data-act="pdfCliente"><span class="dl-ic pdf">${ic("down")}</span><span><b>Descargar PDF</b><span>Para imprimir o enviar</span></span></button></div>
+  </div></div>`;
 }
 async function cargarCuentas(){
   try{S.cuentas=await API.cuentas();S.cuentasErr=null}catch(e){S.cuentasErr=errTxt(e);S.cuentas={usuarios:[],accesos:[],admins:[],perfiles:[]}}
@@ -1786,7 +1816,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.48"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.49"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -1798,8 +1828,9 @@ function render(){
   MEMO={};
   const v=S.sec==="contacto"?viewContacto():viewTrabajo();
   $("#app").classList.remove("enter");
-  $("#app").classList.toggle("wide",esAdmin()&&!S.preview&&S.sec!=="contacto"&&(S.vista==="cliente"||S.vista==="actualizar"));
   $("#app").innerHTML=v+`<p class="ver">Versión ${APP_VER}</p>`;renderNav();
+  $("#app").classList.toggle("wide",S.sec!=="contacto"&&!!S.auth&&(esAdmin()?(S.vista==="cliente"||S.vista==="actualizar"):!!document.querySelector("#app .emp-lay")));
+
   if(document.getElementById("qCli"))filtrarDOM();
   const key=[S.sec,S.vista,S.cid,S.preview,S.m,S.listo].join("|");
   if(key!==S._vk){S._vk=key;animarEntrada()}
@@ -2317,8 +2348,8 @@ const act={
       ["Revisa el cálculo","En “Cálculo” ves el ISR y el IVA paso por paso, igual que en el Excel."],
       ["Precierre y declaración","Haz el precierre y, cuando la presentes en el SAT, toca “Ya lo declaré”. Descarga el Excel o el PDF cuando quieras."]];
     const pasosC=[["Revisa que la captura esté abierta","Si dice “Ya puedes capturar”, adelante. Si no, espera a que tu contador la abra."],
-      ["Agrega tus ingresos","Toca “+ Agregar ingreso”, escribe qué fue, el importe sin IVA y si fue de contado, a crédito o complemento de pago. Con “Guardar y agregar otro” sigues capturando sin salir."],
-      ["Agrega tus gastos","Toca “+ Agregar gasto”. Los gastos con factura e IVA, ya pagados, hacen que pagues menos IVA."],
+      ["Agrega tus ingresos","Toca el botón verde “Agregar ingreso”, escribe qué fue, el importe sin IVA y si fue de contado, a crédito o complemento de pago. Con “Guardar y agregar otro” sigues capturando sin salir."],
+      ["Agrega tus gastos","Toca el botón azul “Agregar gasto”. Los gastos con factura e IVA, ya pagados, hacen que pagues menos IVA."],
       ["Cobros a crédito","Cuando te paguen una factura a crédito, toca “Pasar a cobrado”."],
       ["Antes de que termine el mes","Una vez concluido el mes ya no se puede agregar nada. Tu contador revisa y hace el precierre."]];
     const P=esAdmin()?pasosA:pasosC;
