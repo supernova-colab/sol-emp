@@ -621,6 +621,32 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 @media (hover:hover){.ccard:hover,.grupo:hover,.tile-btn:hover,.qa button:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(20,30,60,.05),0 14px 34px rgba(30,50,110,.12)}}
 .rt-total{background:linear-gradient(135deg,#112a42 0%,#16395a 55%,#1f4b73 100%)}
 .ccard,.grupo{content-visibility:auto;contain-intrinsic-size:auto 190px}
+.rgi{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--accent-soft);color:var(--accent)}
+.rgi .ic{width:20px;height:20px}
+.rg-aut{background:#FDEBD8;color:#B4570F}.rg-626,.rg-626F{background:#E1F2E8;color:#25724A}.rg-606{background:#F1E6F8;color:#7A3FA0}.rg-612{background:#E3EEFB;color:#2C5E9E}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rg-aut{background:#3A2817;color:#F2A25E}:root:not([data-theme="light"]) .rg-626,:root:not([data-theme="light"]) .rg-626F{background:#183225;color:#7FD3A5}:root:not([data-theme="light"]) .rg-606{background:#2C1F38;color:#C9A0EA}:root:not([data-theme="light"]) .rg-612{background:#1B2A40;color:#9CC0F0}}
+.ccard-top{align-items:center;gap:12px}
+.buscar{position:relative;display:flex;align-items:center}
+.buscar .ic{position:absolute;left:16px;width:20px;height:20px;color:var(--muted);pointer-events:none}
+.buscar input{width:100%;padding:14px 16px 14px 46px;border-radius:14px;border:1px solid var(--line);background:var(--glass);outline:none;transition:border-color .15s,box-shadow .15s}
+.buscar input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.fchips::-webkit-scrollbar{display:none}
+.fchip{flex:none;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-weight:600;font-size:.9rem;cursor:pointer}
+.fchip span{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.78rem;text-align:center}
+.fchip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.fchip[aria-pressed="true"] span{background:rgba(255,255,255,.22);color:inherit}
+.dl{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.dl-bar{height:8px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden}
+.dl-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#3F5A9E,#6E8FD8);transition:width .6s ease}
+.dl.urg .dl-bar i{background:linear-gradient(90deg,#C2552E,#E8874F)}
+.dl span{font-size:.88rem}
+.skel{display:flex;flex-direction:column;gap:16px}
+.skel i{display:block;border-radius:16px;background:linear-gradient(90deg,var(--line) 25%,var(--surface) 50%,var(--line) 75%);background-size:300% 100%;animation:shim 1.3s linear infinite;opacity:.7}
+@keyframes shim{from{background-position:100% 0}to{background-position:-100% 0}}
+.enter>*{animation:fadeUp .38s cubic-bezier(.2,.7,.2,1) both}
+.enter>*:nth-child(2){animation-delay:.03s}.enter>*:nth-child(3){animation-delay:.06s}.enter>*:nth-child(4){animation-delay:.09s}.enter>*:nth-child(5){animation-delay:.12s}.enter>*:nth-child(n+6){animation-delay:.15s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.enter>*,.skel i{animation:none}}
 .btn-save{min-height:56px;font-size:1.05rem;gap:10px;margin-top:6px}
 .btn-save .ic{width:22px;height:22px}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:12px 22px 12px 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer;box-shadow:0 6px 18px rgba(40,60,120,.28);animation:backPulse 1.6s ease-out 2;transition:transform .12s,filter .15s}
@@ -1082,6 +1108,12 @@ const FIRMA={nombre:"Sol-Emp Integradora de Servicios S.C.",lema:"Honestidad y P
   dir:"Helsinki #2, esq. Ciudad del Vaticano, Fracc. Monte Magno, C.P. 91193, Xalapa, Veracruz",
   fb:"https://www.facebook.com/integradorasolemp",tw:"https://twitter.com/Solemp_SC",li:"https://www.linkedin.com/in/sol-emp-integradora-de-servicios-s-c-599046bb/"};
 const ICON={
+  truck:'<path d="M3 6h11v9H3z"/><path d="M14 9h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+  building:'<path d="M5 21V4h10v17"/><path d="M15 9h4v12"/><path d="M8 8h1M11 8h1M8 12h1M11 12h1M8 16h1M11 16h1"/><path d="M3 21h18"/>',
+  brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/>',
+  house:'<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/>',
+  leaf:'<path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19l7-7"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   pen:'<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
@@ -1319,9 +1351,22 @@ function viewLogin(){
     </div>
     <button class="mono" data-act="fab" aria-label="Ayuda: WhatsApp o preguntas frecuentes"><img src="monigote.png?v=2" alt="" width="175"><span class="mono-t">¿Necesitas ayuda? <b>Toca aquí</b></span></button></div>`;
 }
-function tarjetaEmpresa(c,i){const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}">
+function regIcon(c){const r=regDe(c),f=fiscal(c);const k=r==="601"&&f.aut?"truck":r==="601"||r==="626"?"building":r==="612"?"brief":r==="606"?"house":"leaf";
+  return`<span class="rgi rg-${r==="601"&&f.aut?"aut":r}" aria-hidden="true">${ic(k)}</span>`}
+const qDe=c=>[c.nombre,c.titular,c.email_cliente,(c.regimenes||[]).map(r=>abrev(c,r)).join(" ")].filter(Boolean).join(" ").toLowerCase();
+function cuentaRegresiva(m){
+  const hoy=new Date(),ini=new Date(YEAR,m-1,1),fin=new Date(YEAR,m,0),dias=fin.getDate();
+  if(hoy<ini)return"";
+  const quedan=Math.max(0,Math.floor((new Date(fin.getFullYear(),fin.getMonth(),fin.getDate())-new Date(hoy.getFullYear(),hoy.getMonth(),hoy.getDate()))/864e5)+1);
+  const pct=Math.min(100,Math.round((dias-quedan+1)/dias*100)),urg=quedan<=3;
+  return`<div class="dl${urg?" urg":""}"><div class="dl-bar"><i style="width:${pct}%"></i></div><span>${quedan<=1?"Hoy es el último día para capturar":"Te quedan <b>"+quedan+" días</b> para capturar"} ${MESES[m-1].toLowerCase()}</span></div>`}
+function saludo(){const h=new Date().getHours();return h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches"}
+function filtrarDOM(){const q=(S.q||"").trim().toLowerCase();let vis=0;
+  document.querySelectorAll(".clist>[data-q]").forEach(el=>{const ok=!q||el.dataset.q.includes(q);el.hidden=!ok;if(ok)vis++});
+  const nr=document.getElementById("sinRes");if(nr)nr.hidden=vis>0}
+function tarjetaEmpresa(c,i){const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}"${i?` data-q="${esc(qDe(c))}"`:""}>
       <button class="ccard-main" data-act="abrir" data-id="${esc(c.id)}">
-        <span class="ccard-top">${i?`<span class="ccard-n">${i}</span>`:""}<b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
+        <span class="ccard-top">${regIcon(c)}<b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
         <span class="ccard-sub">${(c.regimenes||[]).map(r=>abrev(c,r)).join(" · ")}${c.email_cliente&&i?" · "+esc(c.email_cliente):""}</span>
         <span class="ccard-row"><span class="pill ${ok?"ok":"pend"} sm">${ok?"Actualizado":"Pendiente de actualizar"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(totalMes(c,S.m))}</b></span></span>
         <span class="ccard-mod">Última modificación: ${ultimaMod(c)}</span>
@@ -1336,7 +1381,7 @@ function listaGrupos(cs){
     if(arr.length===1)return tarjetaEmpresa(arr[0],n);
     const nom=arr.map(x=>x.titular).find(Boolean)||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
     const tot=arr.reduce((t,c)=>t+(activo(c)?totalMes(c,S.m):0),0);
-    return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}"><summary>
+    return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}" data-q="${esc(arr.map(qDe).join(" "))}"><summary>
       <span class="ccard-n">${n}</span>
       <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${nom!==k?" · "+esc(k):""}</span>
         <span class="g-row"><span class="pill ${pend?"pend":"ok"} sm">${pend?pend+" pendiente"+(pend===1?"":"s"):"Todas actualizadas"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(tot)}</b></span></span></span>
@@ -1347,7 +1392,7 @@ function viewTablero(){
   const cs=clientesOrden(),nombreAdm=S.auth&&S.auth.nombre||"";
   const pend=cs.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
   return`${quien()}
-  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${nombreAdm?esc(nombreAdm):"Mis clientes"}</h2></div>
+  <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${saludo()}${nombreAdm?", "+esc(nombreAdm.split(" ")[0]):""}</h2><span class="small muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,x=>x.toUpperCase())}</span></div>
   <button class="btn primary full big" data-act="nuevoCliente">+ Registrar nuevo cliente</button>
   ${barraMes(true)}
   <section class="stack" style="gap:14px">
@@ -1356,7 +1401,10 @@ function viewTablero(){
       <p><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
       <p>Una vez concluido el mes, ya no se podrá actualizar o agregar nada.</p>
     </div>
-    ${cs.length?listaGrupos(cs)
+    ${cs.length>=4?`<div class="buscar">${ic("search")}<input id="qCli" type="search" placeholder="Buscar cliente, empresa o correo" value="${esc(S.q||"")}" autocomplete="off" enterkeyhint="search"></div>
+    <div class="fchips">${[["todos","Todos",cs.length],["pend","Pendientes",pend],["ok","Actualizados",cs.filter(c=>activo(c)&&actualizado(c,S.m)).length],["inact","Inactivos",cs.filter(c=>!activo(c)).length]].map(([k,l,n])=>`<button class="fchip" data-act="filtroCli" data-f="${k}" aria-pressed="${(S.filtro||"todos")===k}">${l} <span>${n}</span></button>`).join("")}</div>`:""}
+    ${cs.length?(()=>{const f=S.filtro||"todos",fs=cs.filter(c=>f==="todos"||(f==="pend"?activo(c)&&!actualizado(c,S.m):f==="ok"?activo(c)&&actualizado(c,S.m):!activo(c)));
+      return fs.length?listaGrupos(fs)+`<div class="card empty" id="sinRes" hidden><p class="muted">No encontré clientes con esa búsqueda.</p></div>`:`<div class="card empty"><p class="muted">No hay empresas en este filtro.</p></div>`})()
     :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar nuevo cliente”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
   <section class="stack" style="gap:10px">
@@ -1597,13 +1645,13 @@ function viewPanelCliente(){
   return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
   <div class="banner danger"><div class="stack" style="gap:2px"><strong>Importante</strong><span class="small">Una vez concluido el mes, ya no se podrá actualizar ni agregar nada.</span></div></div>
   ${cs.length>1?`<section class="stack" style="gap:10px"><div class="sec-t"><span class="eyebrow">Mis empresas</span></div><div class="emps">${cs.map(x=>`<button class="emp-card" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></section>`:""}
-  <div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.45rem">${esc(c.nombre)}</h2>
+  <div class="sec-t"><span class="eyebrow">${saludo()}${c.titular?", "+esc(c.titular.split(" ")[0]):""}</span><h2 style="font-size:1.45rem">${esc(c.nombre)}</h2>
     <p class="small">${(c.regimenes||[]).map(x=>REGS[x].n).join(", ")}${(c.regimenes||[]).includes("601")?" · Actividad: "+esc(c.actividad||"Empresarial"):""}</p>
     <div class="tags">${f.aut?'<span class="chip warn">Autotransporte: se retiene 4 % de IVA</span>':""}</div></div>
   <div class="stack" style="gap:6px">${precierreTag(c,S.m)}${LEYENDA_ACT}</div>
   ${barraMes()}
   ${prev?"":`<button class="btn full" data-act="recargar">↻ Actualizar</button>`}
-  <div class="banner ${msg[0]}"><div class="stack" style="gap:2px"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span></div></div>
+  <div class="banner ${msg[0]}"><div class="stack" style="gap:2px;flex:1"><strong>${msg[1]}</strong><span class="small">${msg[2]}</span>${p.estado==="abierto"&&!fin?cuentaRegresiva(S.m):""}</div></div>
   <section class="card hero">${resumenHero(c,r,p)}</section>
   ${limiteCard(c,S.m)}
   ${tabsHTML([["ing","Ingresos"],["gas","Gastos"],["historial","Mis meses"]])}
@@ -1637,16 +1685,27 @@ function viewTarifas(){
   </form>`;
 }
 function viewTrabajo(){
-  if(!S.listo)return`${topMini()}<div class="card empty"><p class="muted">Cargando…</p></div>`;
+  if(!S.listo)return`${topMini()}<div class="skel" aria-label="Cargando"><i style="height:28px;width:55%"></i><i style="height:56px"></i><i style="height:64px"></i><i style="height:170px"></i><i style="height:170px"></i></div>`;
   if(!S.auth)return viewLogin();
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.45"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.46"; // súbela junto con el caché de sw.js en cada cambio
+const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
+function animarEntrada(){
+  if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
+  const els=app.querySelectorAll(".rt-t b,.rt-total b,.ccard-tot b");
+  els.forEach(el=>{const fin=num(el.textContent.replace(/[^0-9.-]/g,""));if(!(fin>0))return;const t0=performance.now(),D=750;
+    const paso=t=>{const u=Math.min(1,(t-t0)/D),e=1-Math.pow(1-u,3);el.textContent=money(fin*e);if(u<1)requestAnimationFrame(paso)};requestAnimationFrame(paso)});
+}
 function render(){
   MEMO={};
   const v=S.sec==="contacto"?viewContacto():viewTrabajo();
+  $("#app").classList.remove("enter");
   $("#app").innerHTML=v+`<p class="ver">Versión ${APP_VER}</p>`;renderNav();
+  if(document.getElementById("qCli"))filtrarDOM();
+  const key=[S.sec,S.vista,S.cid,S.preview,S.m,S.listo].join("|");
+  if(key!==S._vk){S._vk=key;animarEntrada()}
 }
 
 /* ================= Formularios ================= */
@@ -2064,6 +2123,7 @@ const act={
   irMes(d){S.m=+d.m;S.tabC="ing";render();scrollTo(0,0)},
   apartado(d){S.apartado=d.a;S.filtroReg="todos";render()},
   filtroReg(d){S.filtroReg=d.r;render()},
+  filtroCli(d){S.filtro=d.f;render()},
   abrir(d){S.cid=d.id;S.vista="cliente";S.tabC="ing";render();scrollTo(0,0)},
   tablero(){S.vista="tablero";S.preview=false;render();scrollTo(0,0)},
   verCliente(){S.preview=true;S.tabC="ing";render();scrollTo(0,0)},
@@ -2190,6 +2250,7 @@ document.addEventListener("input",e=>{
   if(t.id==="mvSub")syncMov(true);
   if(t.id==="mvIvr"||t.id==="mvIsr"){S.retManual=true;syncMov(false)}
   if(t.id==="cMail")mailHint();
+  if(t.id==="qCli"){S.q=t.value;filtrarDOM()}
 });
 // Casillas de dinero: al escribir se ve el número limpio; al salir, con comas y decimales
 document.addEventListener("focusin",e=>{const t=e.target;if(t.classList&&t.classList.contains("money")&&!t.readOnly&&t.value){t.value=String(num(t.value));try{t.select()}catch(_){}}});
