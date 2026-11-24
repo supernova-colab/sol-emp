@@ -602,7 +602,13 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ver{margin:28px 0 0;text-align:center;font-size:.78rem;color:var(--muted);letter-spacing:.04em;opacity:.8}
 .btn-save{min-height:56px;font-size:1.05rem;gap:10px;margin-top:6px}
 .btn-save .ic{width:22px;height:22px}
-.back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:8px 2px;border:0;background:none;color:var(--accent);font:inherit;font-weight:700;font-size:1rem;cursor:pointer}
+.back{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:12px 22px 12px 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer;box-shadow:0 6px 18px rgba(40,60,120,.28);animation:backPulse 1.6s ease-out 2;transition:transform .12s,filter .15s}
+.back:hover{filter:brightness(1.08)}.back:active{transform:scale(.97)}
+.back .ic{width:20px;height:20px}
+@keyframes backPulse{0%{box-shadow:0 0 0 0 rgba(63,90,160,.55),0 6px 18px rgba(40,60,120,.28)}70%{box-shadow:0 0 0 14px rgba(63,90,160,0),0 6px 18px rgba(40,60,120,.28)}100%{box-shadow:0 0 0 0 rgba(63,90,160,0),0 6px 18px rgba(40,60,120,.28)}}
+.back-float{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:max(16px,calc(50% - 650px + 16px));z-index:40;opacity:0;transform:translateY(-12px);pointer-events:none;transition:opacity .2s,transform .2s;animation:none}
+body.scrolled .back-float{opacity:1;transform:none;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){.back{animation:none}}
 .qa{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .qa button{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:14px 8px;border-radius:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.84rem;font-weight:600;line-height:1.2;text-align:center;cursor:pointer;transition:border-color .15s,transform .1s}
 .qa button:active{transform:scale(.97)}
@@ -1526,7 +1532,8 @@ function viewClienteAdmin(){
   const otras=c.email_cliente?clientesOrden().filter(x=>x.id!==c.id&&(x.email_cliente||"")===c.email_cliente):[];
   const uc=ultimaCaptura(c);
   return`${quien()}
-  <button class="back" data-act="tablero">‹ Mis clientes</button>
+  <button class="back" data-act="tablero"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Regresar a mis clientes</button>
+  <button class="back back-float" data-act="tablero" aria-hidden="true" tabindex="-1"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Mis clientes</button>
   <div class="emp-lay"><aside class="emp-side">
   <div class="sec-t" style="gap:8px">
     <div class="row between" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><h2 style="font-size:1.5rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
@@ -1610,7 +1617,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.43"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.44"; // súbela junto con el caché de sw.js en cada cambio
 function render(){
   MEMO={};
   const v=S.sec==="contacto"?viewContacto():viewTrabajo();
@@ -2151,6 +2158,7 @@ document.addEventListener("click",e=>{
   if(t&&!t.disabled){e.preventDefault();act[t.dataset.act]&&act[t.dataset.act](t.dataset,e);return}
   if(e.target.id==="sheet")closeSheet();
 });
+addEventListener("scroll",()=>document.body.classList.toggle("scrolled",scrollY>260),{passive:true});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden)closeSheet()});
 document.addEventListener("input",e=>{
   const t=e.target;
