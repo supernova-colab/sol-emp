@@ -16,12 +16,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.1/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://itxkuljjsbszxpwyxlse.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.1/dist/umd/supabase.js" defer></script>
 <style>
 /* Layout: una sola columna amplia, tarjetas con aire; resumen arriba, detalle abajo. */
 :root{
+  --lava1:rgba(122,160,240,.30);--lava2:rgba(150,200,250,.32);--lava3:rgba(170,150,240,.20);--glass:rgba(255,255,255,.82);
   --bg:#F3F5F9; --surface:#FFFFFF; --ink:#15192A; --muted:#5B6378; --line:#E0E4EE;
   --accent:#3F5A9E; --accent-soft:#E5EAF6; --on-accent:#FFFFFF;
   --pay:#A9412C; --pay-soft:#F6E5E0; --favor:#2A7550; --favor-soft:#E0F0E6; --warn:#8C6200; --warn-soft:#F8EED3;
@@ -31,6 +32,7 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
+    --lava1:rgba(60,90,170,.30);--lava2:rgba(40,110,170,.22);--lava3:rgba(90,70,170,.20);--glass:rgba(24,28,40,.84);
     --bg:#10131C; --surface:#181C28; --ink:#E7EAF2; --muted:#9AA2B6; --line:#2A3042;
     --accent:#9DB2E8; --accent-soft:#232C45; --on-accent:#10162A;
     --pay:#EE8B74; --pay-soft:#3A231E; --favor:#7BCFA0; --favor-soft:#1A3124; --warn:#E3B650; --warn-soft:#352C16;
@@ -38,6 +40,7 @@
   }
 }
 :root[data-theme="dark"]{
+  --lava1:rgba(60,90,170,.30);--lava2:rgba(40,110,170,.22);--lava3:rgba(90,70,170,.20);--glass:rgba(24,28,40,.84);
   --bg:#10131C; --surface:#181C28; --ink:#E7EAF2; --muted:#9AA2B6; --line:#2A3042;
   --accent:#9DB2E8; --accent-soft:#232C45; --on-accent:#10162A;
   --pay:#EE8B74; --pay-soft:#3A231E; --favor:#7BCFA0; --favor-soft:#1A3124; --warn:#E3B650; --warn-soft:#352C16;
@@ -45,7 +48,9 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-b);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+html{background:var(--bg)}
+body{background:transparent}
+html,body{margin:0;color:var(--ink);font-family:var(--font-b);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
 h1,h2,h3{font-family:var(--font-d);margin:0;text-wrap:balance;letter-spacing:-.01em}
 button,input,select,textarea{font:inherit;color:inherit}
 html{touch-action:manipulation}
@@ -600,6 +605,22 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-top:1px solid var(--line);background:var(--bg)}
 .pill.sm{padding:6px 12px;font-size:.82rem}
 .ver{margin:28px 0 0;text-align:center;font-size:.78rem;color:var(--muted);letter-spacing:.04em;opacity:.8}
+/* Fondo tipo lava: 3 manchas suaves que se mueven lento (solo transform, ligero en cualquier equipo) */
+.lava{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;contain:strict}
+.lava i{position:absolute;width:70vmax;height:70vmax;border-radius:50%;will-change:transform}
+.lava i:nth-child(1){left:-20vmax;top:-25vmax;background:radial-gradient(circle,var(--lava1) 0%,transparent 62%);animation:lv1 26s ease-in-out infinite alternate}
+.lava i:nth-child(2){right:-25vmax;top:20vh;background:radial-gradient(circle,var(--lava2) 0%,transparent 62%);animation:lv2 32s ease-in-out infinite alternate}
+.lava i:nth-child(3){left:10vw;bottom:-35vmax;background:radial-gradient(circle,var(--lava3) 0%,transparent 62%);animation:lv3 38s ease-in-out infinite alternate}
+@keyframes lv1{to{transform:translate(28vw,22vh) scale(1.15)}}
+@keyframes lv2{to{transform:translate(-30vw,-18vh) scale(.9)}}
+@keyframes lv3{to{transform:translate(18vw,-26vh) scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.lava i{animation:none}}
+.card,.ccard,.grupo,.tools,.qa button,.otras-l button,.tile-btn,.tabs{background-color:var(--glass)}
+.card,.ccard,.grupo{box-shadow:0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(30,50,110,.07)}
+.ccard,.grupo,.tile-btn,.qa button,.tool{transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
+@media (hover:hover){.ccard:hover,.grupo:hover,.tile-btn:hover,.qa button:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(20,30,60,.05),0 14px 34px rgba(30,50,110,.12)}}
+.rt-total{background:linear-gradient(135deg,#112a42 0%,#16395a 55%,#1f4b73 100%)}
+.ccard,.grupo{content-visibility:auto;contain-intrinsic-size:auto 190px}
 .btn-save{min-height:56px;font-size:1.05rem;gap:10px;margin-top:6px}
 .btn-save .ic{width:22px;height:22px}
 .back{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;padding:12px 22px 12px 16px;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:1.02rem;cursor:pointer;box-shadow:0 6px 18px rgba(40,60,120,.28);animation:backPulse 1.6s ease-out 2;transition:transform .12s,filter .15s}
@@ -658,6 +679,7 @@ table.actm tr.ivar input.ycell{background:#F6C445}
 <div id="splash" aria-hidden="true"><div class="sp">
   <div class="lg"><img class="sw" id="spSw" alt=""><img class="dk" id="spDk" alt=""><img class="em" id="spEm" alt=""><div class="shine" id="spSh"></div></div>
   <div class="tag"><span>Contabilidad · Auditoría</span><span>Administración · Impuestos</span></div></div></div>
+<div class="lava" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="wrap intro" id="app"></div>
 <nav class="nav" id="nav" aria-label="Apartados"><div class="in"></div></nav>
 <div class="overlay" id="sheet" hidden>
@@ -789,6 +811,8 @@ function cargarScript(src){return new Promise((ok,no)=>{const t=document.createE
 async function getSb(){
   if(sb)return sb;
   if(!sbCargando)sbCargando=(async()=>{
+    const tag=document.querySelector('script[src*="supabase"]');
+    if(!window.supabase&&tag)await new Promise(r=>{tag.addEventListener("load",r,{once:true});tag.addEventListener("error",r,{once:true});setTimeout(r,9000)});
     if(!window.supabase){
       for(const u of["https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.100.1/dist/umd/supabase.js","https://unpkg.com/@supabase/supabase-js@2.100.1/dist/umd/supabase.js"]){
         try{await cargarScript(u);if(window.supabase)break}catch(e){}
@@ -1043,6 +1067,7 @@ async function leerArchivos(files){
   for(const f of files){
     const n=f.name.toLowerCase();
     if(n.endsWith(".zip")){
+      if(!window.JSZip){try{await cargarScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js")}catch(e){}}
       if(!window.JSZip){out.push({err:"zip"});continue}
       try{const z=await JSZip.loadAsync(f);for(const e of Object.values(z.files))if(!e.dir&&e.name.toLowerCase().endsWith(".xml"))out.push({text:await e.async("string")})}catch(e){out.push({err:"zip"})}
     }else out.push({text:await f.text()});
@@ -1617,7 +1642,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.44"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.45"; // súbela junto con el caché de sw.js en cada cambio
 function render(){
   MEMO={};
   const v=S.sec==="contacto"?viewContacto():viewTrabajo();
