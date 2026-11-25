@@ -243,3 +243,18 @@ revoke execute on function captura_abierta(uuid, integer, integer) from public, 
 grant execute on function es_admin() to authenticated;
 grant execute on function es_mi_cliente(uuid) to authenticated;
 grant execute on function captura_abierta(uuid, integer, integer) to authenticated;
+-- 25 nov: eliminar una cuenta desde Usuarios y accesos (solo administradores)
+create or replace function eliminar_cuenta(e text) returns void
+language plpgsql security definer set search_path = public, auth as $$
+declare yo text := lower(auth.jwt() ->> 'email'); em text := lower(trim(e));
+begin
+  if not es_admin() then raise exception 'Solo el administrador puede eliminar cuentas'; end if;
+  if em = yo then raise exception 'No puedes eliminar tu propia cuenta'; end if;
+  delete from admins where lower(email) = em;
+  if not exists (select 1 from admins) then raise exception 'Debe quedar al menos un administrador'; end if;
+  delete from accesos where email = em;
+  delete from perfiles where lower(email) = em;
+  delete from auth.users where lower(email) = em;
+end; $$;
+revoke all on function eliminar_cuenta(text) from public, anon;
+grant execute on function eliminar_cuenta(text) to authenticated;

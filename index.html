@@ -680,6 +680,8 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .u-txt span{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}.u-txt .u-emp{color:var(--accent);font-weight:600}
 .u-meta{font-size:.78rem;color:var(--muted)}
 .u-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.u-del{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 2px;border:0;background:none;color:var(--pay);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
+.u-del .ic{width:16px;height:16px}
 .uopt{padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:.84rem;cursor:pointer}
 .uopt[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent);opacity:1}
 .uopt:disabled:not([aria-pressed="true"]){opacity:.45;cursor:not-allowed}
@@ -881,6 +883,7 @@ const Local={
   async cuentas(){const d=this.load_();return{usuarios:[],accesos:Object.values(d.accesos||{}),admins:d.admins.map(e=>({email:e})),perfiles:Object.values(d.perfiles||{})}},
   async ponerAcceso(email,rol){const d=this.load_();d.accesos=d.accesos||{};d.accesos[email]={email,rol:rol==="admin"?"admin":"cliente",activo:rol!=="ninguno"};
     d.admins=d.admins.filter(x=>x!==email);if(rol==="admin")d.admins.push(email);this.save_()},
+  async eliminarCuenta(email){const d=this.load_();if(d.accesos)delete d.accesos[email];if(d.perfiles)delete d.perfiles[email];d.admins=d.admins.filter(x=>x!==email);this.save_()},
   async load(auth){
     const d=this.load_();let cl=Object.values(d.clientes);
     if(!auth.admin)cl=cl.filter(c=>(c.email_cliente||"").toLowerCase()===auth.email);
@@ -938,6 +941,7 @@ const Remote={
   async cuentas(){const sb=await getSb();const[u,a,ad,pf]=await Promise.all([sb.rpc("lista_cuentas"),sb.from("accesos").select("*"),sb.from("admins").select("*"),sb.from("perfiles").select("email,nombre,foto")]);
     if(u.error)throw u.error;return{usuarios:u.data||[],accesos:a.data||[],admins:ad.data||[],perfiles:pf.data||[]}},
   async ponerAcceso(email,rol){const{error}=await (await getSb()).rpc("poner_acceso",{e:email,r:rol});if(error)throw error},
+  async eliminarCuenta(email){const{error}=await (await getSb()).rpc("eliminar_cuenta",{e:email});if(error)throw error},
   async signIn(email,pw){const{error}=await (await getSb()).auth.signInWithPassword({email,password:pw});if(error)throw error;return this.session()},
   async signUp(email,pw){const{data,error}=await (await getSb()).auth.signUp({email,password:pw,options:{emailRedirectTo:location.href.split("#")[0]}});if(error)throw error;
     if(data&&data.user&&Array.isArray(data.user.identities)&&!data.user.identities.length)throw new Error("already registered");
@@ -1193,6 +1197,7 @@ const FIRMA={nombre:"Sol-Emp Integradora de Servicios S.C.",lema:"Honestidad y P
   dir:"Helsinki #2, esq. Ciudad del Vaticano, Fracc. Monte Magno, C.P. 91193, Xalapa, Veracruz",
   fb:"https://www.facebook.com/integradorasolemp",tw:"https://twitter.com/Solemp_SC",li:"https://www.linkedin.com/in/sol-emp-integradora-de-servicios-s-c-599046bb/"};
 const ICON={
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .7 3.2 2.4 3.5 5.2"/>',
   camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
@@ -1793,7 +1798,8 @@ function viewUsuarios(){
     return`<div class="ucard"><div class="u-top">${avatar(x.pf,x.email,48,nom)}<div class="u-txt"><b>${esc(nom||x.email.split("@")[0])}${yo?" <small>(tú)</small>":""}</b><span>${esc(x.email)}</span>
       ${x.emps?`<span class="u-emp">${esc(x.emps.join(" · "))}</span>`:""}<span class="pill ${cl} sm" style="align-self:flex-start;margin-top:6px">${l}</span></div></div>
       <div class="u-meta">${x.cuenta?`Cuenta creada ${fecha(x.creada)}${x.conf===false?" · correo sin confirmar":""}${x.ultimo?" · último ingreso "+fecha(x.ultimo):""}`:"Todavía no crea su cuenta en la app"}</div>
-      <div class="u-acc">${[["cliente","Cliente"],["admin","Administrador"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${(yo&&r!=="admin")||k===r?" disabled":""}>${t}</button>`).join("")}</div></div>`}).join("")+'</div>'
+      <div class="u-acc">${[["cliente","Cliente"],["admin","Administrador"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${(yo&&r!=="admin")||k===r?" disabled":""}>${t}</button>`).join("")}</div>
+      ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div>`}).join("")+'</div>'
   :`<div class="card empty"><p class="muted">Todavía no hay cuentas.</p></div>`}</section>`;
 }
 function viewTarifas(){
@@ -1829,7 +1835,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.52"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.53"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2273,6 +2279,11 @@ const act={
       <div class="pf-acc"><button type="button" class="btn" data-act="ayuda">? Ayuda</button><button type="button" class="btn" data-act="salir">${ic("out")} Cerrar sesión</button></div>
     </form>`)},
   quitarFoto(){S.fotoNueva=null;$("#pfAv").innerHTML=avatar({nombre:$("#pfNom").value},S.auth.email,84)},
+  async eliminarCuenta(d){
+    const x=d.e,emps=Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x).map(c=>c.nombre);
+    if(!confirm("¿Eliminar la cuenta de "+x+"?\n\nYa no podrá entrar a la app y se borra su perfil."+(emps.length?"\nSus empresas ("+emps.join(", ")+") NO se borran; siguen en tu panel.":"")+"\n\nEsto no se puede deshacer."))return;
+    try{await API.eliminarCuenta(x);toast("Cuenta eliminada",3000);await cargarCuentas()}
+    catch(e){toast(/eliminar_cuenta|function/i.test(errTxt(e))?"Falta un paso en Supabase para eliminar cuentas.":errTxt(e),5000)}},
   usuarios(){S.vista="usuarios";S.cuentas=null;render();cargarCuentas()},
   async acceso(d){
     if(d.r==="admin"&&!confirm("¿Dar acceso de ADMINISTRADOR a "+d.e+"?\nPodrá ver y editar a todos los clientes."))return;
