@@ -138,7 +138,7 @@ table.months tr.t td{font-weight:700;border-bottom:0}
 .empty p{margin:0;max-width:44ch}
 .overlay{position:fixed;inset:0;background:rgba(12,15,26,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .overlay[hidden]{display:none}
-.sheet{background:var(--surface);width:100%;max-width:680px;max-height:92%;overflow:auto;border-radius:22px 22px 0 0;padding:22px 20px 28px;display:flex;flex-direction:column;gap:18px}
+.sheet{background:var(--surface);width:100%;max-width:680px;max-height:92%;max-height:92dvh;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:22px 22px 0 0;padding:22px 20px calc(28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px}
 @media (min-width:720px){.overlay{align-items:center}.sheet{border-radius:22px}}
 .sheet-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .sheet-h h2{font-size:1.15rem}
@@ -658,6 +658,9 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .av{flex:none;display:inline-grid;place-items:center;border-radius:50%;overflow:hidden;background:var(--accent-soft)}
 .av img{width:100%;height:100%;object-fit:cover;display:block}
 .av.ini{background:linear-gradient(135deg,#3F5A9E,#6E8FD8);color:#fff;font-weight:800;font-family:var(--font-d);letter-spacing:.02em}
+.pf-acc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pf-acc .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.pf-acc .btn .ic{width:18px;height:18px;flex:none}
 .pf-top{display:flex;flex-direction:column;align-items:center;gap:12px}
 .pf-top .btn .ic{width:18px;height:18px}
 .link{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:4px}
@@ -806,7 +809,10 @@ let toastT;
 function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),ms)}
 
 /* ================= Tablas fiscales (el administrador las actualiza en "Tablas y tarifas") ================= */
-const YEAR=2026;
+const MINY=2026; // primer año con datos en la app
+let YEAR=Math.max(MINY,new Date().getFullYear()); // año que se está viendo (cambia con las flechas del mes)
+const maxY=()=>{const d=new Date();return d.getFullYear()+(d.getMonth()===11?1:0)};
+const hoyISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 const CFG_BASE={
   // Tarifa mensual ISR personas físicas (art. 96 LISR), igual que en los Excel del despacho: [límite inferior, cuota fija, % sobre excedente]
@@ -843,7 +849,7 @@ function tasaResicoPF(ing){let t=CFG.resicoPFli[0][1];for(const[li,p]of CFG.resi
 /* ================= Estado ================= */
 const now=new Date();
 let defM=now.getMonth()+1; // mes actual
-if(now.getFullYear()>YEAR)defM=12;if(now.getFullYear()<YEAR)defM=1;
+if(now.getFullYear()<YEAR)defM=1;
 const S={sec:"trabajo",auth:null,listo:false,clientes:{},periodos:{},movs:{},m:defM,apartado:"PM",filtroReg:"todos",
   vista:"tablero",cid:null,tabC:"hoja",confirm:null,mov:null,login:"entrar",abre:{ing:true,gas:false}};
 const pkey=(cid,m)=>cid+":"+YEAR+":"+m;
@@ -982,6 +988,11 @@ function normCliente(c){
   c.regimenes=rg.filter(r=>REGS[r]);if(!c.regimenes.length)c.regimenes=[c.tipo==="PF"?"612":"601"];
   return c;
 }
+async function cambiarAnio(y,m){
+  const yA=YEAR,mA=S.m;YEAR=y;S.m=m;S.listo=false;render();
+  try{await recargar()}catch(e){YEAR=yA;S.m=mA;toast(errTxt(e),5000);try{await recargar()}catch(e2){}}
+  S.listo=true;MEMO={};render();
+}
 async function recargar(){
   if(!S.auth)return;
   const r=await API.load(S.auth);
@@ -1106,7 +1117,7 @@ function calc(c,mes){
   return{iva,regs,isr,ret,total:isr+iva.cargo+ret,n,E,Co,G:Gm,ing:ingRes,notes};
 }
 function resumenDe(c,m){const r=calc(c,m),isrReg={};r.regs.forEach(x=>isrReg[x.reg]=x.pago);
-  return{total:r.total,isr:r.isr,iva:r.iva.neto,ivaFavor:r.iva.favor,ret:r.ret,isrReg,fecha:new Date().toISOString().slice(0,10)}}
+  return{total:r.total,isr:r.isr,iva:r.iva.neto,ivaFavor:r.iva.favor,ret:r.ret,isrReg,fecha:hoyISO()}}
 function vals(c,m){const p=periodo(c.id,m);if(p.estado==="declarado"&&p.resumen)return{...p.resumen,decl:true};const r=calc(c,m);return{total:r.total,isr:r.isr,iva:r.iva.neto,ivaFavor:r.iva.favor,ret:r.ret,decl:false}}
 const totalMes=(c,m)=>vals(c,m).total;
 // Límite anual de ingresos RESICO: lo que lleva el año y cuánto le queda
@@ -1398,9 +1409,9 @@ function viewActualizar(){
 /* ================= Vistas del Área de trabajo ================= */
 function barraMes(sinFecha){
   return`<div class="period">
-    <button class="btn ghost sm" data-act="mesPrev" aria-label="Mes anterior"${S.m<=1?" disabled":""}>‹</button>
-    <select id="mes" data-change="mes" aria-label="Mes">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===S.m?" selected":""}>${n} ${YEAR}</option>`).join("")}</select>
-    <button class="btn ghost sm" data-act="mesNext" aria-label="Mes siguiente"${S.m>=12?" disabled":""}>›</button>
+    <button class="btn ghost sm" data-act="mesPrev" aria-label="Mes anterior"${S.m<=1&&YEAR<=MINY?" disabled":""}>‹</button>
+    <select id="mes" data-change="mes" aria-label="Mes y año">${(()=>{let o="";for(let y=MINY;y<=maxY();y++)o+=`<optgroup label="${y}">${MESES.map((n,i)=>`<option value="${y}-${i+1}"${i+1===S.m&&y===YEAR?" selected":""}>${n} ${y}</option>`).join("")}</optgroup>`;return o})()}</select>
+    <button class="btn ghost sm" data-act="mesNext" aria-label="Mes siguiente"${S.m>=12&&YEAR>=maxY()?" disabled":""}>›</button>
     ${sinFecha?"":`<div class="due">${hoyTxt()}</div>`}</div>`;
 }
 function iniciales(n,email){const t=(n||"").trim()||String(email||"?").split("@")[0];const p=t.split(/[\s._-]+/).filter(Boolean);return((p[0]||"?")[0]+(p[1]?p[1][0]:"")).toUpperCase()}
@@ -1816,7 +1827,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.50"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.51"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2244,27 +2255,29 @@ const act={
   async demoAdmin(){entrar(await Local.signIn("admin@demo.mx"))},
   async demoCliente(){entrar(await Local.signIn("cliente@demo.mx"))},
   lgModo(d){S.login=d.m;render()},
-  async salir(){await API.signOut();S.auth=null;S.clientes={};S.periodos={};S.movs={};S.cid=null;render()},
+  async salir(){$("#sheet").hidden=true;const pa=$("#printArea");if(pa){pa.hidden=true;document.body.classList.remove("printing")}
+    try{await API.signOut()}catch(e){}
+    Object.assign(S,{auth:null,clientes:{},periodos:{},movs:{},cid:null,vista:"tablero",preview:false,sec:"trabajo",q:"",filtro:"todos",cuentas:null,confirm:null,mov:null,_vk:null,tabC:"ing"});render();scrollTo(0,0)},
   async recargar(){try{if(!MODO_DEMO&&S.auth){const s2=await API.session();if(s2)S.auth=s2}await recargar()}catch(e){toast(errTxt(e))}render()},
   perfil(){S.fotoNueva=undefined;const pf=S.auth.perfil||{};
     openSheet("Mi perfil",`<form id="fPerfil" class="stack" style="gap:18px">
-      <div class="pf-top"><div id="pfAv">${avatar(pf,S.auth.email,96,S.auth.nombre)}</div>
+      <div class="pf-top"><div id="pfAv">${avatar(pf,S.auth.email,84,S.auth.nombre)}</div>
         <label class="btn sm" for="pfFoto">${ic("camera")} ${pf.foto?"Cambiar foto":"Poner foto"}</label><input id="pfFoto" type="file" accept="image/*" hidden>
         ${pf.foto?`<button type="button" class="link small" data-act="quitarFoto">Quitar foto</button>`:""}</div>
       <div class="field"><label for="pfNom">Nombre</label><input id="pfNom" name="nombre" value="${esc(pf.nombre||S.auth.nombre||"")}" placeholder="Tu nombre" autocomplete="name" maxlength="60"></div>
       <div class="field"><label>Correo</label><input value="${esc(S.auth.email)}" readonly disabled></div>
       <div class="row" style="gap:8px"><span class="chip">${esAdmin()?"Administrador":"Cliente"}</span></div>
       <button class="btn primary full" type="submit">Guardar</button>
-      <div class="row" style="gap:10px"><button type="button" class="btn full" data-act="ayuda">? Ayuda</button><button type="button" class="btn full" data-act="salir">${ic("out")} Cerrar sesión</button></div>
+      <div class="pf-acc"><button type="button" class="btn" data-act="ayuda">? Ayuda</button><button type="button" class="btn" data-act="salir">${ic("out")} Cerrar sesión</button></div>
     </form>`)},
-  quitarFoto(){S.fotoNueva=null;$("#pfAv").innerHTML=avatar({nombre:$("#pfNom").value},S.auth.email,96)},
+  quitarFoto(){S.fotoNueva=null;$("#pfAv").innerHTML=avatar({nombre:$("#pfNom").value},S.auth.email,84)},
   usuarios(){S.vista="usuarios";S.cuentas=null;render();cargarCuentas()},
   async acceso(d){
     if(d.r==="admin"&&!confirm("¿Dar acceso de ADMINISTRADOR a "+d.e+"?\nPodrá ver y editar a todos los clientes."))return;
     if(d.r==="ninguno"&&!confirm("¿Quitar el acceso de "+d.e+"?"))return;
     try{await API.ponerAcceso(d.e,d.r);toast(d.r==="ninguno"?"Acceso quitado":"✓ Acceso activado como "+(d.r==="admin"?"administrador":"cliente"),3000);await cargarCuentas()}catch(e){toast(errTxt(e),5000)}},
-  mesPrev(){if(S.m>1){S.m--;render()}},
-  mesNext(){if(S.m<12){S.m++;render()}},
+  mesPrev(){if(S.m>1){S.m--;render()}else if(YEAR>MINY)cambiarAnio(YEAR-1,12)},
+  mesNext(){if(S.m<12){S.m++;render()}else if(YEAR<maxY())cambiarAnio(YEAR+1,1)},
   irMes(d){S.m=+d.m;S.tabC="ing";render();scrollTo(0,0)},
   apartado(d){S.apartado=d.a;S.filtroReg="todos";render()},
   filtroReg(d){S.filtroReg=d.r;render()},
@@ -2275,7 +2288,7 @@ const act={
   salirVista(){S.preview=false;S.tabC="ing";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
-  nuevoCliente(){S.confirm=null;openSheet("¿Qué tipo de cliente vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
+  nuevoCliente(){S.confirm=null;openSheet("¿Qué tipo de empresa vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
   async toggleActivo(d){const c=S.clientes[d.id];if(!c)return;const nc=clone(c);nc.activo=!activo(c);
     try{const s2=await API.saveCliente(nc);S.clientes[d.id]=Object.assign({},nc,s2||{});toast(activo(S.clientes[d.id])?"Cliente activo":"Cliente inactivo")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y)},
@@ -2392,7 +2405,7 @@ addEventListener("scroll",()=>document.body.classList.toggle("scrolled",scrollY>
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden)closeSheet()});
 document.addEventListener("change",async e=>{
   if(e.target.id!=="pfFoto"||!e.target.files.length)return;
-  try{S.fotoNueva=await fotoChica(e.target.files[0]);$("#pfAv").innerHTML=avatar({foto:S.fotoNueva},S.auth.email,96)}catch(er){toast("No se pudo leer la foto. Prueba con otra.")}
+  try{S.fotoNueva=await fotoChica(e.target.files[0]);$("#pfAv").innerHTML=avatar({foto:S.fotoNueva},S.auth.email,84)}catch(er){toast("No se pudo leer la foto. Prueba con otra.")}
 });
 async function fotoChica(file){
   const url=URL.createObjectURL(file);
@@ -2413,7 +2426,7 @@ document.addEventListener("focusin",e=>{const t=e.target;if(t.classList&&t.class
 document.addEventListener("focusout",e=>{const t=e.target;if(t.classList&&t.classList.contains("money")&&t.value!==""){const d=t.classList.contains("coef")?4:t.dataset.d?+t.dataset.d:2;t.value=d===4&&!t.classList.contains("coef")?String(+num(t.value).toFixed(4)):fmtN(num(t.value),d)}});
 document.addEventListener("change",async e=>{
   const t=e.target;
-  if(t.dataset.change==="mes"){S.m=+t.value;render();return}
+  if(t.dataset.change==="mes"){const[y,m]=t.value.split("-").map(Number);if(y!==YEAR)cambiarAnio(y,m);else{S.m=m;render()}return}
   if(t.form&&t.form.getAttribute("id")==="fCliente"&&(t.name==="reg"||t.name==="actividad")){syncClienteForm(true);return}
   if(t.id==="mvReg"){syncMov(true);return}
   if(t.dataset.act2||t.dataset.change==="mesesPF"){
@@ -2424,7 +2437,7 @@ document.addEventListener("change",async e=>{
         let[cid,reg,key,a4,a5]=item,mm=S.m,val=a4;if(item.length===5){mm=+a4||S.m;val=a5}
         const c=S.clientes[cid];
         if(key==="coef"&&mm>=defM){const nc=clone(c);nc.coef=val;const s2=await API.saveCliente(nc);S.clientes[cid]=normCliente(Object.assign({},nc,s2||{}))}
-        const p=clone(periodo(cid,mm));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);
+        const p=clone(periodo(cid,mm));p.ajustes=p.ajustes||{};p.ajustes._mod=hoyISO();
         if(key==="_act"){p.ajustes._act=!!val;const s2=await API.setPeriodo(p);S.periodos[pkey(cid,mm)]=s2||p;continue}
         p.ajustes._act=true;
         if(key==="iva_favor_ant")p.ajustes.iva_favor_ant=val;else{p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=val}
@@ -2437,7 +2450,7 @@ document.addEventListener("change",async e=>{
     return;
   }
   if(t.dataset.aj){
-    const c=S.clientes[S.cid],[reg,key]=t.dataset.aj.split("|"),p=clone(periodo(c.id,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=new Date().toISOString().slice(0,10);p.ajustes._act=true;
+    const c=S.clientes[S.cid],[reg,key]=t.dataset.aj.split("|"),p=clone(periodo(c.id,S.m));p.ajustes=p.ajustes||{};p.ajustes._mod=hoyISO();p.ajustes._act=true;
     if(reg){p.ajustes[reg]=p.ajustes[reg]||{};p.ajustes[reg][key]=num(t.value)}else p.ajustes[key]=num(t.value);
     try{const s2=await API.setPeriodo(p);S.periodos[pkey(c.id,S.m)]=s2||p;toast("Guardado")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y);return;
