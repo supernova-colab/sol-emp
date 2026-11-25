@@ -1385,7 +1385,7 @@ function viewActualizar(){
   <button class="back back-float" data-act="tablero" aria-hidden="true" tabindex="-1"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Mis clientes</button>
   <div class="sec-t"><span class="eyebrow">Actualización de precierres</span><h2 style="font-size:1.5rem">Puntos a actualizar del mes</h2>
     <p>Captura aquí lo que viene de meses anteriores o de la declaración anual. Lo que escribes se guarda solo. Las casillas grises no aplican para ese régimen. Al capturar, la empresa queda como <b>Actualizado</b>; también puedes marcarlo en la última columna.</p></div>
-  <p class="note info"><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
+  <p class="note info"><b>LOS PRECIERRES SE ACTUALIZAN UNA VEZ DECLARADO EL MES ANTERIOR.</b></p>
   ${barraMes(true)}
   ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de ISR de las personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa (normalmente el mismo mes).</span></div>
     <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
@@ -1475,19 +1475,19 @@ function viewTablero(){
   const pend=cs.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
   return`${quien()}
   <div class="sec-t"><span class="eyebrow">Panel del administrador</span><h2 style="font-size:1.6rem">${saludo()}${(S.auth.perfil&&S.auth.perfil.nombre||nombreAdm)?", "+esc((S.auth.perfil&&S.auth.perfil.nombre||nombreAdm).split(" ")[0]):""}</h2><span class="small muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,x=>x.toUpperCase())}</span></div>
-  <button class="btn primary full big" data-act="nuevoCliente">+ Registrar nuevo cliente</button>
+  <button class="btn primary full big" data-act="nuevoCliente">+ REGISTRAR UNA NUEVA EMPRESA</button>
   ${barraMes(true)}
   <section class="stack" style="gap:14px">
     <div class="sec-h"><h2>Clientes</h2><span class="small muted">${cs.length} empresa${cs.length===1?"":"s"}${pend?" · "+pend+" pendiente"+(pend===1?"":"s"):""}</span></div>
     <div class="leyendas">
-      <p><b>Los precierres se actualizan una vez terminado el mes anterior.</b></p>
+      <p><b>LOS PRECIERRES SE ACTUALIZAN UNA VEZ DECLARADO EL MES ANTERIOR.</b></p>
       <p>Una vez concluido el mes, ya no se podrá actualizar o agregar nada.</p>
     </div>
     ${cs.length>=4?`<div class="buscar">${ic("search")}<input id="qCli" type="search" placeholder="Buscar cliente, empresa o correo" value="${esc(S.q||"")}" autocomplete="off" enterkeyhint="search"></div>
     <div class="fchips">${[["todos","Todos",cs.length],["pend","Pendientes",pend],["ok","Actualizados",cs.filter(c=>activo(c)&&actualizado(c,S.m)).length],["inact","Inactivos",cs.filter(c=>!activo(c)).length]].map(([k,l,n])=>`<button class="fchip" data-act="filtroCli" data-f="${k}" aria-pressed="${(S.filtro||"todos")===k}">${l} <span>${n}</span></button>`).join("")}</div>`:""}
     ${cs.length?(()=>{const f=S.filtro||"todos",fs=cs.filter(c=>f==="todos"||(f==="pend"?activo(c)&&!actualizado(c,S.m):f==="ok"?activo(c)&&actualizado(c,S.m):!activo(c)));
       return fs.length?listaGrupos(fs)+`<div class="card empty" id="sinRes" hidden><p class="muted">No encontré clientes con esa búsqueda.</p></div>`:`<div class="card empty"><p class="muted">No hay empresas en este filtro.</p></div>`})()
-    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar nuevo cliente”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
+    :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar una nueva empresa”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
   </section>
   <section class="stack" style="gap:10px">
     <div class="sec-h"><h2 style="font-size:1.1rem">Herramientas</h2></div>
@@ -1500,7 +1500,7 @@ function viewTablero(){
   </section>`;
 }
 const precierreTag=(c,m)=>actualizado(c,m)?`<span class="pill ok">Precierre actualizado</span>`:`<span class="pill pend">Precierre pendiente por actualizar</span>`;
-const LEYENDA_ACT=`<p class="small muted" style="margin:0">Los precierres se actualizan una vez terminado el mes anterior.</p>`;
+const LEYENDA_ACT=`<p class="small muted" style="margin:0">LOS PRECIERRES SE ACTUALIZAN UNA VEZ DECLARADO EL MES ANTERIOR.</p>`;
 function limiteCard(c,m){
   const L=limiteResico(c,m);if(!L)return"";
   const pct=Math.min(1,L.pct),cls=L.pct>=1?"over":L.pct>=0.8?"near":"";
@@ -1816,7 +1816,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.49"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.50"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -1843,7 +1843,7 @@ function formCliente(c,regIni){
   const nuevo=!c;
   c=c||{nombre:"",rfc:"",tipo:REGS[regIni||"601"].t,regimenes:[regIni||"601"],coef:"",email_cliente:"",actividad:"Empresarial",activo:true};
   const reg=regDe(c),f=fiscal(c);
-  openSheet(c.id?"Editar empresa":"Registrar nuevo cliente",`<form id="fCliente">
+  openSheet(c.id?"Editar empresa":"Registrar una nueva empresa",`<form id="fCliente">
     <input type="hidden" name="id" value="${esc(c.id||"")}">
     <fieldset><legend>Régimen</legend><div class="regs">${Object.keys(REGS).map(k=>`<label class="regcard"><input type="radio" name="reg" value="${k}"${k===reg?" checked":""}><span><b>${REGS[k].ab}</b><span class="small muted">${REGS[k].n}</span></span></label>`).join("")}</div></fieldset>
     <fieldset id="wAct"${reg==="601"?"":" hidden"}><legend>Actividad</legend><div class="seg3">${ACTS_601.map(a=>`<label class="pillopt"><input type="radio" name="actividad" value="${a}"${(c.actividad||"Empresarial")===a?" checked":""}><span>${a}</span></label>`).join("")}</div>
@@ -2341,7 +2341,7 @@ const act={
   mvTipo(d){S.mov={tipo:d.t};S.confirm=null;formMov(null)},
   actualizar(){S.vista="actualizar";render();scrollTo(0,0)},
   ayuda(){
-    const pasosA=[["Registra a tus clientes","Toca “Registrar nuevo cliente”, elige el régimen (y la actividad si es régimen general) y escribe su correo. Un mismo correo puede tener varias empresas."],
+    const pasosA=[["Registra a tus clientes","Toca “Registrar una nueva empresa”, elige el régimen (y la actividad si es régimen general) y escribe su correo. Un mismo correo puede tener varias empresas."],
       ["Elige el mes","Arriba cambias de mes. Cada mes se guarda solo."],
       ["Abre la captura","Dentro de la empresa toca “Abrir captura para el cliente”. El cliente captura hasta el último día del mes."],
       ["Actualiza el precierre","En “Actualización de precierres” captura las celdas amarillas (meses anteriores, PTU, pérdidas, coeficiente…). La empresa queda en verde: Precierre actualizado."],
