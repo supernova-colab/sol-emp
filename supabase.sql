@@ -216,3 +216,30 @@ begin
 end; $$;
 revoke all on function poner_acceso(text, text) from public, anon;
 grant execute on function poner_acceso(text, text) to authenticated;
+
+-- ============================================================
+-- 25 nov: Seguridad. Las reglas aplican solo a usuarios con sesión
+-- y las funciones internas ya no se pueden llamar sin iniciar sesión.
+-- Pega desde aquí hasta el final en el SQL Editor y dale Run.
+-- ============================================================
+alter policy "acceso propio" on accesos to authenticated;
+alter policy "admins ven admins" on admins to authenticated;
+alter policy "admin se ve" on admins to authenticated;
+alter policy "cliente ve su ficha" on clientes to authenticated;
+alter policy "admin clientes" on clientes to authenticated;
+alter policy "config leer" on config to authenticated;
+alter policy "config admin" on config to authenticated;
+alter policy "cliente corrige lo suyo" on movimientos to authenticated;
+alter policy "cliente borra lo suyo" on movimientos to authenticated;
+alter policy "cliente captura" on movimientos to authenticated;
+alter policy "cliente ve sus movimientos" on movimientos to authenticated;
+alter policy "admin movimientos" on movimientos to authenticated;
+alter policy "perfil propio o admin" on perfiles to authenticated;
+alter policy "admin periodos" on periodos to authenticated;
+alter policy "cliente ve sus meses" on periodos to authenticated;
+revoke execute on function es_admin() from public, anon;
+revoke execute on function es_mi_cliente(uuid) from public, anon;
+revoke execute on function captura_abierta(uuid, integer, integer) from public, anon;
+grant execute on function es_admin() to authenticated;
+grant execute on function es_mi_cliente(uuid) to authenticated;
+grant execute on function captura_abierta(uuid, integer, integer) to authenticated;
