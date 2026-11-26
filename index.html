@@ -155,7 +155,7 @@ legend{font-family:var(--font-d);font-weight:700;padding:0 6px}
 .check input{width:20px;height:20px;accent-color:var(--accent);flex:none}
 .seg{display:flex;gap:8px;flex-wrap:wrap}
 .seg button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;min-height:38px;font-weight:500;cursor:pointer;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent);box-shadow:0 4px 12px rgba(40,60,120,.2)}
 .con{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
 .con .field input,.con .field select{background:var(--surface)}
 .tot{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-variant-numeric:tabular-nums;font-size:.95rem}
@@ -264,7 +264,7 @@ table.act{min-width:1180px}
 table.act td{padding:8px 8px}
 table.act .ycell{width:108px}
 table.act .ycell.coef{width:86px}
-table.act td.na{background:#B9BEC9}
+table.act td.na{background:repeating-linear-gradient(135deg,var(--line) 0 6px,transparent 6px 12px);opacity:.7}
 table.act th.pa{text-align:center!important;letter-spacing:.08em;text-transform:uppercase;font-size:.72rem;border-bottom:1px solid var(--line)}
 table.act .emp{position:sticky;left:0;background:var(--surface);min-width:150px;white-space:normal;z-index:1;border-right:1px solid var(--line)}
 table.act th.emp{background:var(--bg)}
@@ -437,7 +437,7 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 .fisc-info{margin:6px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
 .seg4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .seg4 button{min-height:44px;border:1px solid var(--line);background:var(--surface);border-radius:12px;font-weight:600;cursor:pointer;color:var(--muted);font-size:.9rem}
-.seg4 button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg4 button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent);box-shadow:0 4px 12px rgba(40,60,120,.2)}
 .seg.big button{flex:1;min-height:48px;font-size:1rem;font-weight:600}
 .moneyin{display:flex;align-items:center;gap:8px}
 .moneyin span{font-weight:700;color:var(--muted)}
@@ -496,6 +496,7 @@ body.printing{overflow:hidden}
 .rt-head{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
 .rt-head b{font-family:var(--font-d);font-size:1.15rem}.rt-head span{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .rt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rt-full{grid-column:1/-1;display:grid}
 .rt-col{display:flex;flex-direction:column;gap:10px}
 .rt-t{display:flex;flex-direction:column;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);min-width:0}
 .rt-t span{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -547,7 +548,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
   table.mv td.ne{grid-column:2;grid-row:1;font-size:1rem}
   table.mv td.nw{grid-column:1;grid-row:2;font-size:.8rem}
   table.mv td.ch{grid-column:2;grid-row:2;text-align:right;max-width:170px}
-  table.mv td.ch .tchip{white-space:normal}
+  table.mv td.ch .tchip{white-space:nowrap}
   table.mv td.im,table.mv td.iv,table.mv td.rt2{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted)}
   table.mv td.im::before,table.mv td.iv::before,table.mv td.rt2::before{content:attr(data-l)}
   table.mv td.acc{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:4px}
@@ -577,7 +578,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
   table.mv td.ne{grid-column:2;grid-row:1;font-size:1rem}
   table.mv td.nw{grid-column:1;grid-row:2;font-size:.8rem}
   table.mv td.ch{grid-column:2;grid-row:2;text-align:right;max-width:170px}
-  table.mv td.ch .tchip{white-space:normal}
+  table.mv td.ch .tchip{white-space:nowrap}
   table.mv td.im,table.mv td.iv,table.mv td.rt2{grid-column:1 / -1;display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted)}
   table.mv td.im::before,table.mv td.iv::before,table.mv td.rt2::before{content:attr(data-l)}
   table.mv td.acc{grid-column:1 / -1;display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap;margin-top:4px}
@@ -620,9 +621,16 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard,.grupo,.tile-btn,.qa button,.tool{transition:transform .18s ease,box-shadow .18s ease,border-color .18s}
 @media (hover:hover){.ccard:hover,.grupo:hover,.tile-btn:hover,.qa button:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(20,30,60,.05),0 14px 34px rgba(30,50,110,.12)}}
 .rt-total{background:linear-gradient(135deg,#112a42 0%,#16395a 55%,#1f4b73 100%)}
-.ccard,.grupo{content-visibility:auto;contain-intrinsic-size:auto 190px}
 .rgi{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--accent-soft);color:var(--accent)}
 .rgi .ic{width:20px;height:20px}
+.pwbox{position:relative}
+.pwbox input{padding-right:52px!important}
+.pweye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:40px;display:grid;place-items:center;border:0;background:transparent;color:var(--muted);border-radius:10px;cursor:pointer}
+.pweye:hover{color:var(--accent);background:var(--accent-soft)}
+.pweye .ic{width:20px;height:20px}
+.pweye.on{color:var(--accent)}
+.pweye.on::after{content:"";position:absolute;width:22px;height:2px;background:currentColor;border-radius:2px;transform:rotate(-45deg);box-shadow:0 0 0 1.5px var(--bg)}
+.rgi.grp{background:linear-gradient(135deg,#3F5A9E,#6E8FD8);color:#fff}
 .rg-aut{background:#FDEBD8;color:#B4570F}.rg-626,.rg-626F{background:#E1F2E8;color:#25724A}.rg-606{background:#F1E6F8;color:#7A3FA0}.rg-612{background:#E3EEFB;color:#2C5E9E}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rg-aut{background:#3A2817;color:#F2A25E}:root:not([data-theme="light"]) .rg-626,:root:not([data-theme="light"]) .rg-626F{background:#183225;color:#7FD3A5}:root:not([data-theme="light"]) .rg-606{background:#2C1F38;color:#C9A0EA}:root:not([data-theme="light"]) .rg-612{background:#1B2A40;color:#9CC0F0}}
 .ccard-top{align-items:center;gap:12px}
@@ -630,7 +638,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .buscar .ic{position:absolute;left:16px;width:20px;height:20px;color:var(--muted);pointer-events:none}
 .buscar input{width:100%;padding:14px 16px 14px 46px;border-radius:14px;border:1px solid var(--line);background:var(--glass);outline:none;transition:border-color .15s,box-shadow .15s}
 .buscar input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
-.fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.fchips::-webkit-scrollbar{display:none}
+.fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}.fchips::-webkit-scrollbar{display:none}
 .fchip{flex:none;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-weight:600;font-size:.9rem;cursor:pointer}
 .fchip span{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:.78rem;text-align:center}
 .fchip[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
@@ -777,10 +785,12 @@ body.scrolled .back-float{opacity:1;transform:none;pointer-events:auto}
 .tool:disabled{opacity:.45}
 @media (min-width:900px){.clist{display:grid;grid-template-columns:1fr 1fr}}
 .tabs.many{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+@media (max-width:640px){.tabs.many{display:grid;grid-template-columns:repeat(3,1fr);overflow:visible;gap:4px}.tabs.many button{padding:10px 4px;font-size:.88rem}}
 .tabs.many::-webkit-scrollbar{display:none}
 .tabs.many button{flex:0 0 auto;padding:4px 16px}
 table.actm th.cur{background:var(--accent-soft);color:var(--accent)}
-table.actm td.emp{min-width:230px;font-size:.8rem}
+table.actm td.emp,table.actm th.emp{min-width:150px;max-width:170px;font-size:.74rem;position:sticky;left:0;z-index:2;background:var(--surface);box-shadow:2px 0 4px rgba(20,30,60,.06)}
+@media (min-width:700px){table.actm td.emp,table.actm th.emp{min-width:220px;max-width:none;font-size:.8rem}}
 table.actm tr.ivar input.ycell{background:#F6C445}
 </style>
 </head>
@@ -937,7 +947,7 @@ async function getSb(){
     }
     if(!window.supabase||!window.supabase.createClient)throw new Error("No se pudo cargar la conexión. Revisa tu internet y vuelve a abrir la app.");
     sb=window.supabase.createClient(SB_URL,SB_KEY);
-    sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){S.sec="trabajo";render();openSheet("Nueva contraseña",`<form id="fNuevaPw"><div class="field"><label for="npw">Escribe tu nueva contraseña</label><input id="npw" name="pw" type="password" minlength="6" required autocomplete="new-password"></div><button class="btn primary full" type="submit">Guardar</button></form>`)}});
+    sb.auth.onAuthStateChange(ev=>{if(ev==="PASSWORD_RECOVERY"){S.sec="trabajo";render();openSheet("Nueva contraseña",`<form id="fNuevaPw"><div class="field"><label for="npw">Escribe tu nueva contraseña</label><div class="pwbox"><input id="npw" name="pw" type="password" minlength="6" required autocomplete="new-password"><button type="button" class="pweye" data-pw aria-label="Mostrar contraseña" title="Mostrar contraseña">${ic("eye")}</button></div></div><button class="btn primary full" type="submit">Guardar</button></form>`)}});
     return sb;
   })().catch(e=>{sbCargando=null;throw e});
   return sbCargando;
@@ -1269,7 +1279,7 @@ const activo=c=>c.activo!==false;
 function ultimaMod(c){
   let t="";Object.values(S.movs).forEach(x=>{if(x.cliente_id===c.id){const f=(x.creado||x.fecha||"").slice(0,10);if(f>t)t=f}});
   for(let m=1;m<=12;m++){const a=(periodo(c.id,m).ajustes||{})._mod;if(a&&a>t)t=a}
-  if(!t)return"—";const[y,mo,d]=t.split("-");return`${d}/${mo}/${y}`;
+  if(!t)return"—";const[y,mo,d]=t.split("-").map(Number);return`${d} de ${MESES[mo-1].toLowerCase()}${y!==new Date().getFullYear()?" de "+y:""}`;
 }
 const actualizado=(c,m)=>!!(periodo(c.id,m).ajustes||{})._act;
 const FAQ=[
@@ -1458,7 +1468,7 @@ function viewLogin(){
       <p>${reg?"Escribe el correo que le diste al despacho (Gmail, Hotmail, iCloud o cualquier otro) y elige una contraseña de al menos 6 caracteres.":rec?"Te enviaremos un enlace a tu correo.":"Entra con tu correo y contraseña."}</p></div>
     <section class="card"><form id="fLogin">
       <div class="field"><label for="lgMail">Correo</label><input id="lgMail" name="email" type="email" autocomplete="email" required></div>
-      ${rec?"":`<div class="field"><label for="lgPw">Contraseña</label><input id="lgPw" name="pw" type="password" minlength="6" autocomplete="${reg?"new-password":"current-password"}" required></div>`}
+      ${rec?"":`<div class="field"><label for="lgPw">Contraseña</label><div class="pwbox"><input id="lgPw" name="pw" type="password" minlength="6" autocomplete="${reg?"new-password":"current-password"}" required><button type="button" class="pweye" data-pw aria-label="Mostrar contraseña" title="Mostrar contraseña">${ic("eye")}</button></div></div>`}
       <button class="btn primary full big" type="submit">${reg?"Crear mi cuenta":rec?"Enviar enlace":"Entrar"}</button>
     </form></section>
     <div class="stack" style="gap:6px;align-items:center">
@@ -1497,7 +1507,7 @@ function listaGrupos(cs){
     const gr=arr.map(x=>x.grupo).find(Boolean),tit=arr.map(x=>x.titular).find(Boolean),nom=gr||tit||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
     const tot=arr.reduce((t,c)=>t+(activo(c)?totalMes(c,S.m):0),0);
     return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}" data-q="${esc(arr.map(qDe).join(" "))}"><summary>
-      <span class="ccard-n">${n}</span>
+      <span class="rgi grp" aria-hidden="true">${ic("users")}</span>
       <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${gr&&tit?" · "+esc(tit):""}${nom!==k?" · "+esc(k):""}</span>
         <span class="g-row"><span class="pill ${pend?"pend":"ok"} sm">${pend?pend+" pendiente"+(pend===1?"":"s"):"Todas actualizadas"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(tot)}</b></span></span></span>
       <span class="g-chev">${ic("arrow")}</span></summary>
@@ -1563,7 +1573,8 @@ function resumenHero(c,r,p){
   return`<div class="rt-head"><b>${esc(c.nombre)}</b><span>Periodo: ${MESES[S.m-1]} ${YEAR}</span></div>
     <div class="rt">
       <div class="rt-col">${t("Ingresos",k.ing)}${t("Gastos",k.G.base)}</div>
-      <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}${esPF(regDe(c))&&!(v.ret>0.005)?"":t("Retenciones",v.ret,"imp")}</div>
+      <div class="rt-col">${t(cli?"ISR estimado":"ISR",v.isr,"imp")}${t(cli?"IVA estimado":"IVA",Math.max(0,v.iva),"imp")}</div>
+      ${esPF(regDe(c))&&!(v.ret>0.005)?"":`<div class="rt-full">${t("Retenciones",v.ret,"imp")}</div>`}
     </div>
     <div class="rt-total"><div><span>Total ${cli&&!v.decl?"estimado":"de impuestos"}</span><b>${money(v.total)}</b>${v.ivaFavor>0.005?`<small>IVA a favor: ${money(v.ivaFavor)}</small>`:""}${cli&&!v.decl?`<small>Estimación sujeta a revisión de tu contador.</small>`:""}</div>
       </div>`;
@@ -1672,7 +1683,7 @@ function tabHistorial(c){
   let ti=0,tg=0,tv=0,tr=0,tt=0;
   const rows=MESES.map((n,i)=>{const m=i+1,p=periodo(c.id,m),r=calc(c,m),v=vals(c,m);
     ti+=r.E.base;tg+=r.G.base;tv+=Math.max(0,v.iva);tr+=v.isr;tt+=v.total;
-    const cuando=m<defM?"Anterior":m===defM?"Este mes":"";
+    const cuando=m===defM&&YEAR===new Date().getFullYear()?"Este mes":"";
     return`<tr class="xr${m===S.m?" sel":""}" data-act="irMes" data-m="${m}"><td>${n.slice(0,3)}${cuando?`<br><span class="small muted">${cuando}</span>`:""}</td><td>${estadoChip(p.estado)}</td>
       <td class="n">${money(r.E.base)}</td><td class="n">${money(r.G.base)}</td><td class="n">${v.iva<0?'<span class="small muted">a favor</span> '+money(-v.iva):money(v.iva)}</td><td class="n">${money(v.isr)}</td><td class="n"><b>${money(v.total)}</b></td></tr>`}).join("");
   return`<div class="grid-wrap"><table class="xl"><thead><tr><th>Mes</th><th>Estado</th><th class="n">Facturado</th><th class="n">Gastos</th><th class="n">IVA</th><th class="n">ISR</th><th class="n">Total</th></tr></thead>
@@ -1826,7 +1837,7 @@ function viewUsuarios(){
       <section class="stack" style="gap:12px"><div class="ulist">${adm.map(card).join("")}</div></section>`}`})()}`;
 }
 function viewTarifas(){
-  const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${fmtN(v,d)}">`;
+  const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${num(v)===0?(0).toFixed(d):fmtN(v,d)}">`;
   return`${quien()}
   <button class="back" data-act="tablero"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Regresar a mis clientes</button>
   <button class="back back-float" data-act="tablero" aria-hidden="true" tabindex="-1"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Mis clientes</button>
@@ -1858,7 +1869,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.59"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.60"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2412,7 +2423,7 @@ const act={
   mvTipo(d){S.mov={tipo:d.t};S.confirm=null;formMov(null)},
   actualizar(){S.vista="actualizar";render();scrollTo(0,0)},
   ayuda(){
-    const pasosA=[["Registra a tus clientes","Toca “Registrar una nueva empresa”, elige el régimen (y la actividad si es régimen general) y escribe su correo. Un mismo correo puede tener varias empresas."],
+    const pasosA=[["Registra a tus clientes","Toca “Registrar una nueva empresa”, elige el régimen y escribe el correo del cliente. Si tiene varias empresas, entra a la empresa y toca “+ Agregar otra empresa”: salen juntas dentro de su grupo."],
       ["Elige el mes","Arriba cambias de mes. Cada mes se guarda solo."],
       ["Abre la captura","Dentro de la empresa toca “Abrir captura para el cliente”. El cliente captura hasta el último día del mes."],
       ["Actualiza el precierre","En “Actualización de precierres” captura las celdas amarillas (meses anteriores, PTU, pérdidas, coeficiente…). La empresa queda en verde: Precierre actualizado."],
@@ -2455,6 +2466,7 @@ const act={
   ejemplo:crearEjemplo
 };
 document.addEventListener("click",e=>{
+  const pe=e.target.closest("[data-pw]");if(pe){const i=pe.parentElement.querySelector("input");const ver=i.type==="password";i.type=ver?"text":"password";pe.classList.toggle("on",ver);const t=ver?"Ocultar contraseña":"Mostrar contraseña";pe.setAttribute("aria-label",t);pe.title=t;i.focus({preventScroll:true});try{const n=i.value.length;i.setSelectionRange(n,n)}catch(_){}return}
   const t=e.target.closest("[data-act]");
   if(t&&!t.disabled){e.preventDefault();act[t.dataset.act]&&act[t.dataset.act](t.dataset,e);return}
   if(e.target.id==="sheet")closeSheet();
