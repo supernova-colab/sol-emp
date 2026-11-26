@@ -598,7 +598,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .ccard-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.8rem;flex:none}
 .ccard-sub{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}
 .ccard-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.ccard-tot{display:flex;flex-direction:column;align-items:flex-end}
+.ccard-tot{display:flex;flex-direction:column;align-items:flex-start}
 .ccard-tot span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .ccard-tot b{font-family:var(--font-d);font-size:1.2rem}
 .ccard-mod{font-size:.78rem;color:var(--muted)}
@@ -969,7 +969,7 @@ const Remote={
     const[c,p,m]=await Promise.all([todo("clientes"),todo("periodos",q=>q.eq("anio",YEAR)),todo("movimientos",q=>q.eq("anio",YEAR))]);
     return{clientes:c,periodos:p,movs:m};
   },
-  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal","titular"])},
+  async saveCliente(c){const row=clone(c);if(!row.id)delete row.id;return upsertFlex("clientes",row,["activo","actividad","fiscal","titular","grupo"])},
   async deleteCliente(id){const{error}=await (await getSb()).from("clientes").delete().eq("id",id);if(error)throw error},
   async setPeriodo(p){const{data,error}=await (await getSb()).from("periodos").upsert(p,{onConflict:"cliente_id,anio,mes"}).select().single();if(error)throw error;return data},
   async saveMov(m,auth){const row=clone(m);if(!auth.admin)row.capturado_por="cliente";if(!row.id)delete row.id;
@@ -1468,7 +1468,7 @@ function viewLogin(){
 }
 function regIcon(c){const r=regDe(c),f=fiscal(c);const k=r==="601"&&f.aut?"truck":r==="601"||r==="626"?"building":r==="612"?"brief":r==="606"?"house":"leaf";
   return`<span class="rgi rg-${r==="601"&&f.aut?"aut":r}" aria-hidden="true">${ic(k)}</span>`}
-const qDe=c=>[c.nombre,c.titular,c.email_cliente,(c.regimenes||[]).map(r=>abrev(c,r)).join(" ")].filter(Boolean).join(" ").toLowerCase();
+const qDe=c=>[c.nombre,c.grupo,c.titular,c.email_cliente,(c.regimenes||[]).map(r=>abrev(c,r)).join(" ")].filter(Boolean).join(" ").toLowerCase();
 function cuentaRegresiva(m){
   const hoy=new Date(),ini=new Date(YEAR,m-1,1),fin=new Date(YEAR,m,0),dias=fin.getDate();
   if(hoy<ini)return"";
@@ -1494,11 +1494,11 @@ function listaGrupos(cs){
   let n=0;S.abiertos=S.abiertos||{};
   return`<div class="clist">${[...g.entries()].map(([k,arr])=>{n++;
     if(arr.length===1)return tarjetaEmpresa(arr[0],n);
-    const nom=arr.map(x=>x.titular).find(Boolean)||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
+    const gr=arr.map(x=>x.grupo).find(Boolean),tit=arr.map(x=>x.titular).find(Boolean),nom=gr||tit||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
     const tot=arr.reduce((t,c)=>t+(activo(c)?totalMes(c,S.m):0),0);
     return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}" data-q="${esc(arr.map(qDe).join(" "))}"><summary>
       <span class="ccard-n">${n}</span>
-      <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${nom!==k?" · "+esc(k):""}</span>
+      <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${gr&&tit?" · "+esc(tit):""}${nom!==k?" · "+esc(k):""}</span>
         <span class="g-row"><span class="pill ${pend?"pend":"ok"} sm">${pend?pend+" pendiente"+(pend===1?"":"s"):"Todas actualizadas"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(tot)}</b></span></span></span>
       <span class="g-chev">${ic("arrow")}</span></summary>
       <div class="g-body">${arr.map(c=>tarjetaEmpresa(c,0)).join("")}</div></details>`}).join("")}</div>`;
@@ -1726,7 +1726,7 @@ function viewClienteAdmin(){
   <div class="emp-lay"><aside class="emp-side">
   <div class="sec-t" style="gap:8px">
     <div class="row between" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><h2 style="font-size:1.5rem;overflow-wrap:anywhere">${esc(c.nombre)}</h2>${estadoChip(p.estado)}</div>
-    <span class="small muted">${c.titular?esc(c.titular)+" · ":""}${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
+    <span class="small muted">${c.grupo?esc(c.grupo)+" · ":""}${c.titular?esc(c.titular)+" · ":""}${(c.regimenes||[]).map(x=>abrev(c,x)).join(" · ")}${f.aut?" · retiene 4 % de IVA":""}${c.rfc?" · "+esc(c.rfc):""} · ${c.email_cliente?esc(c.email_cliente):"sin correo"}${activo(c)?"":" · inactivo"}</span>
     <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">${precierreTag(c,S.m)}<span class="small muted">${uc?"Última captura: "+uc:"Sin capturas todavía"}</span></div>${LEYENDA_ACT}
   </div>
   <div class="qa">
@@ -1734,8 +1734,8 @@ function viewClienteAdmin(){
     <button data-act="editCliente"><i>${ic("pen")}</i><span>Editar empresa</span></button>
     <button data-act="descargas"><i>${ic("down")}</i><span>Excel / PDF</span></button>
   </div>
-  ${c.email_cliente?`<button class="btn full otra-emp" data-act="otraEmpresa">+ Agregar otra empresa a ${esc(c.titular||c.email_cliente)}</button>`:""}
-  ${otras.length?`<div class="otras"><span class="eyebrow">Otras empresas de ${esc(c.titular||"este cliente")}</span><div class="otras-l">${otras.map(x=>`<button data-act="abrir" data-id="${esc(x.id)}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></div>`:""}
+  ${c.email_cliente?`<button class="btn full otra-emp" data-act="otraEmpresa">+ Agregar otra empresa a ${esc(c.grupo||c.titular||c.email_cliente)}</button>`:""}
+  ${otras.length?`<div class="otras"><span class="eyebrow">Otras empresas de ${esc(c.grupo||c.titular||"este cliente")}</span><div class="otras-l">${otras.map(x=>`<button data-act="abrir" data-id="${esc(x.id)}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></div>`:""}
   ${barraMes(true)}
   <section class="card hero">${resumenHero(c,r,p)}${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}</section>
   ${limiteCard(c,S.m)}
@@ -1765,7 +1765,7 @@ function viewPanelCliente(){
   if(!["ing","gas","historial"].includes(S.tabC))S.tabC="ing";
   return`${prev?`<div class="banner warn"><div class="stack" style="gap:4px"><strong>Así lo ve el cliente</strong><span class="small">Solo para ver: desde aquí no se puede capturar.</span></div><button class="btn sm" data-act="salirVista">Salir de la vista</button></div>`:quien()}
   ${(()=>{const nm=(S.auth.perfil&&S.auth.perfil.nombre)||c.titular||"";return`<div class="sec-t"><span class="eyebrow">Mi panel</span><h2 style="font-size:1.6rem">${saludo()}${nm?", "+esc(nm.split(" ")[0]):""}</h2><span class="small muted">${new Date().toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"}).replace(/^./,x=>x.toUpperCase())}</span></div>`})()}
-  ${cs.length>1?`<div class="stack" style="gap:8px"><span class="eyebrow">Mis empresas · ${cs.length}</span><div class="emps-x">${cs.map(x=>`<button class="emp-chip" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${regIcon(x)}<span><b>${esc(x.nombre)}</b><small>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</small></span></button>`).join("")}</div></div>`:""}
+  ${cs.length>1?`<div class="stack" style="gap:8px"><span class="eyebrow">${esc(cs.map(x=>x.grupo).find(Boolean)||"Mis empresas")} · ${cs.length} empresas</span><div class="emps-x">${cs.map(x=>`<button class="emp-chip" data-act="miCliente" data-id="${esc(x.id)}" aria-pressed="${x.id===c.id}">${regIcon(x)}<span><b>${esc(x.nombre)}</b><small>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</small></span></button>`).join("")}</div></div>`:""}
   <div class="emp-lay"><aside class="emp-side">
   <div class="card emp-head"><div class="eh-top">${regIcon(c)}<div class="eh-t"><h2>${esc(c.nombre)}</h2><span>${(c.regimenes||[]).map(x=>REGS[x].n).join(", ")}${(c.regimenes||[]).includes("601")?" · "+esc(c.actividad||"Empresarial"):""}</span></div></div>
     ${f.aut?'<span class="chip warn" style="align-self:flex-start">Autotransporte: se retiene 4 % de IVA</span>':""}
@@ -1858,7 +1858,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.58"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.59"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -1894,7 +1894,8 @@ function formCliente(c,regIni){
     <div class="two"><div class="field"><label for="cRfc">RFC (opcional)</label><input id="cRfc" name="rfc" maxlength="13" placeholder="Opcional" value="${esc(c.rfc)}" style="text-transform:uppercase" autocomplete="off"></div>
       <div class="field" id="wCoef"${reg==="601"?"":" hidden"}><label for="cCoef">Coeficiente de utilidad</label><input id="cCoef" name="coef" class="money coef" type="text" inputmode="decimal" value="${num(c.coef)?num(c.coef).toFixed(4):""}" placeholder="0.0000"></div></div>
     <div class="field"><label for="cMail">Correo del cliente (obligatorio)</label><input id="cMail" name="email_cliente" type="email" required value="${esc(c.email_cliente||"")}" autocomplete="off" placeholder="cliente@gmail.com, hotmail, icloud…"><span class="small muted" id="mailHint"></span></div>
-    <div class="field"><label for="cTit">Nombre del cliente (dueño)</label><input id="cTit" name="titular" value="${esc(c.titular||"")}" autocomplete="off" placeholder="Ej. Juan Pérez · opcional"><span class="small muted">Si una persona tiene varias empresas, usa el mismo correo y nombre: en tu panel salen juntas.</span></div>
+    <div class="field"><label for="cGrupo">Nombre del grupo (opcional)</label><input id="cGrupo" name="grupo" value="${esc(c.grupo||"")}" autocomplete="off" placeholder="Ej. Grupo Castizo"><span class="small muted">Si este cliente tiene varias empresas, en tu panel salen juntas dentro de este grupo. Usa el mismo correo en todas.</span></div>
+    <div class="field"><label for="cTit">Nombre del dueño (opcional)</label><input id="cTit" name="titular" value="${esc(c.titular||"")}" autocomplete="off" placeholder="Ej. Jaime Hernández"><span class="small muted">Con este nombre lo saluda la app.</span></div>
     <div class="field"><label for="cSit">Situación</label><select id="cSit" name="activo"><option value="1"${activo(c)?" selected":""}>Activo</option><option value="0"${activo(c)?"":" selected"}>Inactivo</option></select></div>
     <fieldset><legend>Características fiscales</legend>
       <div class="fisc"><label class="check"><input type="checkbox" name="rivaOn" id="rivaOn"${f.retIva.aplica?" checked":""}> Le retienen IVA por sus ingresos</label><div class="pct"><input class="money" data-d="4" name="rivaPct" id="rivaPct" type="text" inputmode="decimal" value="${f.retIva.pct||""}" placeholder="0"><span>%</span></div></div>
@@ -1913,7 +1914,7 @@ function mailHint(){
   const i=$("#cMail"),h=$("#mailHint");if(!i||!h)return;
   const v=i.value.trim().toLowerCase(),id=($("#fCliente [name=id]")||{}).value;
   const otras=v?clientesOrden().filter(x=>x.id!==id&&(x.email_cliente||"").toLowerCase()===v):[];
-  h.innerHTML=otras.length?`Este correo ya tiene acceso a: <b>${otras.map(x=>esc(x.nombre)).join(", ")}</b>. Esta empresa se agregará a su cuenta.`+(()=>{const t=$("#cTit"),n=otras.map(x=>x.titular).find(Boolean);if(t&&n&&!t.value)t.value=n;return""})()
+  h.innerHTML=otras.length?`Este correo ya tiene acceso a: <b>${otras.map(x=>esc(x.nombre)).join(", ")}</b>. Esta empresa se agregará a su cuenta.`+(()=>{const t=$("#cTit"),n=otras.map(x=>x.titular).find(Boolean);if(t&&n&&!t.value)t.value=n;const g=$("#cGrupo"),gn=otras.map(x=>x.grupo).find(Boolean);if(g&&gn&&!g.value)g.value=gn;return""})()
     :/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)?"Con este correo el cliente crea su cuenta y ve sus empresas. Sirve cualquier correo (Gmail, Hotmail, Outlook, iCloud, Yahoo…).":"";
 }
 function syncClienteForm(defaults){
@@ -2344,8 +2345,8 @@ const act={
   salirVista(){S.preview=false;S.tabC="ing";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
-  otraEmpresa(){const c=S.clientes[S.cid];if(!c)return;S.prefill={email_cliente:c.email_cliente||"",titular:c.titular||""};act.nuevoCliente(true)},
-  nuevoCliente(keep){if(keep!==true)S.prefill=null;S.confirm=null;openSheet(S.prefill&&S.prefill.email_cliente?"¿Qué tipo es la otra empresa de "+(S.prefill.titular||S.prefill.email_cliente)+"?":"¿Qué tipo de empresa vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
+  otraEmpresa(){const c=S.clientes[S.cid];if(!c)return;S.prefill={email_cliente:c.email_cliente||"",titular:c.titular||"",grupo:c.grupo||""};act.nuevoCliente(true)},
+  nuevoCliente(keep){if(keep!==true)S.prefill=null;S.confirm=null;openSheet(S.prefill&&S.prefill.email_cliente?"¿Qué tipo es la otra empresa de "+(S.prefill.grupo||S.prefill.titular||S.prefill.email_cliente)+"?":"¿Qué tipo de empresa vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
   async toggleActivo(d){const c=S.clientes[d.id];if(!c)return;const nc=clone(c);nc.activo=!activo(c);
     try{const s2=await API.saveCliente(nc);S.clientes[d.id]=Object.assign({},nc,s2||{});toast(activo(S.clientes[d.id])?"Cliente activo":"Cliente inactivo")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y)},
@@ -2553,12 +2554,13 @@ document.addEventListener("submit",async e=>{
     }
     if(reg==="601"&&!num(d.coef)&&!confirm("No capturaste el coeficiente de utilidad. ¿Guardar así y capturarlo después?"))return;
     const prev=d.id?S.clientes[d.id]:null;
-    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo,regimenes:[reg],coef:reg==="601"?num(d.coef):0,coef_aut:0,email_cliente:mail,titular:(d.titular||"").trim()||null,
+    const c=Object.assign({},prev||{},{nombre:d.nombre.trim(),rfc,tipo,regimenes:[reg],coef:reg==="601"?num(d.coef):0,coef_aut:0,email_cliente:mail,titular:(d.titular||"").trim()||null,grupo:(d.grupo||"").trim()||null,
       actividad:reg==="601"?(d.actividad||"Empresarial"):reg==="606"?"Arrendamiento":"Empresarial",activo:d.activo!=="0",
       fiscal:{iva:[!!d.rivaOn,num(d.rivaPct)],isr:[!!d.risrOn,num(d.risrPct)]}});
     if(d.id)c.id=d.id;
     $("#sheet").hidden=true;S.confirm=null;
-    try{const s=await API.saveCliente(c);S.clientes[s.id]=normCliente(Object.assign({},c,s));if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Empresa actualizada":"✓ Empresa registrada")}catch(er){toast(errTxt(er),5000)}
+    try{const s=await API.saveCliente(c);S.clientes[s.id]=normCliente(Object.assign({},c,s));
+      if(c.grupo&&mail)for(const o of Object.values(S.clientes).filter(o=>o.id!==s.id&&(o.email_cliente||"").toLowerCase()===mail&&o.grupo!==c.grupo)){const n=clone(o);n.grupo=c.grupo;try{const s2=await API.saveCliente(n);S.clientes[o.id]=normCliente(Object.assign({},n,s2||{}))}catch(e){}}if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Empresa actualizada":"✓ Empresa registrada")}catch(er){toast(errTxt(er),5000)}
     render();return;
   }
   if(fid==="fPerfil"){

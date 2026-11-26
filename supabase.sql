@@ -258,3 +258,6 @@ begin
 end; $$;
 revoke all on function eliminar_cuenta(text) from public, anon;
 grant execute on function eliminar_cuenta(text) to authenticated;
+
+-- 26 nov: nombre del grupo para juntar las empresas de un mismo cliente
+alter table clientes add column if not exists grupo text;
