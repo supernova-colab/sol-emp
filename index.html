@@ -455,6 +455,7 @@ td.emp.sem-ok{box-shadow:inset 4px 0 0 #2E9E5B}
 .moneyin{display:flex;align-items:center;gap:8px}
 .moneyin span{font-weight:700;color:var(--muted)}
 .moneyin input{flex:1}
+.pmbtn{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink,inherit);border-radius:10px;padding:8px 12px;font-weight:700;font-size:15px;cursor:pointer}
 input[readonly]{background:var(--bg);color:var(--muted)}
 table.calc tr.sum td{font-weight:600}
 table.calc tr.hd td{padding-top:16px;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border-bottom:0}
@@ -1179,7 +1180,14 @@ function calcISR(c,reg,mes){return memo("isr|"+c.id+"|"+reg+"|"+mes,()=>{
 function calcIVA(c,mes){return memo("iva|"+c.id+"|"+mes,()=>{
   const C=suma(c.id,null,mes,mes,"cobr"),G=suma(c.id,null,mes,mes,"gded");
   const ant=num(ajustes(c.id,mes).iva_favor_ant); // solo lo que captura el despacho
-  const o={tras:C.iva,ret:C.ivaRet,acred:G.iva,ant};o.neto=o.tras-o.ret-o.acred-o.ant;
+  // Prorrateo (hoja IVA PRECIERRE del despacho): si hay ingresos exentos, solo se acredita
+  // la parte del IVA de gastos que corresponde a ingresos gravados (16 % y 0 %).
+  let ing16=0,ing0=0,ingEx=0;
+  for(const x of Object.values(S.movs)){if(x.cliente_id!==c.id||x.mes!==mes||x.tipo!=="ingreso"||est(x)==="I")continue;
+    const t=tasaDe(x),b=+x.subtotal||0;if(t==="exento")ingEx+=b;else if(t==="0")ing0+=b;else ing16+=b}
+  const totIng=ing16+ing0+ingEx,pctEx=ingEx>0&&totIng>0?Math.round(ingEx/totIng*10000)/10000:0;
+  const noAcred=pctEx?Math.round(G.iva*pctEx):0;
+  const o={tras:C.iva,ret:C.ivaRet,ivaGastos:G.iva,acred:G.iva-noAcred,noAcred,pctEx,ing16,ing0,ingEx,totIng,ant};o.neto=o.tras-o.ret-o.acred-o.ant;
   o.cargo=Math.max(0,o.neto);o.favor=Math.max(0,-o.neto);return o;
 })}
 function calc(c,mes){
@@ -1722,7 +1730,7 @@ function rowsTable(rows,ctx){ // ctx: {c,m,reg} vuelve editables las celdas amar
 }
 function tabCalculo(c,r){
   const ctxI={c,m:S.m,reg:""};
-  return`<div class="card"><h3>IVA</h3>${rowsTable([["Trasladado (IVA de facturas cobradas)",r.iva.tras],["Menos: IVA retenido",-r.iva.ret],["Menos: acreditable (gastos con IVA)",-r.iva.acred],
+  return`<div class="card"><h3>IVA</h3>${rowsTable([["Trasladado (IVA de facturas cobradas)",r.iva.tras],["Menos: IVA retenido",-r.iva.ret],...(r.iva.pctEx?[["Prorrateo de IVA (hay ingresos exentos)","","sub"],["Ingresos cobrados al 16 %",r.iva.ing16,"sub"],["Ingresos cobrados al 0 %",r.iva.ing0,"sub"],["Ingresos cobrados exentos",r.iva.ingEx,"sub"],["Total de ingresos",r.iva.totIng,"sub"],["Porcentaje exento",(r.iva.pctEx*100).toFixed(2)+" %","sub"],["IVA de gastos (no identificado)",r.iva.ivaGastos,"sub"],["IVA no acreditable (parte exenta)",-r.iva.noAcred,"sub"]]:[]),["Menos: acreditable (gastos con IVA)",-r.iva.acred],
       ["Menos: saldo a favor de meses anteriores",-num(ajustes(c.id,S.m).iva_favor_ant),"","iva_favor_ant"],
       [r.iva.neto>=0?"IVA a pagar":"IVA a favor",Math.abs(r.iva.neto),"total"]],ctxI)}</div>
     ${r.regs.map(x=>`<div class="card"><h3>Cálculo de ISR · ${esc(REGS[x.reg].n)}</h3>${rowsTable(x.rows,{c,m:S.m,reg:x.reg})}</div>`).join("")}
@@ -2009,7 +2017,7 @@ function formMov(x){
     <div class="two"><div class="field"><label for="mvFec">Fecha</label><input id="mvFec" name="fecha" type="date" min="${YEAR}-${pad(m)}-01" max="${YEAR}-${pad(m)}-${pad(last)}" value="${esc(x.fecha)}" required${dis}></div>
       <div class="field"><label for="mvRfc">RFC (opcional)</label><input id="mvRfc" name="rfc" maxlength="13" value="${esc(x.rfc||"")}" style="text-transform:uppercase"${dis}></div></div>
     ${(c.regimenes||[]).length>1?`<div class="field"><label for="mvReg">Régimen</label><select id="mvReg" name="regimen"${dis}>${c.regimenes.map(r=>`<option value="${r}"${r===x.regimen?" selected":""}>${abrev(c,r)}</option>`).join("")}</select></div>`:`<input type="hidden" name="regimen" value="${regDe(c)}">`}
-    <div class="field"><label for="mvSub">Importe sin IVA</label><div class="moneyin"><span>$</span><input id="mvSub" name="subtotal" class="money" type="text" inputmode="decimal" value="${x.subtotal===""?"":fmtN(x.subtotal)}" placeholder="0.00" required${dis}></div></div>
+    <div class="field"><label for="mvSub">Importe sin IVA</label><div class="moneyin"><span>$</span><input id="mvSub" name="subtotal" class="money" type="text" inputmode="decimal" value="${x.subtotal===""?"":fmtN(x.subtotal)}" placeholder="0.00" required${dis}><button type="button" class="pmbtn" title="Nota de crédito: cambia a negativo" aria-label="Cambiar a negativo (nota de crédito)" onclick="const i=document.getElementById('mvSub');i.value=i.value?fmtN(-num(i.value)):'-';i.focus();syncMov(true)"${dis}>−/+</button></div><small class="small muted" style="display:block;margin-top:4px">Nota de crédito: escribe el importe en negativo o toca −/+.</small></div>
     <div class="field"><label>Tasa de IVA</label><div class="seg4" role="group" aria-label="Tasa de IVA">${IVA_TASAS.map(([k,l])=>`<button type="button" data-act="mvTasa" data-t="${k}" aria-pressed="${tasa===k}"${dis}>${l}</button>`).join("")}</div>
       <input type="hidden" name="tasa_iva" id="mvTasa" value="${tasa}"></div>
     <div class="field"><label for="mvIva">IVA</label><div class="moneyin"><span>$</span><input id="mvIva" name="iva" class="money" type="text" inputmode="decimal" value="${x.iva===""?"":fmtN(x.iva)}" placeholder="0.00"${tasa==="manual"&&edit?"":" readonly"}${dis}></div><span class="small muted" id="hIva">${tasa==="manual"?"Escribe el IVA a mano.":"Se calcula solo."}</span></div>
@@ -2673,7 +2681,7 @@ document.addEventListener("submit",async e=>{
   }
   if(fid==="fMov"){
     const c=S.clientes[S.cid],sub=num(d.subtotal),prev=d.id?S.movs[d.id]:null,otro=e.submitter&&e.submitter.value==="otro";
-    if(!(sub>0)){toast("Escribe el importe sin IVA.");return}
+    if(!sub){toast("Escribe el importe sin IVA.");return}
     const mes=+d.fecha.slice(5,7),ing=d.tipo==="ingreso",estatus=ing?(d.estatus||"C"):null,tasa=d.tasa_iva||"16";
     const iva=tasa==="manual"?num(d.iva):tasa==="16"?Math.round(sub*CFG.iva)/100:0;
     let ivr=num(d.iva_ret),isr=num(d.isr_ret);
