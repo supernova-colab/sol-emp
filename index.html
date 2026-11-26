@@ -680,6 +680,9 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .u-txt span{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}.u-txt .u-emp{color:var(--accent);font-weight:600}
 .u-meta{font-size:.78rem;color:var(--muted)}
 .u-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.u-links{display:flex;gap:18px;flex-wrap:wrap}
+.u-edit{display:inline-flex;align-items:center;gap:6px;padding:6px 2px;border:0;background:none;color:var(--accent);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
+.u-edit .ic{width:16px;height:16px}
 .u-del{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 2px;border:0;background:none;color:var(--pay);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
 .u-del .ic{width:16px;height:16px}
 .uopt{padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:.84rem;cursor:pointer}
@@ -1799,7 +1802,8 @@ function viewUsuarios(){
       ${x.emps?`<span class="u-emp">${esc(x.emps.join(" · "))}</span>`:""}<span class="pill ${cl} sm" style="align-self:flex-start;margin-top:6px">${l}</span></div></div>
       <div class="u-meta">${x.cuenta?`Cuenta creada ${fecha(x.creada)}${x.conf===false?" · correo sin confirmar":""}${x.ultimo?" · último ingreso "+fecha(x.ultimo):""}`:"Todavía no crea su cuenta en la app"}</div>
       <div class="u-acc">${[["cliente","Cliente"],["admin","Administrador"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${(yo&&r!=="admin")||k===r?" disabled":""}>${t}</button>`).join("")}</div>
-      ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div>`}).join("")+'</div>'
+      <div class="u-links"><button class="u-edit" data-act="editarPersona" data-e="${esc(x.email)}">${ic("pen")} Editar nombre</button>
+      ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div></div>`}).join("")+'</div>'
   :`<div class="card empty"><p class="muted">Todavía no hay cuentas.</p></div>`}</section>`;
 }
 function viewTarifas(){
@@ -1835,7 +1839,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.53"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.54"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2279,6 +2283,15 @@ const act={
       <div class="pf-acc"><button type="button" class="btn" data-act="ayuda">? Ayuda</button><button type="button" class="btn" data-act="salir">${ic("out")} Cerrar sesión</button></div>
     </form>`)},
   quitarFoto(){S.fotoNueva=null;$("#pfAv").innerHTML=avatar({nombre:$("#pfNom").value},S.auth.email,84)},
+  editarPersona(d){
+    const x=d.e,pf=(S.cuentas&&S.cuentas.perfiles||[]).find(f=>(f.email||"").toLowerCase()===x)||{},emps=Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x);
+    const nom=pf.nombre||(emps.find(c=>c.titular)||{}).titular||"";
+    openSheet("Editar persona",`<form id="fPersona" class="stack" style="gap:16px" data-e="${esc(x)}">
+      <div class="pf-top">${avatar(pf,x,72,nom)}</div>
+      <div class="field"><label for="psNom">Nombre</label><input id="psNom" name="nombre" value="${esc(nom)}" placeholder="Ej. María López" maxlength="60" autocomplete="off" required></div>
+      <div class="field"><label>Correo</label><input value="${esc(x)}" readonly disabled><span class="small muted">El correo no se puede cambiar porque es con el que entra a la app.</span></div>
+      ${emps.length?`<p class="small muted" style="margin:0">También se actualiza como dueño de: <b>${emps.map(c=>esc(c.nombre)).join(", ")}</b>.</p>`:""}
+      <button class="btn primary full" type="submit">Guardar</button></form>`)},
   async eliminarCuenta(d){
     const x=d.e,emps=Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x).map(c=>c.nombre);
     if(!confirm("¿Eliminar la cuenta de "+x+"?\n\nYa no podrá entrar a la app y se borra su perfil."+(emps.length?"\nSus empresas ("+emps.join(", ")+") NO se borran; siguen en tu panel.":"")+"\n\nEsto no se puede deshacer."))return;
@@ -2519,6 +2532,17 @@ document.addEventListener("submit",async e=>{
   if(fid==="fPerfil"){
     const row={email:S.auth.email,nombre:(d.nombre||"").trim()||null,foto:S.fotoNueva===undefined?((S.auth.perfil&&S.auth.perfil.foto)||null):S.fotoNueva,actualizado:new Date().toISOString()};
     try{const sv=await API.savePerfil(row);S.auth.perfil=sv||row;if(row.nombre)S.auth.nombre=row.nombre;closeSheet();toast("✓ Perfil guardado",2500)}catch(er){toast(/perfiles/.test(errTxt(er))?"Falta correr el SQL nuevo en Supabase para guardar el perfil.":errTxt(er),5000)}
+    return;
+  }
+  if(fid==="fPersona"){
+    const x=fm.dataset.e,nom=(d.nombre||"").trim();if(!nom){toast("Escribe el nombre");return}
+    const pf=(S.cuentas&&S.cuentas.perfiles||[]).find(f=>(f.email||"").toLowerCase()===x)||{};
+    try{
+      await API.savePerfil({email:x,nombre:nom,foto:pf.foto||null,actualizado:new Date().toISOString()});
+      for(const c of Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x&&c.titular!==nom)){const n=clone(c);n.titular=nom;const sv=await API.saveCliente(n);S.clientes[c.id]=normCliente(Object.assign({},n,sv||{}))}
+      if(x===S.auth.email){S.auth.perfil=Object.assign({},S.auth.perfil||{},{email:x,nombre:nom});S.auth.nombre=nom}
+      closeSheet();toast("✓ Nombre guardado",2500);await cargarCuentas();
+    }catch(er){toast(errTxt(er),5000)}
     return;
   }
   if(fid==="fAcceso"){
