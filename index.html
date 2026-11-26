@@ -681,8 +681,13 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .u-meta{font-size:.78rem;color:var(--muted)}
 .u-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 #adBtn:not(:disabled){background:var(--pay);color:#fff;border-color:var(--pay)}#adBtn:disabled{opacity:.5}
-.adm-sec{margin-top:18px;padding-top:22px;border-top:2px dashed var(--line)}
-.adm-sec h2 .ic{width:20px;height:20px;color:var(--muted)}
+.utabs{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:999px;background:var(--glass);border:1px solid var(--line);box-shadow:0 6px 18px rgba(30,50,110,.08)}
+.utabs button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 10px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:.95rem;cursor:pointer;transition:background .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.utabs button .ic{width:18px;height:18px;flex:none}
+.utabs button span{min-width:22px;padding:1px 7px;border-radius:999px;background:var(--line);font-size:.78rem}
+.utabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px rgba(40,60,120,.28)}
+.utabs button[aria-selected="true"] span{background:rgba(255,255,255,.22)}
+@media (max-width:380px){.utabs button{font-size:.86rem;gap:5px;padding:12px 6px}.utabs button .ic{display:none}}
 .u-acc.two{grid-template-columns:1fr 1fr}
 .u-adm{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--favor-soft);color:var(--favor);font-size:.86rem;font-weight:600}.u-adm .ic{width:16px;height:16px;flex:none}
 .u-edit.muted{color:var(--muted)}
@@ -1797,11 +1802,7 @@ function viewUsuarios(){
   const fecha=d=>d?new Date(d).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}):"";
   return head+`
   ${S.cuentasErr?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>Falta un paso en Supabase</strong><span class="small">Para ver las cuentas hay que correr el SQL nuevo (24 nov). Mientras, puedes activar correos con el formulario. Detalle: ${esc(S.cuentasErr)}</span></div></div>`:""}
-  ${esp?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>${esp} cuenta${esp===1?"":"s"} esperando activación</strong><span class="small">Revisa que sean tus clientes y actívalas con el botón “Cliente”.</span></div></div>`:""}
-  <form id="fAcceso" class="card stack" style="gap:14px"><h3 style="font-size:1.05rem">Dar acceso de cliente a un correo</h3>
-    <div class="field"><label for="acMail">Correo</label><input id="acMail" name="email" type="email" required placeholder="correo@ejemplo.com" autocomplete="off"></div>
-    <input type="hidden" name="rol" value="cliente"><p class="small muted" style="margin:0">Se activa como <b>cliente</b>. Para hacer a alguien administrador, búscalo abajo y toca “Hacer administrador”.</p>
-    <button class="btn primary full" type="submit">Activar acceso</button></form>
+
   ${(()=>{const card=x=>{const[k,l,cl]=est(x),yo=x.email===S.auth.email,nom=(x.pf&&x.pf.nombre)||x.tit||"";
     return`<div class="ucard"><div class="u-top">${avatar(x.pf,x.email,48,nom)}<div class="u-txt"><b>${esc(nom||x.email.split("@")[0])}${yo?" <small>(tú)</small>":""}</b><span>${esc(x.email)}</span>
       ${x.emps?`<span class="u-emp">${esc(x.emps.join(" · "))}</span>`:""}<span class="pill ${cl} sm" style="align-self:flex-start;margin-top:6px">${l}</span></div></div>
@@ -1811,12 +1812,16 @@ function viewUsuarios(){
       <div class="u-links"><button class="u-edit" data-act="editarPersona" data-e="${esc(x.email)}">${ic("pen")} Editar nombre</button>
       ${yo?"":k==="admin"?`<button class="u-edit muted" data-act="quitarAdmin" data-e="${esc(x.email)}">${ic("lock")} Quitar administrador</button>`:`<button class="u-edit muted" data-act="hacerAdmin" data-e="${esc(x.email)}">${ic("lock")} Hacer administrador</button>`}
       ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div></div>`};
-    const cli=lista.filter(x=>est(x)[0]!=="admin"),adm=lista.filter(x=>est(x)[0]==="admin");
-    return`<section class="stack" style="gap:12px"><div class="sec-h"><h2>Clientes</h2><span class="small muted">${cli.length}</span></div>
-      ${cli.length?'<div class="ulist">'+cli.map(card).join("")+'</div>':`<div class="card empty"><p class="muted">Todavía no hay clientes con cuenta.</p></div>`}</section>
-    <section class="stack adm-sec" style="gap:12px"><div class="sec-h"><h2 class="row" style="gap:8px">${ic("lock")} Administradores</h2><span class="small muted">${adm.length}</span></div>
-      <p class="small muted" style="margin:-4px 0 0">Tienen acceso total: ven y editan a todos los clientes, dan accesos y cambian las tablas.</p>
-      <div class="ulist">${adm.map(card).join("")}</div></section>`})()}`;
+    const cli=lista.filter(x=>est(x)[0]!=="admin"),adm=lista.filter(x=>est(x)[0]==="admin"),tab=S.uTab||"cli";
+    return`<div class="utabs" role="tablist"><button role="tab" data-act="uTab" data-t="cli" aria-selected="${tab==="cli"}">${ic("users")} Clientes <span>${cli.length}</span></button><button role="tab" data-act="uTab" data-t="adm" aria-selected="${tab==="adm"}">${ic("lock")} Administradores <span>${adm.length}</span></button></div>
+    ${tab==="cli"?`${esp?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>${esp} cuenta${esp===1?"":"s"} esperando activación</strong><span class="small">Revisa que sean tus clientes y actívalas con el botón “Cliente”.</span></div></div>`:""}
+  <form id="fAcceso" class="card stack" style="gap:14px"><h3 style="font-size:1.05rem">Dar acceso de cliente a un correo</h3>
+    <div class="field"><label for="acMail">Correo</label><input id="acMail" name="email" type="email" required placeholder="correo@ejemplo.com" autocomplete="off"></div>
+    <input type="hidden" name="rol" value="cliente"><p class="small muted" style="margin:0">Se activa como <b>cliente</b>. Para hacer a alguien administrador, búscalo abajo y toca “Hacer administrador”.</p>
+    <button class="btn primary full" type="submit">Activar acceso</button></form>
+      <section class="stack" style="gap:12px">${cli.length?'<div class="ulist">'+cli.map(card).join("")+'</div>':`<div class="card empty"><p class="muted">Todavía no hay clientes con cuenta.</p></div>`}</section>`
+    :`<p class="small muted" style="margin:0">Tienen acceso total: ven y editan a todos los clientes, dan accesos y cambian las tablas.</p>
+      <section class="stack" style="gap:12px"><div class="ulist">${adm.map(card).join("")}</div></section>`}`})()}`;
 }
 function viewTarifas(){
   const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${fmtN(v,d)}">`;
@@ -1851,7 +1856,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.56"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.57"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2314,6 +2319,7 @@ const act={
     if(!confirm("¿Quitarle el acceso de administrador a "+d.e+"?\nQuedará como cliente."))return;
     try{await API.ponerAcceso(d.e,"cliente");toast("Ya no es administrador",3000);await cargarCuentas()}catch(e){toast(errTxt(e),5000)}},
   cerrarSheet(){closeSheet()},
+  uTab(d){S.uTab=d.t;render()},
   async eliminarCuenta(d){
     const x=d.e,emps=Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x).map(c=>c.nombre);
     if(!confirm("¿Eliminar la cuenta de "+x+"?\n\nYa no podrá entrar a la app y se borra su perfil."+(emps.length?"\nSus empresas ("+emps.join(", ")+") NO se borran; siguen en tu panel.":"")+"\n\nEsto no se puede deshacer."))return;
