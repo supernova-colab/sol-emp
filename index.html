@@ -1930,7 +1930,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.63"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.66"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
