@@ -401,6 +401,13 @@ table.xl tr.trt td{font-weight:700;background:var(--bg);border-bottom:0}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;font-weight:700;font-size:.92rem}
 .pill::before{content:"";width:10px;height:10px;border-radius:50%;background:currentColor}
 .pill.ok{background:var(--favor-soft);color:var(--favor)}
+.ccard.sem-rojo,.grupo.sem-rojo{box-shadow:inset 4px 0 0 #D93A30,0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(30,50,110,.07)}
+.ccard.sem-ok,.grupo.sem-ok{box-shadow:inset 4px 0 0 #2E9E5B,0 1px 2px rgba(20,30,60,.04),0 8px 28px rgba(30,50,110,.07)}
+td.emp.sem-rojo{box-shadow:inset 4px 0 0 #D93A30}
+td.emp.sem-ok{box-shadow:inset 4px 0 0 #2E9E5B}
+.fdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.fdot.r{background:#D93A30}.fdot.v{background:#2E9E5B}
+.okchk.r{color:#C62828;font-weight:700}.okchk.v{color:var(--favor);font-weight:700}
 .pill.pend{background:#FDEBD3;color:#B45309}
 .pill.rojo{background:#FDE3E1;color:#C62828;border:1px solid #F6C2BE}
 .pill.ok{border:1px solid #BFE5CC}
@@ -1475,7 +1482,7 @@ function viewActualizar(){
   ${hayPF?`<section class="card row between" style="gap:14px;flex-wrap:wrap"><div class="stack" style="gap:2px"><b>Mes para los pagos provisionales de ISR de las personas físicas</b><span class="small muted">Número de meses que se usan en la tarifa (normalmente el mismo mes).</span></div>
     <select id="mesesPF" data-change="mesesPF" aria-label="Meses de la tarifa">${MESES.map((n,i)=>`<option value="${i+1}"${i+1===mesesPF?" selected":""}>${i+1} · ${n}</option>`).join("")}</select></section>`:""}
   ${filas.length?`<div class="grid-wrap"><table class="xl act"><thead><tr><th class="emp" rowspan="2">Empresa</th><th class="pa" colspan="${COLS_ACT.length}">Puntos a actualizar</th><th rowspan="2">Estatus</th></tr><tr>${COLS_ACT.map(([,l])=>`<th class="n">${l}</th>`).join("")}</tr></thead>
-    <tbody>${filas.map(f=>`<tr><td class="emp"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${abrev(f.c,f.r)}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap.includes(f.r))).join("")}<td>${f.primero?`<label class="okchk"><input type="checkbox" data-act2="${esc(f.c.id)}||_act"${actualizado(f.c,S.m)?" checked":""}${periodo(f.c.id,S.m).estado==="declarado"?" disabled":""}> ${actualizado(f.c,S.m)?"Actualizado":"Pendiente"}</label>`:""}</td></tr>`).join("")}</tbody></table></div>
+    <tbody>${filas.map(f=>`<tr><td class="emp ${actualizado(f.c,S.m)?"sem-ok":"sem-rojo"}"><b>${esc(f.c.nombre)}</b><br><span class="small muted">${abrev(f.c,f.r)}</span></td>${COLS_ACT.map(([k,,ap])=>celda(f,k,ap.includes(f.r))).join("")}<td>${f.primero?`<label class="okchk ${actualizado(f.c,S.m)?"v":"r"}"><input type="checkbox" data-act2="${esc(f.c.id)}||_act"${actualizado(f.c,S.m)?" checked":""}${periodo(f.c.id,S.m).estado==="declarado"?" disabled":""}> ${actualizado(f.c,S.m)?"Actualizado":"Pendiente"}</label>`:""}</td></tr>`).join("")}</tbody></table></div>
     <p class="small muted" style="margin:0">Desliza la tabla hacia los lados para ver todas las columnas. Los meses ya declarados no se pueden modificar.</p>
     <button class="btn primary full btn-save" data-act="guardarAct">${ic("check")} Guardar cambios</button>`
     :`<div class="card empty"><p class="muted">Primero agrega empresas.</p></div>`}`;
@@ -1531,7 +1538,7 @@ function saludo(){const h=new Date().getHours();return h<12?"Buenos días":h<19?
 function filtrarDOM(){const q=(S.q||"").trim().toLowerCase();let vis=0;
   document.querySelectorAll(".clist>[data-q]").forEach(el=>{const ok=!q||el.dataset.q.includes(q);el.hidden=!ok;if(ok)vis++});
   const nr=document.getElementById("sinRes");if(nr)nr.hidden=vis>0}
-function tarjetaEmpresa(c,i){const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard${on?"":" inact"}"${i?` data-q="${esc(qDe(c))}"`:""}>
+function tarjetaEmpresa(c,i){const ok=actualizado(c,S.m),on=activo(c);return`<div class="ccard ${on?(ok?"sem-ok":"sem-rojo"):"inact"}"${i?` data-q="${esc(qDe(c))}"`:""}>
       <button class="ccard-main" data-act="abrir" data-id="${esc(c.id)}">
         <span class="ccard-top">${regIcon(c)}<b>${esc(c.nombre)}</b><span class="go">${ic("arrow")}</span></span>
         <span class="ccard-sub">${(c.regimenes||[]).map(r=>abrev(c,r)).join(" · ")}${c.email_cliente&&i?" · "+esc(c.email_cliente):""}</span>
@@ -1548,7 +1555,7 @@ function listaGrupos(cs){
     if(arr.length===1)return tarjetaEmpresa(arr[0],n);
     const gr=arr.map(x=>x.grupo).find(Boolean),tit=arr.map(x=>x.titular).find(Boolean),nom=gr||tit||k,pend=arr.filter(c=>activo(c)&&!actualizado(c,S.m)).length;
     const tot=arr.reduce((t,c)=>t+(activo(c)?totalMes(c,S.m):0),0);
-    return`<details class="grupo"${S.abiertos[k]?" open":""} data-k="${esc(k)}" data-q="${esc(arr.map(qDe).join(" "))}"><summary>
+    return`<details class="grupo ${pend?"sem-rojo":"sem-ok"}"${S.abiertos[k]?" open":""} data-k="${esc(k)}" data-q="${esc(arr.map(qDe).join(" "))}"><summary>
       <span class="rgi grp" aria-hidden="true">${ic("users")}</span>
       <span class="g-txt"><b>${esc(nom)}</b><span>${arr.length} empresas${gr&&tit?" · "+esc(tit):""}${nom!==k?" · "+esc(k):""}</span>
         <span class="g-row"><span class="pill ${pend?"rojo":"ok"} sm">${pend?pend+" pendiente"+(pend===1?"":"s"):"Todas actualizadas"}</span><span class="ccard-tot"><span>Total impuestos</span><b>${money(tot)}</b></span></span></span>
@@ -1570,7 +1577,7 @@ function viewTablero(){
       <p>Una vez concluido el mes, ya no se podrá actualizar o agregar nada.</p>
     </div>
     ${cs.length>=4?`<div class="buscar">${ic("search")}<input id="qCli" type="search" placeholder="Buscar cliente, empresa o correo" value="${esc(S.q||"")}" autocomplete="off" enterkeyhint="search"></div>
-    <div class="fchips">${[["todos","Todos",cs.length],["pend","Pendientes",pend],["ok","Actualizados",cs.filter(c=>activo(c)&&actualizado(c,S.m)).length],["inact","Inactivos",cs.filter(c=>!activo(c)).length]].map(([k,l,n])=>`<button class="fchip" data-act="filtroCli" data-f="${k}" aria-pressed="${(S.filtro||"todos")===k}">${l} <span>${n}</span></button>`).join("")}</div>`:""}
+    <div class="fchips">${[["todos","Todos",cs.length],["pend","Pendientes",pend],["ok","Actualizados",cs.filter(c=>activo(c)&&actualizado(c,S.m)).length],["inact","Inactivos",cs.filter(c=>!activo(c)).length]].map(([k,l,n])=>`<button class="fchip" data-act="filtroCli" data-f="${k}" aria-pressed="${(S.filtro||"todos")===k}">${k==="pend"?'<i class="fdot r"></i>':k==="ok"?'<i class="fdot v"></i>':""}${l} <span>${n}</span></button>`).join("")}</div>`:""}
     ${cs.length?(()=>{const f=S.filtro||"todos",fs=cs.filter(c=>f==="todos"||(f==="pend"?activo(c)&&!actualizado(c,S.m):f==="ok"?activo(c)&&actualizado(c,S.m):!activo(c)));
       return fs.length?listaGrupos(fs)+`<div class="card empty" id="sinRes" hidden><p class="muted">No encontré clientes con esa búsqueda.</p></div>`:`<div class="card empty"><p class="muted">No hay empresas en este filtro.</p></div>`})()
     :`<div class="card empty"><p class="muted">Todavía no hay clientes. Toca “Registrar una nueva empresa”.</p>${MODO_DEMO?`<button class="btn ghost" data-act="ejemplo">Cargar clientes de ejemplo</button>`:""}</div>`}
@@ -1915,7 +1922,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.62"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.63"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");

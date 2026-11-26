@@ -3,7 +3,7 @@
 // - Librerías y letras de internet (llevan versión en su dirección): se guardan y se usan desde el teléfono.
 // - Imágenes de la app: se muestran al instante desde lo guardado y se actualizan por detrás.
 // - La base de datos (Supabase) nunca se guarda aquí: siempre va directo a internet.
-const CACHE="sol-emp-v62";
+const CACHE="sol-emp-v63";
 const LIBS=["cdn.jsdelivr.net","unpkg.com","cdnjs.cloudflare.com","fonts.googleapis.com","fonts.gstatic.com"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(["./","./index.html","./manifest.webmanifest","./icon-192.png","./logo.png","./monigote.png?v=2"].map(u=>new Request(u,{cache:"reload"})))));self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE&&k!=="sol-emp-libs").map(k=>caches.delete(k)))));self.clients.claim()});
