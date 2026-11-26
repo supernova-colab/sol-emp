@@ -681,6 +681,8 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .u-meta{font-size:.78rem;color:var(--muted)}
 .u-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 #adBtn:not(:disabled){background:var(--pay);color:#fff;border-color:var(--pay)}#adBtn:disabled{opacity:.5}
+.adm-sec{margin-top:18px;padding-top:22px;border-top:2px dashed var(--line)}
+.adm-sec h2 .ic{width:20px;height:20px;color:var(--muted)}
 .u-acc.two{grid-template-columns:1fr 1fr}
 .u-adm{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--favor-soft);color:var(--favor);font-size:.86rem;font-weight:600}.u-adm .ic{width:16px;height:16px;flex:none}
 .u-edit.muted{color:var(--muted)}
@@ -1800,8 +1802,7 @@ function viewUsuarios(){
     <div class="field"><label for="acMail">Correo</label><input id="acMail" name="email" type="email" required placeholder="correo@ejemplo.com" autocomplete="off"></div>
     <input type="hidden" name="rol" value="cliente"><p class="small muted" style="margin:0">Se activa como <b>cliente</b>. Para hacer a alguien administrador, búscalo abajo y toca “Hacer administrador”.</p>
     <button class="btn primary full" type="submit">Activar acceso</button></form>
-  <section class="stack" style="gap:12px"><div class="sec-h"><h2>Personas</h2><span class="small muted">${lista.length}</span></div>
-  ${lista.length?'<div class="ulist">'+lista.map(x=>{const[k,l,cl]=est(x),yo=x.email===S.auth.email,nom=(x.pf&&x.pf.nombre)||x.tit||"";
+  ${(()=>{const card=x=>{const[k,l,cl]=est(x),yo=x.email===S.auth.email,nom=(x.pf&&x.pf.nombre)||x.tit||"";
     return`<div class="ucard"><div class="u-top">${avatar(x.pf,x.email,48,nom)}<div class="u-txt"><b>${esc(nom||x.email.split("@")[0])}${yo?" <small>(tú)</small>":""}</b><span>${esc(x.email)}</span>
       ${x.emps?`<span class="u-emp">${esc(x.emps.join(" · "))}</span>`:""}<span class="pill ${cl} sm" style="align-self:flex-start;margin-top:6px">${l}</span></div></div>
       <div class="u-meta">${x.cuenta?`Cuenta creada ${fecha(x.creada)}${x.conf===false?" · correo sin confirmar":""}${x.ultimo?" · último ingreso "+fecha(x.ultimo):""}`:"Todavía no crea su cuenta en la app"}</div>
@@ -1809,8 +1810,13 @@ function viewUsuarios(){
         :`<div class="u-acc two">${[["cliente","Cliente"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${k===r?" disabled":""}>${t}</button>`).join("")}</div>`}
       <div class="u-links"><button class="u-edit" data-act="editarPersona" data-e="${esc(x.email)}">${ic("pen")} Editar nombre</button>
       ${yo?"":k==="admin"?`<button class="u-edit muted" data-act="quitarAdmin" data-e="${esc(x.email)}">${ic("lock")} Quitar administrador</button>`:`<button class="u-edit muted" data-act="hacerAdmin" data-e="${esc(x.email)}">${ic("lock")} Hacer administrador</button>`}
-      ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div></div>`}).join("")+'</div>'
-  :`<div class="card empty"><p class="muted">Todavía no hay cuentas.</p></div>`}</section>`;
+      ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div></div>`};
+    const cli=lista.filter(x=>est(x)[0]!=="admin"),adm=lista.filter(x=>est(x)[0]==="admin");
+    return`<section class="stack" style="gap:12px"><div class="sec-h"><h2>Clientes</h2><span class="small muted">${cli.length}</span></div>
+      ${cli.length?'<div class="ulist">'+cli.map(card).join("")+'</div>':`<div class="card empty"><p class="muted">Todavía no hay clientes con cuenta.</p></div>`}</section>
+    <section class="stack adm-sec" style="gap:12px"><div class="sec-h"><h2 class="row" style="gap:8px">${ic("lock")} Administradores</h2><span class="small muted">${adm.length}</span></div>
+      <p class="small muted" style="margin:-4px 0 0">Tienen acceso total: ven y editan a todos los clientes, dan accesos y cambian las tablas.</p>
+      <div class="ulist">${adm.map(card).join("")}</div></section>`})()}`;
 }
 function viewTarifas(){
   const inp=(name,v,d=2)=>`<input class="ycell money" type="text" inputmode="decimal" name="${name}" data-d="${d}" value="${fmtN(v,d)}">`;
@@ -1845,7 +1851,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.55"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.56"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
