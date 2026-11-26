@@ -680,6 +680,10 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .u-txt span{font-size:.84rem;color:var(--muted);overflow-wrap:anywhere}.u-txt .u-emp{color:var(--accent);font-weight:600}
 .u-meta{font-size:.78rem;color:var(--muted)}
 .u-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+#adBtn:not(:disabled){background:var(--pay);color:#fff;border-color:var(--pay)}#adBtn:disabled{opacity:.5}
+.u-acc.two{grid-template-columns:1fr 1fr}
+.u-adm{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--favor-soft);color:var(--favor);font-size:.86rem;font-weight:600}.u-adm .ic{width:16px;height:16px;flex:none}
+.u-edit.muted{color:var(--muted)}
 .u-links{display:flex;gap:18px;flex-wrap:wrap}
 .u-edit{display:inline-flex;align-items:center;gap:6px;padding:6px 2px;border:0;background:none;color:var(--accent);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
 .u-edit .ic{width:16px;height:16px}
@@ -1776,7 +1780,7 @@ async function cargarCuentas(){
 function viewUsuarios(){
   const head=`${quien()}<button class="back" data-act="tablero"><span style="display:inline-flex;transform:rotate(180deg)">${ic("arrow")}</span>Regresar a mis clientes</button>
   <div class="sec-t"><span class="eyebrow">Administración</span><h2 style="font-size:1.5rem">Usuarios y accesos</h2>
-    <p class="small muted">Cada persona crea su cuenta en la app con su correo (“Crear mi cuenta”). Después tú la activas aquí como <b>cliente</b> o como <b>administrador</b>. También puedes activar un correo antes de que cree su cuenta.</p></div>`;
+    <p class="small muted">Cada persona crea su cuenta en la app con su correo (“Crear mi cuenta”). Después tú la activas aquí como <b>cliente</b>. También puedes activar un correo antes de que cree su cuenta. Hacer a alguien administrador lleva una confirmación aparte.</p></div>`;
   if(!S.cuentas)return head+`<div class="skel"><i style="height:120px"></i><i style="height:84px"></i><i style="height:84px"></i></div>`;
   const C=S.cuentas,M=new Map(),get=e=>{e=(e||"").toLowerCase().trim();if(!e)return null;if(!M.has(e))M.set(e,{email:e});return M.get(e)};
   C.usuarios.forEach(u=>Object.assign(get(u.email),{cuenta:true,creada:u.creada,ultimo:u.ultimo_acceso,conf:u.confirmada}));
@@ -1791,18 +1795,20 @@ function viewUsuarios(){
   const fecha=d=>d?new Date(d).toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}):"";
   return head+`
   ${S.cuentasErr?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>Falta un paso en Supabase</strong><span class="small">Para ver las cuentas hay que correr el SQL nuevo (24 nov). Mientras, puedes activar correos con el formulario. Detalle: ${esc(S.cuentasErr)}</span></div></div>`:""}
-  ${esp?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>${esp} cuenta${esp===1?"":"s"} esperando activación</strong><span class="small">Elige si es cliente o administrador.</span></div></div>`:""}
-  <form id="fAcceso" class="card stack" style="gap:14px"><h3 style="font-size:1.05rem">Dar acceso a un correo</h3>
+  ${esp?`<div class="banner warn"><div class="stack" style="gap:2px"><strong>${esp} cuenta${esp===1?"":"s"} esperando activación</strong><span class="small">Revisa que sean tus clientes y actívalas con el botón “Cliente”.</span></div></div>`:""}
+  <form id="fAcceso" class="card stack" style="gap:14px"><h3 style="font-size:1.05rem">Dar acceso de cliente a un correo</h3>
     <div class="field"><label for="acMail">Correo</label><input id="acMail" name="email" type="email" required placeholder="correo@ejemplo.com" autocomplete="off"></div>
-    <div class="seg2" role="radiogroup"><label><input type="radio" name="rol" value="cliente" checked><span>Cliente</span></label><label><input type="radio" name="rol" value="admin"><span>Administrador</span></label></div>
+    <input type="hidden" name="rol" value="cliente"><p class="small muted" style="margin:0">Se activa como <b>cliente</b>. Para hacer a alguien administrador, búscalo abajo y toca “Hacer administrador”.</p>
     <button class="btn primary full" type="submit">Activar acceso</button></form>
   <section class="stack" style="gap:12px"><div class="sec-h"><h2>Personas</h2><span class="small muted">${lista.length}</span></div>
   ${lista.length?'<div class="ulist">'+lista.map(x=>{const[k,l,cl]=est(x),yo=x.email===S.auth.email,nom=(x.pf&&x.pf.nombre)||x.tit||"";
     return`<div class="ucard"><div class="u-top">${avatar(x.pf,x.email,48,nom)}<div class="u-txt"><b>${esc(nom||x.email.split("@")[0])}${yo?" <small>(tú)</small>":""}</b><span>${esc(x.email)}</span>
       ${x.emps?`<span class="u-emp">${esc(x.emps.join(" · "))}</span>`:""}<span class="pill ${cl} sm" style="align-self:flex-start;margin-top:6px">${l}</span></div></div>
       <div class="u-meta">${x.cuenta?`Cuenta creada ${fecha(x.creada)}${x.conf===false?" · correo sin confirmar":""}${x.ultimo?" · último ingreso "+fecha(x.ultimo):""}`:"Todavía no crea su cuenta en la app"}</div>
-      <div class="u-acc">${[["cliente","Cliente"],["admin","Administrador"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${(yo&&r!=="admin")||k===r?" disabled":""}>${t}</button>`).join("")}</div>
+      ${k==="admin"?`<div class="u-adm">${ic("lock")}<span>Tiene acceso completo a todos los clientes.</span></div>`
+        :`<div class="u-acc two">${[["cliente","Cliente"],["ninguno","Sin acceso"]].map(([r,t])=>`<button class="uopt" data-act="acceso" data-e="${esc(x.email)}" data-r="${r}" aria-pressed="${k===r}"${k===r?" disabled":""}>${t}</button>`).join("")}</div>`}
       <div class="u-links"><button class="u-edit" data-act="editarPersona" data-e="${esc(x.email)}">${ic("pen")} Editar nombre</button>
+      ${yo?"":k==="admin"?`<button class="u-edit muted" data-act="quitarAdmin" data-e="${esc(x.email)}">${ic("lock")} Quitar administrador</button>`:`<button class="u-edit muted" data-act="hacerAdmin" data-e="${esc(x.email)}">${ic("lock")} Hacer administrador</button>`}
       ${!yo&&(x.cuenta||x.acc||x.admin)?`<button class="u-del" data-act="eliminarCuenta" data-e="${esc(x.email)}">${ic("trash")} Eliminar cuenta</button>`:""}</div></div>`}).join("")+'</div>'
   :`<div class="card empty"><p class="muted">Todavía no hay cuentas.</p></div>`}</section>`;
 }
@@ -1839,7 +1845,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.54"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.55"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -2292,6 +2298,16 @@ const act={
       <div class="field"><label>Correo</label><input value="${esc(x)}" readonly disabled><span class="small muted">El correo no se puede cambiar porque es con el que entra a la app.</span></div>
       ${emps.length?`<p class="small muted" style="margin:0">También se actualiza como dueño de: <b>${emps.map(c=>esc(c.nombre)).join(", ")}</b>.</p>`:""}
       <button class="btn primary full" type="submit">Guardar</button></form>`)},
+  hacerAdmin(d){
+    openSheet("Hacer administrador",`<form id="fAdmin" class="stack" style="gap:16px" data-e="${esc(d.e)}">
+      <div class="banner danger"><div class="stack" style="gap:4px"><strong>Cuidado: esto da acceso total</strong><span class="small"><b>${esc(d.e)}</b> podrá ver y editar a <b>todos</b> los clientes, sus facturas y sus impuestos, dar y quitar accesos, y cambiar las tablas.</span></div></div>
+      <div class="field"><label for="adConf">Para confirmar, escribe <b>ADMINISTRADOR</b></label><input id="adConf" name="conf" autocomplete="off" autocapitalize="characters" placeholder="ADMINISTRADOR"></div>
+      <button class="btn danger full" type="submit" id="adBtn" disabled>Sí, hacer administrador</button>
+      <button class="btn full" type="button" data-act="cerrarSheet">Cancelar</button></form>`)},
+  async quitarAdmin(d){
+    if(!confirm("¿Quitarle el acceso de administrador a "+d.e+"?\nQuedará como cliente."))return;
+    try{await API.ponerAcceso(d.e,"cliente");toast("Ya no es administrador",3000);await cargarCuentas()}catch(e){toast(errTxt(e),5000)}},
+  cerrarSheet(){closeSheet()},
   async eliminarCuenta(d){
     const x=d.e,emps=Object.values(S.clientes).filter(c=>(c.email_cliente||"").toLowerCase()===x).map(c=>c.nombre);
     if(!confirm("¿Eliminar la cuenta de "+x+"?\n\nYa no podrá entrar a la app y se borra su perfil."+(emps.length?"\nSus empresas ("+emps.join(", ")+") NO se borran; siguen en tu panel.":"")+"\n\nEsto no se puede deshacer."))return;
@@ -2299,7 +2315,7 @@ const act={
     catch(e){toast(/eliminar_cuenta|function/i.test(errTxt(e))?"Falta un paso en Supabase para eliminar cuentas.":errTxt(e),5000)}},
   usuarios(){S.vista="usuarios";S.cuentas=null;render();cargarCuentas()},
   async acceso(d){
-    if(d.r==="admin"&&!confirm("¿Dar acceso de ADMINISTRADOR a "+d.e+"?\nPodrá ver y editar a todos los clientes."))return;
+    if(d.r==="admin")return act.hacerAdmin(d);
     if(d.r==="ninguno"&&!confirm("¿Quitar el acceso de "+d.e+"?"))return;
     try{await API.ponerAcceso(d.e,d.r);toast(d.r==="ninguno"?"Acceso quitado":"✓ Acceso activado como "+(d.r==="admin"?"administrador":"cliente"),3000);await cargarCuentas()}catch(e){toast(errTxt(e),5000)}},
   mesPrev(){if(S.m>1){S.m--;render()}else if(YEAR>MINY)cambiarAnio(YEAR-1,12)},
@@ -2446,6 +2462,7 @@ document.addEventListener("input",e=>{
   if(t.id==="mvIvr"||t.id==="mvIsr"){S.retManual=true;syncMov(false)}
   if(t.id==="cMail")mailHint();
   if(t.id==="qCli"){S.q=t.value;filtrarDOM()}
+  if(t.id==="adConf"){const b=$("#adBtn");if(b)b.disabled=t.value.trim().toUpperCase()!=="ADMINISTRADOR"}
 });
 // Casillas de dinero: al escribir se ve el número limpio; al salir, con comas y decimales
 document.addEventListener("focusin",e=>{const t=e.target;if(t.classList&&t.classList.contains("money")&&!t.readOnly&&t.value){t.value=String(num(t.value));try{t.select()}catch(_){}}});
@@ -2534,6 +2551,11 @@ document.addEventListener("submit",async e=>{
     try{const sv=await API.savePerfil(row);S.auth.perfil=sv||row;if(row.nombre)S.auth.nombre=row.nombre;closeSheet();toast("✓ Perfil guardado",2500)}catch(er){toast(/perfiles/.test(errTxt(er))?"Falta correr el SQL nuevo en Supabase para guardar el perfil.":errTxt(er),5000)}
     return;
   }
+  if(fid==="fAdmin"){
+    if((d.conf||"").trim().toUpperCase()!=="ADMINISTRADOR"){toast("Escribe ADMINISTRADOR para confirmar");return}
+    try{await API.ponerAcceso(fm.dataset.e,"admin");closeSheet();toast("✓ "+fm.dataset.e+" ahora es administrador",3500);await cargarCuentas()}catch(er){toast(errTxt(er),5000)}
+    return;
+  }
   if(fid==="fPersona"){
     const x=fm.dataset.e,nom=(d.nombre||"").trim();if(!nom){toast("Escribe el nombre");return}
     const pf=(S.cuentas&&S.cuentas.perfiles||[]).find(f=>(f.email||"").toLowerCase()===x)||{};
@@ -2547,7 +2569,7 @@ document.addEventListener("submit",async e=>{
   }
   if(fid==="fAcceso"){
     const em=(d.email||"").trim().toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast("Escribe un correo válido");return}
-    if(d.rol==="admin"&&!confirm("¿Dar acceso de ADMINISTRADOR a "+em+"?\nPodrá ver y editar a todos los clientes."))return;
+    d.rol="cliente";
     try{await API.ponerAcceso(em,d.rol);toast("✓ "+em+" activado como "+(d.rol==="admin"?"administrador":"cliente"),3500);await cargarCuentas()}catch(er){toast(errTxt(er),5000)}
     return;
   }
