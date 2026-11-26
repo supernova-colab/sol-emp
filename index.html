@@ -688,6 +688,7 @@ table.mv tfoot tr.big td{color:var(--ink);font-weight:800;font-family:var(--font
 .utabs button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px rgba(40,60,120,.28)}
 .utabs button[aria-selected="true"] span{background:rgba(255,255,255,.22)}
 @media (max-width:380px){.utabs button{font-size:.86rem;gap:5px;padding:12px 6px}.utabs button .ic{display:none}}
+.otra-emp{border:1.5px dashed var(--accent);color:var(--accent);background:var(--glass);font-weight:700}
 .u-acc.two{grid-template-columns:1fr 1fr}
 .u-adm{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--favor-soft);color:var(--favor);font-size:.86rem;font-weight:600}.u-adm .ic{width:16px;height:16px;flex:none}
 .u-edit.muted{color:var(--muted)}
@@ -1733,6 +1734,7 @@ function viewClienteAdmin(){
     <button data-act="editCliente"><i>${ic("pen")}</i><span>Editar empresa</span></button>
     <button data-act="descargas"><i>${ic("down")}</i><span>Excel / PDF</span></button>
   </div>
+  ${c.email_cliente?`<button class="btn full otra-emp" data-act="otraEmpresa">+ Agregar otra empresa a ${esc(c.titular||c.email_cliente)}</button>`:""}
   ${otras.length?`<div class="otras"><span class="eyebrow">Otras empresas de ${esc(c.titular||"este cliente")}</span><div class="otras-l">${otras.map(x=>`<button data-act="abrir" data-id="${esc(x.id)}"><b>${esc(x.nombre)}</b><span>${(x.regimenes||[]).map(rr=>abrev(x,rr)).join(" · ")}</span></button>`).join("")}</div></div>`:""}
   ${barraMes(true)}
   <section class="card hero">${resumenHero(c,r,p)}${r.notes.length?`<div class="notes">${r.notes.map(t=>`<p class="note">${esc(t)}</p>`).join("")}</div>`:""}</section>
@@ -1856,7 +1858,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.57"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.58"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
@@ -1881,7 +1883,7 @@ function openSheet(title,html){$("#sheetTitle").textContent=title;$("#sheetBody"
 function closeSheet(){$("#sheet").hidden=true;S.confirm=null;S.mov=null;render()}
 function formCliente(c,regIni){
   const nuevo=!c;
-  c=c||{nombre:"",rfc:"",tipo:REGS[regIni||"601"].t,regimenes:[regIni||"601"],coef:"",email_cliente:"",actividad:"Empresarial",activo:true};
+  c=c||Object.assign({nombre:"",rfc:"",tipo:REGS[regIni||"601"].t,regimenes:[regIni||"601"],coef:"",email_cliente:"",actividad:"Empresarial",activo:true},S.prefill||{});
   const reg=regDe(c),f=fiscal(c);
   openSheet(c.id?"Editar empresa":"Registrar una nueva empresa",`<form id="fCliente">
     <input type="hidden" name="id" value="${esc(c.id||"")}">
@@ -2342,7 +2344,8 @@ const act={
   salirVista(){S.preview=false;S.tabC="ing";render();scrollTo(0,0)},
   miCliente(d){S.cid=d.id;render()},
   tabC(d){S.tabC=d.t;render()},
-  nuevoCliente(){S.confirm=null;openSheet("¿Qué tipo de empresa vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
+  otraEmpresa(){const c=S.clientes[S.cid];if(!c)return;S.prefill={email_cliente:c.email_cliente||"",titular:c.titular||""};act.nuevoCliente(true)},
+  nuevoCliente(keep){if(keep!==true)S.prefill=null;S.confirm=null;openSheet(S.prefill&&S.prefill.email_cliente?"¿Qué tipo es la otra empresa de "+(S.prefill.titular||S.prefill.email_cliente)+"?":"¿Qué tipo de empresa vas a registrar?",`<div class="stack" style="gap:10px">${CATALOGO.map((k,i)=>`<button class="tipo-op" data-act="crearTipo" data-i="${i}"><span><b>${k.ab}</b><span class="small muted">${k.rf} · ${k.act}</span></span><span class="go">${ic("arrow")}</span></button>`).join("")}</div>`)},
   async toggleActivo(d){const c=S.clientes[d.id];if(!c)return;const nc=clone(c);nc.activo=!activo(c);
     try{const s2=await API.saveCliente(nc);S.clientes[d.id]=Object.assign({},nc,s2||{});toast(activo(S.clientes[d.id])?"Cliente activo":"Cliente inactivo")}catch(er){toast(errTxt(er),5000)}
     const y=scrollY;render();scrollTo(0,y)},
@@ -2539,7 +2542,7 @@ document.addEventListener("submit",async e=>{
     try{const{error}=await (await getSb()).auth.updateUser({password:d.pw});if(error)throw error;$("#sheet").hidden=true;toast("Contraseña actualizada");await entrar(await Remote.session())}catch(er){toast(errTxt(er),5000)}
     return;
   }
-  if(fid==="fCliente"){
+  if(fid==="fCliente"){S.prefill=null;
     const rfc=(d.rfc||"").trim().toUpperCase().replace(/\s/g,""),reg=d.reg||"601",tipo=REGS[reg].t;
     const mail=(d.email_cliente||"").trim().toLowerCase();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)){toast("Escribe un correo válido para el acceso del cliente.");return}
@@ -2555,7 +2558,7 @@ document.addEventListener("submit",async e=>{
       fiscal:{iva:[!!d.rivaOn,num(d.rivaPct)],isr:[!!d.risrOn,num(d.risrPct)]}});
     if(d.id)c.id=d.id;
     $("#sheet").hidden=true;S.confirm=null;
-    try{const s=await API.saveCliente(c);S.clientes[s.id]=normCliente(Object.assign({},c,s));if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Empresa actualizada":"Cliente creado: ya aparece en la tabla")}catch(er){toast(errTxt(er),5000)}
+    try{const s=await API.saveCliente(c);S.clientes[s.id]=normCliente(Object.assign({},c,s));if(!prev){S.vista="tablero";scrollTo(0,0)}toast(prev?"Empresa actualizada":"✓ Empresa registrada")}catch(er){toast(errTxt(er),5000)}
     render();return;
   }
   if(fid==="fPerfil"){
