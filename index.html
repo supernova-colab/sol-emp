@@ -2023,7 +2023,7 @@ function formMov(x){
     <div class="two" id="wRetIn"${(ing&&adm&&puedeRet)||(!ing&&x.id&&tieneRet(x))?"":" hidden"}>
       <div class="field"><label for="mvIvr" id="lIvr">${ing?"IVA retenido":"IVA que retuviste"}</label><input id="mvIvr" name="iva_ret" class="money" type="text" inputmode="decimal" value="${fmtN(x.iva_ret)}" placeholder="0.00"${dis}></div>
       <div class="field"><label for="mvIsr" id="lIsr">${ing?"ISR retenido":"ISR que retuviste"}</label><input id="mvIsr" name="isr_ret" class="money" type="text" inputmode="decimal" value="${fmtN(x.isr_ret)}" placeholder="0.00"${dis}></div></div>
-    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo la factura y ya la pagué (baja el IVA)</label>
+    <label class="check" id="wDed"${ing?" hidden":""}><input type="checkbox" name="deducible"${x.deducible!==false?" checked":""}${dis}> Tengo la factura y ya la pagué</label>
     <div class="field"><label for="mvNota">${adm?"Nota del cliente":"¿Alguna duda o nota para tu contador? (opcional)"}</label><textarea id="mvNota" name="nota" rows="2" placeholder="${adm?"Sin nota":"Ej. Esta factura es de un pago parcial"}"${dis}>${esc(x.nota||"")}</textarea></div>
     ${x.id?`<p class="small muted" style="margin:0">Capturó: ${x.capturado_por==="cliente"?"el cliente":"el despacho"}</p>`:""}
     ${edit?(x.id?`<button class="btn primary full big" type="submit" name="next" value="cerrar">Guardar cambios</button>`
