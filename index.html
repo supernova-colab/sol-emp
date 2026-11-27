@@ -509,17 +509,17 @@ body.printing{overflow:hidden}
 /* ===== Tablas de movimientos y resumen (ref. nov 2026) ===== */
 .rt-head{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
 .rt-head b{font-family:var(--font-d);font-size:1.15rem}.rt-head span{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.rt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rt{display:grid;grid-template-columns:1fr;gap:10px}
 .rt-full{grid-column:1/-1;display:grid}
-.rt-col{display:flex;flex-direction:column;gap:10px}
-.rt-t{display:flex;flex-direction:column;gap:4px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);min-width:0}
+.rt-col{display:contents}
+.rt-t{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);min-width:0}
 .rt-t span{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.rt-t b{font-family:var(--font-d);font-size:1.15rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.rt-t b{font-family:var(--font-d);font-size:clamp(1rem,3.6vw,1.2rem);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 .rt-t.imp b{color:var(--accent)}
 .rt-total{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:12px;padding:18px;border-radius:16px;background:#14324B;color:#fff}
 .rt-total>div{display:flex;flex-direction:column;gap:4px}
 .rt-total span{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#B9CBDD}
-.rt-total b{font-family:var(--font-d);font-size:1.9rem;font-variant-numeric:tabular-nums}
+.rt-total b{font-family:var(--font-d);font-size:clamp(1.5rem,6vw,1.9rem);font-variant-numeric:tabular-nums;white-space:nowrap}
 .rt-total small{font-size:.78rem;color:#CFDCEA}
 .btn-go{border:0;border-radius:14px;background:#F59E0B;color:#1A1A1A;font:700 1.05rem var(--font-d);padding:16px 22px;min-height:56px;cursor:pointer;box-shadow:0 6px 16px rgba(245,158,11,.35);flex:1 1 200px}
 .btn-go:active{transform:translateY(1px)}
@@ -794,7 +794,7 @@ body.scrolled .back-float{opacity:1;transform:none;pointer-events:auto}
 @media (min-width:1000px){
   .wrap.wide{max-width:1300px}
   .emp-lay{display:grid;grid-template-columns:360px minmax(0,1fr);gap:28px;align-items:start}
-  .emp-side .rt{grid-template-columns:1fr 1fr}
+  .emp-side .rt{grid-template-columns:1fr}
 }
 .grupo{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .grupo>summary{list-style:none;display:flex;align-items:flex-start;gap:12px;padding:16px;cursor:pointer}
@@ -1930,7 +1930,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.68"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.69"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
