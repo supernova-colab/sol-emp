@@ -1659,8 +1659,8 @@ function tablaMovs(c,m,tipo){
       <td class="acc">${ing&&e==="I"&&!ce&&!S.preview?`<button class="mini go" data-act="pasarCobrado" data-id="${esc(x.id)}">Pasar a cobrado</button>`:""}<button class="mini" data-act="mov" data-id="${esc(x.id)}">${ed?"Editar":"Ver"}</button>${ed?`<button class="mini del" data-act="borrarRapido" data-id="${esc(x.id)}">Eliminar</button>`:""}</td></tr>`}).join("");
   return`<div class="grid-wrap"><table class="mv"><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th><th class="n">Importe</th><th class="n">IVA</th><th class="n">Retención</th><th class="n">Neto</th><th></th></tr></thead>
     <tbody>${filas}</tbody><tfoot>
-    ${ing?`<tr><td colspan="6">Total facturado (contado y crédito)</td><td class="n">${money(fac)}</td><td class="e"></td></tr><tr class="big"><td colspan="6">Total cobrado y cobros anteriores</td><td class="n">${money(cob)}</td><td class="e"></td></tr>`
-      :`<tr class="big"><td colspan="3">Total de gastos (neto)</td><td class="n e">${money(tI)}</td><td class="n e">${money(tV)}</td><td class="n e">${tR?money(tR):"—"}</td><td class="n">${money(tN)}</td><td class="e"></td></tr>`}</tfoot></table></div>`;
+    ${ing?`<tr><td colspan="6">Total facturado (contado y crédito)</td><td class="n">${money(fac)}</td><td class="e"></td></tr><tr class="big"><td colspan="6">TOTAL DE INGRESOS FISCALES DEL MES</td><td class="n">${money(cob)}</td><td class="e"></td></tr>`
+      :`<tr class="big"><td colspan="3">TOTAL DE GASTOS FISCALES DEL MES</td><td class="n e">${money(tI)}</td><td class="n e">${money(tV)}</td><td class="n e">${tR?money(tR):"—"}</td><td class="n">${money(tN)}</td><td class="e"></td></tr>`}</tfoot></table></div>`;
 }
 function grupoMovs(c,m,k,edit){
   const ing=k==="ing",ms=movsDe(c.id,m).filter(x=>x.tipo===(ing?"ingreso":"gasto")),open=S.abre[k];
@@ -1930,7 +1930,7 @@ function viewTrabajo(){
   if(esAdmin())return S.vista==="cliente"?(S.preview?viewPanelCliente():viewClienteAdmin()):S.vista==="actualizar"?viewActualizar():S.vista==="tarifas"?viewTarifas():S.vista==="usuarios"?viewUsuarios():viewTablero();
   S.cid=S.cid||null;return viewPanelCliente();
 }
-const APP_VER="1.66"; // súbela junto con el caché de sw.js en cada cambio
+const APP_VER="1.67"; // súbela junto con el caché de sw.js en cada cambio
 const quieto=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 function animarEntrada(){
   if(quieto())return;const app=$("#app");app.classList.remove("enter");void app.offsetWidth;app.classList.add("enter");
